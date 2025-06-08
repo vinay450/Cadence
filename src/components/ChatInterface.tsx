@@ -9,7 +9,6 @@ import ReactMarkdown from 'react-markdown';
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Loading } from "@/components/ui/Loading";
 import { DataVisualization } from "./visualizations/DataVisualization";
-import { sampleData, sampleVisualization } from '@/lib/testData';
 
 interface ChatInterfaceProps {
   uploadedFile: string | null;
@@ -22,7 +21,8 @@ const ChatInterface = ({ uploadedFile, fileContent }: ChatInterfaceProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isInitialAnalysis, setIsInitialAnalysis] = useState(true);
   const [loadingMessage, setLoadingMessage] = useState("");
-  const [visualizations, setVisualizations] = useState<VisualizationResponse>(sampleVisualization);
+  const [visualizations, setVisualizations] = useState<VisualizationResponse>();
+  const [parsedData, setParsedData] = useState<any[]>([]);
 
   const handleSendMessage = async () => {
     if (!chatMessage.trim() || isLoading) return;
@@ -46,9 +46,16 @@ const ChatInterface = ({ uploadedFile, fileContent }: ChatInterfaceProps) => {
           question: chatMessage
         });
 
-        // Store visualizations separately
+        // Store visualizations if available
         if (analysis.visualizations) {
           setVisualizations(analysis.visualizations);
+          try {
+            // Parse the file content as JSON for the charts
+            const data = JSON.parse(fileContent);
+            setParsedData(Array.isArray(data) ? data : [data]);
+          } catch (e) {
+            console.error('Error parsing file content:', e);
+          }
         }
 
         const assistantMessage: ChatMessage = {
@@ -109,7 +116,7 @@ const ChatInterface = ({ uploadedFile, fileContent }: ChatInterfaceProps) => {
                   <p className="text-sm font-medium text-gray-700 mb-1">Cadence AI</p>
                   <p className="text-gray-600">
                     {uploadedFile 
-                      ? `Great! I've analyzed your dataset "${uploadedFile}". What insights would you like me to generate?`
+                      ? `Great! I've received your dataset "${uploadedFile}". What insights would you like me to generate?`
                       : "Hello! Upload a dataset above and I'll help you discover insights through interactive visualizations."
                     }
                   </p>
@@ -161,10 +168,10 @@ const ChatInterface = ({ uploadedFile, fileContent }: ChatInterfaceProps) => {
               </div>
             )}
 
-            {visualizations && (
+            {visualizations && parsedData.length > 0 && (
               <DataVisualization
                 visualizations={visualizations}
-                data={sampleData}
+                data={parsedData}
               />
             )}
           </div>
