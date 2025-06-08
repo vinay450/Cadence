@@ -11,6 +11,7 @@ import { Loading } from "@/components/ui/Loading";
 import { DataVisualization } from "./visualizations/DataVisualization";
 import { useApiKey } from '@/contexts/ApiKeyContext';
 import { useToast } from '@/components/ui/use-toast';
+import Papa from 'papaparse';
 
 interface ChatInterfaceProps {
   uploadedFile: string | null;
@@ -27,6 +28,93 @@ const ChatInterface = ({ uploadedFile, fileContent }: ChatInterfaceProps) => {
   const [parsedData, setParsedData] = useState<any[]>([]);
   const { apiKey, isLoading: isApiKeyLoading, error: apiKeyError } = useApiKey();
   const { toast } = useToast();
+
+  const parseFileContent = (content: string, fileType: string) => {
+    try {
+      switch (fileType.toLowerCase()) {
+        case 'csv':
+          const results = Papa.parse(content, {
+            header: true,
+            skipEmptyLines: true
+          });
+          return results.data;
+        case 'json':
+          return JSON.parse(content);
+        case 'excel':
+          // For now, assume it's CSV format
+          const excelResults = Papa.parse(content, {
+            header: true,
+            skipEmptyLines: true
+          });
+          return excelResults.data;
+        default:
+          console.error('Unsupported file type:', fileType);
+          return [];
+      }
+    } catch (error) {
+      console.error('Error parsing file content:', error);
+      return [];
+    }
+  };
+
+  const formatAnalysisContent = (content: string) => {
+    const sections = {
+      visualizations: content.match(/\[VISUALIZATION METHODS\]([\s\S]*?)(?=\[|$)/)?.[1]?.trim(),
+      structure: content.match(/\[DATA STRUCTURE\]([\s\S]*?)(?=\[|$)/)?.[1]?.trim(),
+      statistics: content.match(/\[KEY STATISTICS\]([\s\S]*?)(?=\[|$)/)?.[1]?.trim(),
+      insights: content.match(/\[NOTABLE INSIGHTS\]([\s\S]*?)(?=\[|$)/)?.[1]?.trim(),
+      correlations: content.match(/\[CORRELATIONS\]([\s\S]*?)(?=\[|$)/)?.[1]?.trim(),
+    };
+
+    if (Object.values(sections).some(section => section)) {
+      return (
+        <div className="space-y-6">
+          {sections.visualizations && (
+            <div className="bg-blue-50 p-4 rounded-lg">
+              <h3 className="text-lg font-semibold text-blue-900 mb-2">Visualization Methods</h3>
+              <div className="prose prose-blue max-w-none">
+                <ReactMarkdown>{sections.visualizations}</ReactMarkdown>
+              </div>
+            </div>
+          )}
+          {sections.structure && (
+            <div className="bg-purple-50 p-4 rounded-lg">
+              <h3 className="text-lg font-semibold text-purple-900 mb-2">Data Structure</h3>
+              <div className="prose prose-purple max-w-none">
+                <ReactMarkdown>{sections.structure}</ReactMarkdown>
+              </div>
+            </div>
+          )}
+          {sections.statistics && (
+            <div className="bg-green-50 p-4 rounded-lg">
+              <h3 className="text-lg font-semibold text-green-900 mb-2">Key Statistics</h3>
+              <div className="prose prose-green max-w-none">
+                <ReactMarkdown>{sections.statistics}</ReactMarkdown>
+              </div>
+            </div>
+          )}
+          {sections.insights && (
+            <div className="bg-amber-50 p-4 rounded-lg">
+              <h3 className="text-lg font-semibold text-amber-900 mb-2">Notable Insights</h3>
+              <div className="prose prose-amber max-w-none">
+                <ReactMarkdown>{sections.insights}</ReactMarkdown>
+              </div>
+            </div>
+          )}
+          {sections.correlations && (
+            <div className="bg-red-50 p-4 rounded-lg">
+              <h3 className="text-lg font-semibold text-red-900 mb-2">Correlations</h3>
+              <div className="prose prose-red max-w-none">
+                <ReactMarkdown>{sections.correlations}</ReactMarkdown>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    return <ReactMarkdown>{content}</ReactMarkdown>;
+  };
 
   const handleSendMessage = async () => {
     if (!apiKey) {
@@ -50,25 +138,20 @@ const ChatInterface = ({ uploadedFile, fileContent }: ChatInterfaceProps) => {
     setChatMessage("");
 
     try {
-      // If this is the first message, use analyzeDataset
       if (messages.length === 0 && fileContent) {
         setLoadingMessage("Analyzing your dataset in detail...");
+        const fileType = uploadedFile?.split('.').pop() || 'csv';
+        
         const analysis = await analyzeDataset({
-          dataContent: fileContent || '',
-          fileType: (uploadedFile?.split('.').pop() || 'csv') as 'csv' | 'json' | 'excel',
+          dataContent: fileContent,
+          fileType: fileType as 'csv' | 'json' | 'excel',
           question: chatMessage
         });
 
-        // Store visualizations if available
         if (analysis.visualizations) {
           setVisualizations(analysis.visualizations);
-          try {
-            // Parse the file content as JSON for the charts
-            const data = JSON.parse(fileContent);
-            setParsedData(Array.isArray(data) ? data : [data]);
-          } catch (e) {
-            console.error('Error parsing file content:', e);
-          }
+          const data = parseFileContent(fileContent, fileType);
+          setParsedData(Array.isArray(data) ? data : [data]);
         }
 
         const assistantMessage: ChatMessage = {
@@ -79,7 +162,6 @@ const ChatInterface = ({ uploadedFile, fileContent }: ChatInterfaceProps) => {
         setMessages(prev => [...prev, assistantMessage]);
         setIsInitialAnalysis(false);
       } else {
-        // For follow-up questions, use chatWithClaude
         setLoadingMessage("Processing your question...");
         const response = await chatWithClaude(
           [...messages, userMessage],
@@ -177,7 +259,10 @@ const ChatInterface = ({ uploadedFile, fileContent }: ChatInterfaceProps) => {
                       {message.role === 'user' ? 'You' : 'Cadence AI'}
                     </p>
                     <div className="prose prose-sm max-w-none">
-                      <ReactMarkdown>{message.content}</ReactMarkdown>
+                      {message.role === 'assistant' 
+                        ? formatAnalysisContent(message.content)
+                        : <p>{message.content}</p>
+                      }
                     </div>
                   </div>
                 </div>

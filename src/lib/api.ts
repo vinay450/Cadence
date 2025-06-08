@@ -31,16 +31,53 @@ export async function analyzeDataset(request: DatasetAnalysisRequest): Promise<A
   try {
     const prompt = `You are a data analysis expert. Your role is to analyze and research this ${request.fileType} data deeply to find any patterns or trends.
 
-In the following order provide:
-1. The two best ways to represent this data graphically
-2. A summary of the data structure
-3. Key statistics and patterns you recognize from your research
-4. Any notable insights or anomalies
-5. Potential correlations between variables
+Please provide your analysis in the following strictly formatted sections, each separated by dividers:
+
+[VISUALIZATION METHODS]
+List the two best ways to represent this data graphically, with a brief explanation for each choice.
+1.
+2.
+
+[DATA STRUCTURE]
+Provide a clear summary of:
+- Number of records and variables
+- Data types present
+- Format of special fields
+- Any missing data patterns
+
+[KEY STATISTICS]
+Present the main statistical findings:
+- Ranges and means of numerical variables
+- Distribution of categorical variables
+- Key percentages and counts
+
+[NOTABLE INSIGHTS]
+Highlight 3-5 significant findings or anomalies discovered in the data.
+- 
+- 
+- 
+
+[CORRELATIONS]
+List any meaningful relationships between variables, ordered by strength of correlation.
+- 
+- 
 
 Format your response as follows:
 ---TEXT ANALYSIS---
-[Your detailed analysis following the above 5 points]
+[VISUALIZATION METHODS]
+{Your analysis}
+
+[DATA STRUCTURE]
+{Your analysis}
+
+[KEY STATISTICS]
+{Your analysis}
+
+[NOTABLE INSIGHTS]
+{Your analysis}
+
+[CORRELATIONS]
+{Your analysis}
 
 ---VISUALIZATION RECOMMENDATIONS---
 {

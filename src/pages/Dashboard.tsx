@@ -2,7 +2,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { LogOut, Upload, BarChart, MessageSquare } from 'lucide-react';
+import { LogOut, User, MessageSquare, Upload, BarChart, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -37,6 +37,42 @@ const Dashboard = () => {
     return name.split(' ').map((word: string) => word[0]).join('').toUpperCase().slice(0, 2);
   };
 
+  const quickActions = [
+    {
+      title: 'Upload Dataset',
+      description: 'Upload a new dataset for analysis',
+      icon: Upload,
+      action: () => setActiveTab('upload'),
+    },
+    {
+      title: 'Analyze Data',
+      description: 'Start a new analysis conversation',
+      icon: MessageSquare,
+      action: () => setActiveTab('chat'),
+    },
+    {
+      title: 'View Visualizations',
+      description: 'Explore your data visualizations',
+      icon: BarChart,
+      action: () => setActiveTab('visualizations'),
+    },
+  ];
+
+  const recentAnalyses = [
+    {
+      title: 'Patient Data Analysis',
+      date: '2024-03-15',
+      type: 'Healthcare',
+      insights: 3,
+    },
+    {
+      title: 'Sales Performance Q1',
+      date: '2024-03-14',
+      type: 'Business',
+      insights: 5,
+    },
+  ];
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 p-4">
       <div className="max-w-6xl mx-auto">
@@ -69,41 +105,46 @@ const Dashboard = () => {
                 <CardTitle className="text-lg">Quick Actions</CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
-                <Button 
-                  variant="outline" 
-                  className="w-full justify-start" 
-                  onClick={() => setActiveTab('upload')}
-                >
-                  <Upload className="w-4 h-4 mr-2" />
-                  Upload Dataset
-                </Button>
-                <Button 
-                  variant="outline" 
-                  className="w-full justify-start"
-                  onClick={() => setActiveTab('chat')}
-                >
-                  <MessageSquare className="w-4 h-4 mr-2" />
-                  Analyze Data
-                </Button>
-                <Button 
-                  variant="outline" 
-                  className="w-full justify-start"
-                  onClick={() => setActiveTab('visualizations')}
-                >
-                  <BarChart className="w-4 h-4 mr-2" />
-                  View Visualizations
-                </Button>
+                {quickActions.map((action, index) => (
+                  <Button
+                    key={index}
+                    variant="outline"
+                    className="w-full justify-start"
+                    onClick={action.action}
+                  >
+                    <action.icon className="w-4 h-4 mr-2" />
+                    {action.title}
+                  </Button>
+                ))}
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">Recent Datasets</CardTitle>
+                <CardTitle className="text-lg">Recent Analyses</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-sm text-gray-600">
-                  Your recently analyzed datasets will appear here.
-                </p>
+                {recentAnalyses.length > 0 ? (
+                  <div className="space-y-4">
+                    {recentAnalyses.map((analysis, index) => (
+                      <div key={index} className="flex items-center justify-between">
+                        <div>
+                          <p className="font-medium">{analysis.title}</p>
+                          <p className="text-sm text-gray-600">
+                            {analysis.date} • {analysis.type}
+                          </p>
+                        </div>
+                        <Button variant="ghost" size="sm">
+                          <ArrowRight className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-sm text-gray-600">
+                    Your recently analyzed datasets will appear here.
+                  </p>
+                )}
               </CardContent>
             </Card>
           </div>
