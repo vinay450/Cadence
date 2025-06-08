@@ -67,10 +67,18 @@ const calculateCost = (inputTokens: number, outputTokens: number) => {
   };
 };
 
-// Types for our chat interface
+// Types for chat messages and responses
 export interface ChatMessage {
   role: 'user' | 'assistant';
   content: string;
+}
+
+export interface ChatResponse {
+  response: string;
+  usage?: {
+    input_tokens: number;
+    output_tokens: number;
+  };
 }
 
 export interface DatasetAnalysisRequest {
