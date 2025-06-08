@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { BarChart3 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
@@ -28,7 +29,7 @@ const Navigation = () => {
 
   const handleSignOut = async () => {
     await signOut();
-    navigate('/');
+    navigate('/landing');
   };
 
   return (
@@ -52,7 +53,7 @@ const Navigation = () => {
               <div className="flex items-center space-x-4">
                 <Button
                   variant="ghost"
-                  onClick={() => navigate('/dashboard')}
+                  onClick={() => navigate('/')}
                   className="text-gray-600 hover:text-gray-900"
                 >
                   Dashboard
