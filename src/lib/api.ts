@@ -1,60 +1,49 @@
-import { ChatMessage } from './claude';
 import { supabase } from '../integrations/supabase/client';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
-const API_KEY = import.meta.env.VITE_BACKEND_API_KEY;
-
-interface ApiResponse<T> {
-  data?: T;
-  error?: string;
+// Types for chat messages and responses
+export interface ChatMessage {
+  role: 'user' | 'assistant';
+  content: string;
 }
 
-interface AnalysisResponse {
-  analysis: string;
-  usage: {
-    input_tokens: number;
-    output_tokens: number;
-  };
+export interface DatasetAnalysisRequest {
+  dataContent: string;
+  fileType: 'csv' | 'json' | 'excel';
+  question?: string;
 }
 
-interface ChatResponse {
-  response: string;
-  usage: {
-    input_tokens: number;
-    output_tokens: number;
-  };
-}
-
-const headers = {
-  'Content-Type': 'application/json',
-  'Authorization': `Bearer ${API_KEY}`,
+// Feature configuration
+export const featureConfig = {
+  webSearch: {
+    enabled: false, // Disabled by default to prevent unexpected costs
+    costPerSearch: 0.01, // $0.01 per search
+  }
 };
 
-export async function analyzeDataset(dataContent: string, fileType: string, question?: string): Promise<string> {
+// Function to analyze dataset
+export async function analyzeDataset(request: DatasetAnalysisRequest): Promise<string> {
   try {
-    const messages = [
-      {
-        role: 'user',
-        content: `Please analyze this ${fileType} data:\n\n${dataContent}${question ? `\n\nSpecific question: ${question}` : ''}`
-      }
-    ];
-
-    const { data, error } = await supabase.functions.invoke('analyze', {
-      body: { messages },
+    const { data, error } = await supabase.functions.invoke('bright-api', {
+      body: { messages: [{ role: 'user', content: `Please analyze this ${request.fileType} data:\n\n${request.dataContent}${request.question ? `\n\nSpecific question: ${request.question}` : ''}` }] }
     });
 
     if (error) throw error;
     return data.analysis || 'No analysis received';
   } catch (error) {
     console.error('Error analyzing dataset:', error);
-    throw error;
+    return 'An error occurred while analyzing the dataset. Please try again later.';
   }
 }
 
-export async function chatWithClaude(messages: ChatMessage[], dataContext?: string): Promise<string> {
+// Function to continue chat conversation
+export async function chatWithClaude(
+  messages: ChatMessage[],
+  dataContext?: string
+): Promise<string> {
   try {
+    let allMessages = messages;
     if (dataContext) {
-      messages = [
+      allMessages = [
         {
           role: 'user',
           content: `Context about the data:\n${dataContext}`
@@ -63,15 +52,15 @@ export async function chatWithClaude(messages: ChatMessage[], dataContext?: stri
       ];
     }
 
-    const { data, error } = await supabase.functions.invoke('analyze', {
-      body: { messages },
+    const { data, error } = await supabase.functions.invoke('bright-api', {
+      body: { messages: allMessages }
     });
 
     if (error) throw error;
     return data.analysis || 'No response received';
   } catch (error) {
     console.error('Error in chat:', error);
-    throw error;
+    return 'An error occurred during the chat. Please try again later.';
   }
 }
 

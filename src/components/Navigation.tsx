@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { BarChart3 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
@@ -24,7 +23,7 @@ const Navigation = () => {
 
   const getUserInitials = () => {
     const name = getUserDisplayName();
-    return name.split(' ').map(word => word[0]).join('').toUpperCase().slice(0, 2);
+    return name.split(' ').map((word: string) => word[0]).join('').toUpperCase().slice(0, 2);
   };
 
   const handleSignOut = async () => {

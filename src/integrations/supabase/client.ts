@@ -2,11 +2,15 @@
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from './types';
 
-// Default to the integrated Supabase project URL
-const SUPABASE_URL = "https://awuibcrmituuaailkrdl.supabase.co";
+// Get the Supabase URL from environment or use the default
+const SUPABASE_URL = import.meta.env.SUPABASE_URL || 
+                    import.meta.env.VITE_SUPABASE_URL || 
+                    "https://awuibcrmituuaailkrdl.supabase.co";
 
-// The anon key will be injected by Lovable's integration
-const SUPABASE_ANON_KEY = import.meta.env.SUPABASE_ANON_KEY || import.meta.env.VITE_SUPABASE_ANON_KEY;
+// Get the Supabase key from environment
+const SUPABASE_ANON_KEY = import.meta.env.SUPABASE_ANON_KEY || 
+                         import.meta.env.VITE_SUPABASE_ANON_KEY ||
+                         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF3dWliY3JtaXR1dWFhaWxrcmRsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDk5MjA0NzcsImV4cCI6MjAyNTQ5NjQ3N30.RqOyoXZ_1UoFnYwsOAJeqNwFNe_z_5YlDO-_h0JQZL4';
 
 if (!SUPABASE_ANON_KEY) {
   console.warn('Supabase anon key not found. Some features may be disabled.');
@@ -15,4 +19,4 @@ if (!SUPABASE_ANON_KEY) {
 // Import the supabase client like this:
 // import { supabase } from "@/integrations/supabase/client";
 
-export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_ANON_KEY || '');
+export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_ANON_KEY);

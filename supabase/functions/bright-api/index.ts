@@ -1,65 +1,66 @@
-import { serve } from "https://deno.fresh.dev/std@0.177.0/http/server.ts"
-import { Anthropic } from "https://esm.sh/@anthropic-ai/sdk@0.18.0"
+import { serve } from 'https://deno.land/std@0.177.0/http/server.ts'
+import { Anthropic } from '@anthropic-ai/sdk'
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-  'Access-Control-Max-Age': '86400',
+interface RequestBody {
+  messages: Array<{
+    role: string;
+    content: string;
+  }>;
 }
 
-serve(async (req) => {
-  // Handle CORS preflight requests
+serve(async (req: Request) => {
+  // CORS headers
+  const headers = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  };
+
+  // Handle preflight requests
   if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders })
+    return new Response('ok', { headers });
   }
 
   try {
-    const { messages } = await req.json()
-
     const anthropic = new Anthropic({
-      apiKey: Deno.env.get('ANTHROPIC_API_KEY'),
-    })
+      apiKey: Deno.env.get('ANTHROPIC_API_KEY') || '',
+    });
 
-    const response = await anthropic.messages.create({
-      model: 'claude-3-sonnet-20240229',
-      max_tokens: 4096,
-      messages: messages,
-    })
+    const body: RequestBody = await req.json();
 
-    const content = response.content[0]
-    if ('text' in content) {
-      return new Response(
-        JSON.stringify({ analysis: content.text }),
-        {
-          headers: {
-            ...corsHeaders,
-            'Content-Type': 'application/json',
-          },
-        }
-      )
-    } else {
-      return new Response(
-        JSON.stringify({ error: 'Unexpected response format' }),
-        {
-          status: 500,
-          headers: {
-            ...corsHeaders,
-            'Content-Type': 'application/json',
-          },
-        }
-      )
-    }
-  } catch (error) {
+    const completion = await anthropic.messages.create({
+      model: 'claude-3-opus-20240229',
+      max_tokens: 4000,
+      messages: body.messages,
+    });
+
+    const responseBody = {
+      analysis: completion.content[0].text,
+      usage: {
+        input_tokens: completion.usage.input_tokens,
+        output_tokens: completion.usage.output_tokens,
+      },
+    };
+
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify(responseBody),
       {
-        status: 500,
         headers: {
-          ...corsHeaders,
+          ...headers,
           'Content-Type': 'application/json',
         },
       }
-    )
+    );
+  } catch (error: unknown) {
+    const err = error as Error;
+    return new Response(
+      JSON.stringify({ error: err.message }),
+      {
+        status: 500,
+        headers: {
+          ...headers,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
   }
-}) 
+}); 

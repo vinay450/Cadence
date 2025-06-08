@@ -1,4 +1,3 @@
-
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -30,7 +29,7 @@ const Dashboard = () => {
 
   const getUserInitials = () => {
     const name = getUserDisplayName();
-    return name.split(' ').map(word => word[0]).join('').toUpperCase().slice(0, 2);
+    return name.split(' ').map((word: string) => word[0]).join('').toUpperCase().slice(0, 2);
   };
 
   return (

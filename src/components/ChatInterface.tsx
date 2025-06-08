@@ -34,11 +34,12 @@ const ChatInterface = ({ uploadedFile, fileContent }: ChatInterfaceProps) => {
       
       // If this is the first message, use analyzeDataset
       if (messages.length === 0 && fileContent) {
-        response = await analyzeDataset(
-          fileContent,
-          uploadedFile?.split('.').pop() || 'csv',
-          chatMessage
-        );
+        const analysis = await analyzeDataset({
+          dataContent: uploadedFile || '',
+          fileType: (uploadedFile?.split('.').pop() || 'csv') as 'csv' | 'json' | 'excel',
+          question: chatMessage
+        });
+        response = analysis;
       } else {
         // For follow-up questions, use chatWithClaude
         response = await chatWithClaude(
