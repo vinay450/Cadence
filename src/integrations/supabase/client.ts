@@ -3,17 +3,18 @@ import { createClient } from '@supabase/supabase-js';
 import type { Database } from './types';
 
 // Get the Supabase URL from environment or use the default
-const SUPABASE_URL = import.meta.env.SUPABASE_URL || 
-                    import.meta.env.VITE_SUPABASE_URL || 
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || 
+                    import.meta.env.SUPABASE_URL || 
                     "https://awuibcrmituuaailkrdl.supabase.co";
 
 // Get the Supabase key from environment
-const SUPABASE_ANON_KEY = import.meta.env.SUPABASE_ANON_KEY || 
-                         import.meta.env.VITE_SUPABASE_ANON_KEY ||
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || 
+                         import.meta.env.SUPABASE_ANON_KEY ||
                          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF3dWliY3JtaXR1dWFhaWxrcmRsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDk5MjA0NzcsImV4cCI6MjAyNTQ5NjQ3N30.RqOyoXZ_1UoFnYwsOAJeqNwFNe_z_5YlDO-_h0JQZL4';
 
 if (!SUPABASE_ANON_KEY) {
-  console.warn('Supabase anon key not found. Some features may be disabled.');
+  console.warn('Some environment variables are missing: VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY');
+  console.warn('Some features may be disabled or not work correctly.');
 }
 
 // Import the supabase client like this:

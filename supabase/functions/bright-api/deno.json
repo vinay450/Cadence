@@ -2,8 +2,12 @@
   "tasks": {
     "serve": "deno run --allow-net --allow-env index.ts"
   },
+  "compilerOptions": {
+    "allowJs": true,
+    "lib": ["deno.window"],
+    "strict": true
+  },
   "imports": {
-    "@anthropic-ai/sdk": "npm:@anthropic-ai/sdk@0.18.0",
-    "https://deno.land/std@0.177.0/http/server.ts": "https://deno.land/std@0.177.0/http/server.ts"
+    "std/": "https://deno.land/std@0.177.0/"
   }
 } 

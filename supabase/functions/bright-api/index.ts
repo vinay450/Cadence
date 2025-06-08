@@ -1,5 +1,5 @@
 import { serve } from 'https://deno.land/std@0.177.0/http/server.ts'
-import { Anthropic } from '@anthropic-ai/sdk'
+import { Anthropic } from 'npm:@anthropic-ai/sdk@0.18.0'
 
 interface RequestBody {
   messages: Array<{
@@ -21,17 +21,30 @@ serve(async (req: Request) => {
   }
 
   try {
+    const apiKey = Deno.env.get('ANTHROPIC_API_KEY');
+    if (!apiKey) {
+      throw new Error('ANTHROPIC_API_KEY environment variable is not set');
+    }
+
     const anthropic = new Anthropic({
-      apiKey: Deno.env.get('ANTHROPIC_API_KEY') || '',
+      apiKey,
     });
 
     const body: RequestBody = await req.json();
+
+    if (!body.messages || !Array.isArray(body.messages) || body.messages.length === 0) {
+      throw new Error('Invalid request body: messages array is required');
+    }
 
     const completion = await anthropic.messages.create({
       model: 'claude-3-opus-20240229',
       max_tokens: 4000,
       messages: body.messages,
     });
+
+    if (!completion.content || !completion.content[0] || !completion.content[0].text) {
+      throw new Error('Unexpected response format from Claude API');
+    }
 
     const responseBody = {
       analysis: completion.content[0].text,
@@ -52,8 +65,13 @@ serve(async (req: Request) => {
     );
   } catch (error: unknown) {
     const err = error as Error;
+    console.error('Edge Function error:', err.message);
+    
     return new Response(
-      JSON.stringify({ error: err.message }),
+      JSON.stringify({ 
+        error: err.message,
+        details: 'Please check that all required environment variables are set and try again.'
+      }),
       {
         status: 500,
         headers: {
