@@ -1,27 +1,29 @@
 import Anthropic from '@anthropic-ai/sdk';
 import { MessageParam } from '@anthropic-ai/sdk/resources';
-import * as dotenv from 'dotenv';
-
-// Load environment variables in Node.js environment
-if (typeof process !== 'undefined') {
-  dotenv.config();
-}
 
 // Get API key from environment
 const getApiKey = () => {
-  if (typeof process !== 'undefined' && process.env.VITE_ANTHROPIC_API_KEY) {
-    return process.env.VITE_ANTHROPIC_API_KEY;
+  const apiKey = import.meta.env.VITE_ANTHROPIC_API_KEY;
+  if (!apiKey) {
+    console.warn('API key not found in environment - some features will be disabled');
+    return null;
   }
-  if (typeof import.meta !== 'undefined' && import.meta.env.VITE_ANTHROPIC_API_KEY) {
-    return import.meta.env.VITE_ANTHROPIC_API_KEY;
-  }
-  throw new Error('Anthropic API key not found in environment variables');
+  return apiKey;
 };
 
 // Initialize Anthropic client
-const anthropic = new Anthropic({
-  apiKey: getApiKey(),
-});
+let anthropicInstance: Anthropic | null = null;
+
+const getAnthropicClient = () => {
+  if (!anthropicInstance) {
+    const apiKey = getApiKey();
+    if (!apiKey) {
+      return null;
+    }
+    anthropicInstance = new Anthropic({ apiKey });
+  }
+  return anthropicInstance;
+};
 
 // Types for our chat interface
 export interface ChatMessage {
@@ -38,6 +40,11 @@ export interface DatasetAnalysisRequest {
 // Function to analyze dataset
 export async function analyzeDataset(request: DatasetAnalysisRequest): Promise<string> {
   try {
+    const anthropic = getAnthropicClient();
+    if (!anthropic) {
+      return 'API key not configured - analysis features are currently disabled. Please contact support.';
+    }
+
     const systemPrompt = `You are a data analysis assistant. Analyze the following ${request.fileType} data and provide insights.
     If a specific question is asked, focus on answering that question.
     Format your response in clear, concise markdown.`;
@@ -58,7 +65,6 @@ export async function analyzeDataset(request: DatasetAnalysisRequest): Promise<s
       system: systemPrompt,
     });
 
-    // Extract the response content
     const content = response.content[0];
     if ('text' in content) {
       return content.text;
@@ -66,7 +72,7 @@ export async function analyzeDataset(request: DatasetAnalysisRequest): Promise<s
     return 'No text response received';
   } catch (error) {
     console.error('Error analyzing dataset:', error);
-    throw new Error('Failed to analyze dataset');
+    return 'An error occurred while analyzing the dataset. Please try again later.';
   }
 }
 
@@ -76,6 +82,11 @@ export async function chatWithClaude(
   dataContext?: string
 ): Promise<string> {
   try {
+    const anthropic = getAnthropicClient();
+    if (!anthropic) {
+      return 'API key not configured - chat features are currently disabled. Please contact support.';
+    }
+
     const systemPrompt = dataContext
       ? `You are a data analysis assistant. Use this data context for answering questions:\n${dataContext}`
       : 'You are a data analysis assistant. Help users understand their data.';
@@ -92,7 +103,6 @@ export async function chatWithClaude(
       system: systemPrompt,
     });
 
-    // Extract the response content
     const content = response.content[0];
     if ('text' in content) {
       return content.text;
@@ -100,6 +110,6 @@ export async function chatWithClaude(
     return 'No text response received';
   } catch (error) {
     console.error('Error in chat:', error);
-    throw new Error('Failed to get response');
+    return 'An error occurred during the chat. Please try again later.';
   }
 } 
