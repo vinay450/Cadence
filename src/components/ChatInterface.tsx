@@ -2,7 +2,8 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { MessageSquare, Send, Loader2 } from "lucide-react";
-import { ChatMessage, chatWithClaude, analyzeDataset } from "@/lib/claude";
+import { ChatMessage } from "@/lib/claude";
+import { analyzeDataset, chatWithClaude } from "@/lib/api";
 import ReactMarkdown from 'react-markdown';
 import { ScrollArea } from "@/components/ui/scroll-area";
 
@@ -33,11 +34,11 @@ const ChatInterface = ({ uploadedFile, fileContent }: ChatInterfaceProps) => {
       
       // If this is the first message, use analyzeDataset
       if (messages.length === 0 && fileContent) {
-        response = await analyzeDataset({
-          dataContent: fileContent,
-          fileType: uploadedFile?.split('.').pop() as 'csv' | 'json' | 'excel' || 'csv',
-          question: chatMessage,
-        });
+        response = await analyzeDataset(
+          fileContent,
+          uploadedFile?.split('.').pop() || 'csv',
+          chatMessage
+        );
       } else {
         // For follow-up questions, use chatWithClaude
         response = await chatWithClaude(
