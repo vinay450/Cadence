@@ -1,13 +1,13 @@
-
 import { useState } from "react";
 import { Upload, Database } from "lucide-react";
 
 interface FileUploadAreaProps {
   uploadedFile: string | null;
   setUploadedFile: (file: string | null) => void;
+  onFileContent: (content: string) => void;
 }
 
-const FileUploadArea = ({ uploadedFile, setUploadedFile }: FileUploadAreaProps) => {
+const FileUploadArea = ({ uploadedFile, setUploadedFile, onFileContent }: FileUploadAreaProps) => {
   const [isDragOver, setIsDragOver] = useState(false);
 
   const handleDragOver = (e: React.DragEvent) => {
@@ -20,19 +20,30 @@ const FileUploadArea = ({ uploadedFile, setUploadedFile }: FileUploadAreaProps) 
     setIsDragOver(false);
   };
 
+  const processFile = async (file: File) => {
+    try {
+      const content = await file.text();
+      setUploadedFile(file.name);
+      onFileContent(content);
+    } catch (error) {
+      console.error('Error reading file:', error);
+      alert('Error reading file. Please try again.');
+    }
+  };
+
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     setIsDragOver(false);
     const files = e.dataTransfer.files;
     if (files.length > 0) {
-      setUploadedFile(files[0].name);
+      processFile(files[0]);
     }
   };
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files && files.length > 0) {
-      setUploadedFile(files[0].name);
+      processFile(files[0]);
     }
   };
 

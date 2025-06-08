@@ -1,4 +1,3 @@
-
 import { Card, CardContent } from "@/components/ui/card";
 import { useState } from "react";
 import Navigation from "@/components/Navigation";
@@ -12,6 +11,11 @@ import Footer from "@/components/Footer";
 
 const Index = () => {
   const [uploadedFile, setUploadedFile] = useState<string | null>(null);
+  const [fileContent, setFileContent] = useState<string>("");
+
+  const handleFileContent = (content: string) => {
+    setFileContent(content);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
@@ -26,9 +30,13 @@ const Index = () => {
             <CardContent className="p-8">
               <FileUploadArea 
                 uploadedFile={uploadedFile} 
-                setUploadedFile={setUploadedFile} 
+                setUploadedFile={setUploadedFile}
+                onFileContent={handleFileContent}
               />
-              <ChatInterface uploadedFile={uploadedFile} />
+              <ChatInterface 
+                uploadedFile={uploadedFile}
+                fileContent={fileContent}
+              />
             </CardContent>
           </Card>
         </div>
