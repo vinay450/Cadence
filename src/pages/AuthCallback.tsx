@@ -8,7 +8,7 @@ const AuthCallback = () => {
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) {
-        navigate('/dashboard');
+        navigate('/');
       } else {
         navigate('/login');
       }

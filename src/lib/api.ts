@@ -1,12 +1,8 @@
 import { supabase } from '@/lib/supabase';
 import type { VisualizationResponse } from './types/visualization';
+import { ChatMessage } from './claude';
 
 // Types for chat messages and responses
-export interface ChatMessage {
-  role: 'user' | 'assistant';
-  content: string;
-}
-
 export interface DatasetAnalysisRequest {
   dataContent: string;
   fileType: 'csv' | 'json' | 'excel';
@@ -18,6 +14,12 @@ export interface AnalysisResponse {
   visualizations?: VisualizationResponse;
 }
 
+interface AnalyzeDatasetParams {
+  dataContent: string;
+  fileType: 'csv' | 'json' | 'excel';
+  question: string;
+}
+
 // Feature configuration
 export const featureConfig = {
   webSearch: {
@@ -27,9 +29,13 @@ export const featureConfig = {
 };
 
 // Function to analyze dataset
-export async function analyzeDataset(request: DatasetAnalysisRequest): Promise<AnalysisResponse> {
+export const analyzeDataset = async ({
+  dataContent,
+  fileType,
+  question,
+}: AnalyzeDatasetParams): Promise<AnalysisResponse> => {
   try {
-    const prompt = `You are a data analysis expert. Your role is to analyze and research this ${request.fileType} data deeply to find any patterns or trends.
+    const prompt = `You are a data analysis expert. Your role is to analyze and research this ${fileType} data deeply to find any patterns or trends.
 
 Please provide your analysis in the following strictly formatted sections, each separated by dividers:
 
@@ -60,65 +66,25 @@ Highlight 3-5 significant findings or anomalies discovered in the data.
 [CORRELATIONS]
 List any meaningful relationships between variables, ordered by strength of correlation.
 - 
-- 
-
-Format your response as follows:
----TEXT ANALYSIS---
-[VISUALIZATION METHODS]
-{Your analysis}
-
-[DATA STRUCTURE]
-{Your analysis}
-
-[KEY STATISTICS]
-{Your analysis}
-
-[NOTABLE INSIGHTS]
-{Your analysis}
-
-[CORRELATIONS]
-{Your analysis}
-
----VISUALIZATION RECOMMENDATIONS---
-{
-  "recommendations": [
-    {
-      "chartType": "[One of: LineChart, BarChart, AreaChart, PieChart, ScatterChart, ComposedChart]",
-      "reason": "[Explanation why this chart type is appropriate]",
-      "dataPoints": {
-        "xAxis": "[Column name for x-axis]",
-        "yAxis": ["Column(s) for y-axis"],
-        "groupBy": "[Optional: Column to group by]",
-        "aggregation": "[Optional: sum, average, or count]"
-      },
-      "title": "[Suggested chart title]",
-      "xAxisLabel": "[Label for x-axis]",
-      "yAxisLabel": "[Label for y-axis]"
-    }
-  ]
-}
-
-Data to analyze:
-${request.dataContent}
-${request.question ? `\nSpecific question to address: ${request.question}` : ''}`;
-
-    // Get the user's session
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) {
-      throw new Error('No active session');
-    }
+- `;
 
     const { data, error } = await supabase.functions.invoke('bright-api', {
-      body: { messages: [{ role: 'user', content: prompt }] },
-      headers: {
-        Authorization: `Bearer ${session.access_token}`,
-      },
+      body: {
+        messages: [{
+          role: 'user',
+          content: prompt
+        }],
+        data: dataContent
+      }
     });
 
     if (error) throw error;
 
-    // Parse the response to separate text analysis and visualization recommendations
-    const response = data.analysis || '';
+    if (!data || !data.analysis) {
+      throw new Error('No analysis received from API');
+    }
+
+    const response = data.analysis;
     const textAnalysisMatch = response.match(/---TEXT ANALYSIS---([\s\S]*?)(?=---VISUALIZATION RECOMMENDATIONS---)/);
     const visualizationMatch = response.match(/---VISUALIZATION RECOMMENDATIONS---([\s\S]*)/);
 
@@ -140,62 +106,40 @@ ${request.question ? `\nSpecific question to address: ${request.question}` : ''}
     };
   } catch (error) {
     console.error('Error analyzing dataset:', error);
-    return {
-      textAnalysis: 'An error occurred while analyzing the dataset. Please try again later.'
-    };
+    throw error;
   }
-}
+};
 
 // Function to continue chat conversation
-export async function chatWithClaude(
+export const chatWithClaude = async (
   messages: ChatMessage[],
-  dataContext?: string
-): Promise<string> {
+  dataContent?: string
+): Promise<string> => {
   try {
-    let allMessages = messages;
-    if (dataContext) {
-      allMessages = [
-        {
-          role: 'user',
-          content: `Context about the data:\n${dataContext}`
-        },
-        ...messages
-      ];
-    }
-
-    // Get the user's session
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) {
-      throw new Error('No active session');
-    }
-
     const { data, error } = await supabase.functions.invoke('bright-api', {
-      body: { messages: allMessages },
-      headers: {
-        Authorization: `Bearer ${session.access_token}`,
-      },
+      body: {
+        messages,
+        data: dataContent
+      }
     });
 
     if (error) throw error;
-    return data.analysis || 'No response received';
+
+    if (!data || !data.analysis) {
+      throw new Error('No response received from API');
+    }
+
+    return data.analysis;
   } catch (error) {
-    console.error('Error in chat:', error);
-    return 'An error occurred during the chat. Please try again later.';
+    console.error('Error chatting with Claude:', error);
+    throw error;
   }
-}
+};
 
+// Remove unused functions
 export async function analyzeData(messages: any[]) {
-  // Get the user's session
-  const { data: { session } } = await supabase.auth.getSession();
-  if (!session) {
-    throw new Error('No active session');
-  }
-
-  const { data, error } = await supabase.functions.invoke('analyze', {
-    body: { messages },
-    headers: {
-      Authorization: `Bearer ${session.access_token}`,
-    },
+  const { data, error } = await supabase.functions.invoke('bright-api', {
+    body: { messages }
   });
 
   if (error) throw error;

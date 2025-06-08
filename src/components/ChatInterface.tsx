@@ -9,7 +9,6 @@ import ReactMarkdown from 'react-markdown';
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Loading } from "@/components/ui/Loading";
 import { DataVisualization } from "./visualizations/DataVisualization";
-import { useApiKey } from '@/contexts/ApiKeyContext';
 import { useToast } from '@/components/ui/use-toast';
 import Papa from 'papaparse';
 
@@ -26,7 +25,6 @@ const ChatInterface = ({ uploadedFile, fileContent }: ChatInterfaceProps) => {
   const [loadingMessage, setLoadingMessage] = useState("");
   const [visualizations, setVisualizations] = useState<VisualizationResponse>();
   const [parsedData, setParsedData] = useState<any[]>([]);
-  const { apiKey, isLoading: isApiKeyLoading, error: apiKeyError } = useApiKey();
   const { toast } = useToast();
 
   const parseFileContent = (content: string, fileType: string) => {
@@ -117,15 +115,6 @@ const ChatInterface = ({ uploadedFile, fileContent }: ChatInterfaceProps) => {
   };
 
   const handleSendMessage = async () => {
-    if (!apiKey) {
-      toast({
-        title: 'Error',
-        description: 'API key not available. Please try again later.',
-        variant: 'destructive',
-      });
-      return;
-    }
-
     if (!chatMessage.trim() || isLoading) return;
 
     const userMessage: ChatMessage = {
@@ -177,11 +166,11 @@ const ChatInterface = ({ uploadedFile, fileContent }: ChatInterfaceProps) => {
       }
     } catch (error) {
       console.error('Error in chat:', error);
-      const errorMessage: ChatMessage = {
-        role: 'assistant',
-        content: 'I apologize, but I encountered an error while processing your request. Please try again.',
-      };
-      setMessages(prev => [...prev, errorMessage]);
+      toast({
+        title: 'Error',
+        description: 'An error occurred while processing your request. Please try again.',
+        variant: 'destructive',
+      });
     } finally {
       setIsLoading(false);
       setLoadingMessage("");
@@ -194,18 +183,6 @@ const ChatInterface = ({ uploadedFile, fileContent }: ChatInterfaceProps) => {
       handleSendMessage();
     }
   };
-
-  if (isApiKeyLoading) {
-    return <div className="text-center p-4">Loading API key...</div>;
-  }
-
-  if (apiKeyError) {
-    return (
-      <div className="text-center p-4 text-red-600">
-        Error loading API key. Please try again later.
-      </div>
-    );
-  }
 
   return (
     <div className="mt-8 space-y-4">

@@ -20,6 +20,11 @@ export interface DatasetAnalysisRequest {
   question?: string;
 }
 
+export interface ClaudeResponse {
+  analysis: string;
+  error?: string;
+}
+
 // Feature configuration
 export const featureConfig = {
   webSearch: {

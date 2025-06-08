@@ -10,7 +10,7 @@ const Login = () => {
   const handleGoogleSignIn = async () => {
     try {
       await signInWithGoogle();
-      navigate('/dashboard');
+      navigate('/');
     } catch (error) {
       console.error('Error signing in with Google:', error);
     }

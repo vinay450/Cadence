@@ -1,10 +1,4 @@
-export type SupportedChartType = 
-  | 'LineChart'
-  | 'BarChart'
-  | 'AreaChart'
-  | 'PieChart'
-  | 'ScatterChart'
-  | 'ComposedChart';
+export type ChartType = 'LineChart' | 'BarChart' | 'AreaChart' | 'PieChart' | 'ScatterChart' | 'ComposedChart';
 
 export interface DataPoint {
   xAxis: string;
@@ -13,8 +7,8 @@ export interface DataPoint {
   aggregation?: 'sum' | 'average' | 'count';
 }
 
-export interface ChartRecommendation {
-  chartType: SupportedChartType;
+export interface VisualizationRecommendation {
+  chartType: ChartType;
   reason: string;
   dataPoints: DataPoint;
   title: string;
@@ -23,6 +17,5 @@ export interface ChartRecommendation {
 }
 
 export interface VisualizationResponse {
-  recommendations: ChartRecommendation[];
-  error?: string;
+  recommendations: VisualizationRecommendation[];
 } 

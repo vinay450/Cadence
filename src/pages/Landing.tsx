@@ -1,6 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import ChatInterface from "@/components/ChatInterface";
+import FileUpload from "@/components/FileUpload";
 
 const Landing = () => {
   const navigate = useNavigate();
@@ -17,13 +19,29 @@ const Landing = () => {
           <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
             Upload your medical datasets and get instant insights through our AI-powered analysis platform.
           </p>
-          <Button 
-            size="lg"
-            onClick={() => navigate(user ? '/dashboard' : '/login')}
-            className="bg-blue-600 hover:bg-blue-700"
-          >
-            {user ? 'Go to Dashboard' : 'Get Started'}
-          </Button>
+          {user && (
+            <Button 
+              size="lg"
+              onClick={() => navigate('/dashboard')}
+              className="bg-blue-600 hover:bg-blue-700"
+            >
+              Go to Dashboard
+            </Button>
+          )}
+        </div>
+      </div>
+
+      {/* Chat Interface Section */}
+      <div className="container mx-auto px-4 py-8">
+        <div className="max-w-5xl mx-auto">
+          <FileUpload>
+            {(uploadedFile, fileContent) => (
+              <ChatInterface
+                uploadedFile={uploadedFile}
+                fileContent={fileContent}
+              />
+            )}
+          </FileUpload>
         </div>
       </div>
 
@@ -59,13 +77,15 @@ const Landing = () => {
           <p className="text-gray-600 mb-6">
             Join healthcare professionals who are already using our platform to gain valuable insights.
           </p>
-          <Button 
-            size="lg"
-            onClick={() => navigate(user ? '/dashboard' : '/login')}
-            className="bg-blue-600 hover:bg-blue-700"
-          >
-            {user ? 'Go to Dashboard' : 'Start Analyzing'}
-          </Button>
+          {user && (
+            <Button 
+              size="lg"
+              onClick={() => navigate('/dashboard')}
+              className="bg-blue-600 hover:bg-blue-700"
+            >
+              Go to Dashboard
+            </Button>
+          )}
         </div>
       </div>
     </div>
