@@ -4,9 +4,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { MessageSquare, Send, Loader2 } from "lucide-react";
 import { ChatMessage } from "@/lib/claude";
 import { analyzeDataset, chatWithClaude } from "@/lib/api";
+import type { VisualizationResponse } from "@/lib/types/visualization";
 import ReactMarkdown from 'react-markdown';
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Loading } from "@/components/ui/Loading";
+import { DataVisualization } from "./visualizations/DataVisualization";
+import { sampleData, sampleVisualization } from '@/lib/testData';
 
 interface ChatInterfaceProps {
   uploadedFile: string | null;
@@ -19,6 +22,7 @@ const ChatInterface = ({ uploadedFile, fileContent }: ChatInterfaceProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isInitialAnalysis, setIsInitialAnalysis] = useState(true);
   const [loadingMessage, setLoadingMessage] = useState("");
+  const [visualizations, setVisualizations] = useState<VisualizationResponse>(sampleVisualization);
 
   const handleSendMessage = async () => {
     if (!chatMessage.trim() || isLoading) return;
@@ -33,8 +37,6 @@ const ChatInterface = ({ uploadedFile, fileContent }: ChatInterfaceProps) => {
     setChatMessage("");
 
     try {
-      let response: string;
-      
       // If this is the first message, use analyzeDataset
       if (messages.length === 0 && fileContent) {
         setLoadingMessage("Analyzing your dataset in detail...");
@@ -43,23 +45,34 @@ const ChatInterface = ({ uploadedFile, fileContent }: ChatInterfaceProps) => {
           fileType: (uploadedFile?.split('.').pop() || 'csv') as 'csv' | 'json' | 'excel',
           question: chatMessage
         });
-        response = analysis;
+
+        // Store visualizations separately
+        if (analysis.visualizations) {
+          setVisualizations(analysis.visualizations);
+        }
+
+        const assistantMessage: ChatMessage = {
+          role: 'assistant',
+          content: analysis.textAnalysis,
+        };
+
+        setMessages(prev => [...prev, assistantMessage]);
         setIsInitialAnalysis(false);
       } else {
         // For follow-up questions, use chatWithClaude
         setLoadingMessage("Processing your question...");
-        response = await chatWithClaude(
+        const response = await chatWithClaude(
           [...messages, userMessage],
           fileContent
         );
+
+        const assistantMessage: ChatMessage = {
+          role: 'assistant',
+          content: response,
+        };
+
+        setMessages(prev => [...prev, assistantMessage]);
       }
-
-      const assistantMessage: ChatMessage = {
-        role: 'assistant',
-        content: response,
-      };
-
-      setMessages(prev => [...prev, assistantMessage]);
     } catch (error) {
       console.error('Error in chat:', error);
       const errorMessage: ChatMessage = {
@@ -146,6 +159,13 @@ const ChatInterface = ({ uploadedFile, fileContent }: ChatInterfaceProps) => {
                   <span className="text-sm text-primary">{loadingMessage}</span>
                 </div>
               </div>
+            )}
+
+            {visualizations && (
+              <DataVisualization
+                visualizations={visualizations}
+                data={sampleData}
+              />
             )}
           </div>
         )}
