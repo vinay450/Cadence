@@ -1,6 +1,14 @@
 import Anthropic from '@anthropic-ai/sdk';
 import { MessageParam } from '@anthropic-ai/sdk/resources';
 
+// Configuration for features that incur additional costs
+export const featureConfig = {
+  webSearch: {
+    enabled: false, // Disabled by default to prevent unexpected costs
+    costPerSearch: 0.01, // $0.01 per search
+  }
+};
+
 // Get API key from environment
 const getApiKey = () => {
   const apiKey = import.meta.env.VITE_ANTHROPIC_API_KEY;
@@ -25,6 +33,19 @@ const getAnthropicClient = () => {
   return anthropicInstance;
 };
 
+// Cost calculation helper
+const calculateCost = (inputTokens: number, outputTokens: number) => {
+  const inputCost = (inputTokens / 1000000) * 3; // $3 per million input tokens
+  const outputCost = (outputTokens / 1000000) * 15; // $15 per million output tokens
+  return {
+    inputCost,
+    outputCost,
+    totalCost: inputCost + outputCost,
+    inputTokens,
+    outputTokens,
+  };
+};
+
 // Types for our chat interface
 export interface ChatMessage {
   role: 'user' | 'assistant';
@@ -47,7 +68,8 @@ export async function analyzeDataset(request: DatasetAnalysisRequest): Promise<s
 
     const systemPrompt = `You are a data analysis assistant. Analyze the following ${request.fileType} data and provide insights.
     If a specific question is asked, focus on answering that question.
-    Format your response in clear, concise markdown.`;
+    Format your response in clear, concise markdown.
+    Do not attempt to search the web or access external resources.`;
 
     const userMessage = request.question 
       ? `Question about the data: ${request.question}\n\nData:\n${request.dataContent}`
@@ -64,6 +86,18 @@ export async function analyzeDataset(request: DatasetAnalysisRequest): Promise<s
       ],
       system: systemPrompt,
     });
+
+    // Log token usage and cost
+    if (response.usage) {
+      const costs = calculateCost(
+        response.usage.input_tokens,
+        response.usage.output_tokens
+      );
+      console.log('Analysis Request Costs:', {
+        ...costs,
+        details: 'Costs in USD',
+      });
+    }
 
     const content = response.content[0];
     if ('text' in content) {
@@ -87,9 +121,9 @@ export async function chatWithClaude(
       return 'API key not configured - chat features are currently disabled. Please contact support.';
     }
 
-    const systemPrompt = dataContext
-      ? `You are a data analysis assistant. Use this data context for answering questions:\n${dataContext}`
-      : 'You are a data analysis assistant. Help users understand their data.';
+    const systemPrompt = `You are a data analysis assistant. ${
+      dataContext ? `Use this data context for answering questions:\n${dataContext}\n` : ''
+    }Do not attempt to search the web or access external resources. If you need current information, please inform the user that web search is disabled.`;
 
     const formattedMessages: MessageParam[] = messages.map((msg) => ({
       role: msg.role,
@@ -102,6 +136,18 @@ export async function chatWithClaude(
       messages: formattedMessages,
       system: systemPrompt,
     });
+
+    // Log token usage and cost
+    if (response.usage) {
+      const costs = calculateCost(
+        response.usage.input_tokens,
+        response.usage.output_tokens
+      );
+      console.log('Chat Request Costs:', {
+        ...costs,
+        details: 'Costs in USD',
+      });
+    }
 
     const content = response.content[0];
     if ('text' in content) {
