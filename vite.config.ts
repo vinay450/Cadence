@@ -7,13 +7,18 @@ import { componentTagger } from "lovable-tagger";
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
   plugins: [
-    react(),
+    react({
+      jsxRuntime: 'automatic'
+    }),
     mode === 'development' && componentTagger(),
   ].filter(Boolean),
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
+  },
+  esbuild: {
+    jsx: 'automatic',
   },
   server: {
     host: "::",
@@ -24,5 +29,8 @@ export default defineConfig(({ mode }) => ({
         changeOrigin: true,
       }
     }
+  },
+  build: {
+    target: 'esnext',
   }
 }));
