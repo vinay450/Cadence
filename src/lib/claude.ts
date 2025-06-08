@@ -31,7 +31,7 @@ export const featureConfig = {
 // Function to analyze dataset
 export async function analyzeDataset(request: DatasetAnalysisRequest): Promise<string> {
   try {
-    const { data, error } = await supabase.functions.invoke('analyze', {
+    const { data, error } = await supabase.functions.invoke('bright-api', {
       body: { messages: [{ role: 'user', content: `Please analyze this ${request.fileType} data:\n\n${request.dataContent}${request.question ? `\n\nSpecific question: ${request.question}` : ''}` }] }
     });
 
@@ -60,7 +60,7 @@ export async function chatWithClaude(
       ];
     }
 
-    const { data, error } = await supabase.functions.invoke('analyze', {
+    const { data, error } = await supabase.functions.invoke('bright-api', {
       body: { messages: allMessages }
     });
 
