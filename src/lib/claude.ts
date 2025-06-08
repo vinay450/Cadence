@@ -1,4 +1,4 @@
-import { supabase } from '../integrations/supabase/client';
+import { supabase } from '@/lib/supabase';
 
 // Types for chat messages and responses
 export interface ChatMessage {
