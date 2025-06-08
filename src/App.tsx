@@ -2,17 +2,19 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { verifyEnvironment } from "@/lib/env";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import AuthCallback from "./pages/AuthCallback";
 import Dashboard from "./pages/Dashboard";
-import ProtectedRoute from "./components/ProtectedRoute";
+import { ProtectedRoute } from '@/components/ProtectedRoute';
 import NotFound from "./pages/NotFound";
 import { useEffect } from "react";
 import { useToast } from "@/components/ui/use-toast";
+import { LoginPage } from '@/pages/Login';
+import ChatInterface from '@/components/ChatInterface';
 
 const queryClient = new QueryClient();
 
@@ -32,28 +34,28 @@ const App = () => {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <TooltipProvider>
+      <TooltipProvider>
+        <AuthProvider>
           <Toaster />
           <Sonner />
-          <BrowserRouter>
+          <Router>
             <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/auth" element={<Auth />} />
-              <Route path="/auth/callback" element={<AuthCallback />} />
-              <Route 
-                path="/dashboard" 
+              <Route path="/login" element={<LoginPage />} />
+              <Route
+                path="/"
                 element={
                   <ProtectedRoute>
-                    <Dashboard />
+                    <div className="container mx-auto px-4 py-8">
+                      <ChatInterface uploadedFile={null} />
+                    </div>
                   </ProtectedRoute>
-                } 
+                }
               />
-              <Route path="*" element={<NotFound />} />
+              <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
-          </BrowserRouter>
-        </TooltipProvider>
-      </AuthProvider>
+          </Router>
+        </AuthProvider>
+      </TooltipProvider>
     </QueryClientProvider>
   );
 };
