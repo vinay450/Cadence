@@ -11,21 +11,27 @@ export const featureConfig = {
 
 // Get API key from environment
 const getApiKey = () => {
+  // Try different ways to access the API key
+  const apiKey = 
+    import.meta.env.VITE_ANTHROPIC_API_KEY || // Vite way
+    process.env.VITE_ANTHROPIC_API_KEY;       // Traditional way
+
   // Debug logging for environment variables
   console.debug('Environment check:', {
     isDev: import.meta.env.DEV,
     mode: import.meta.env.MODE,
     hasViteEnv: typeof import.meta.env !== 'undefined',
+    hasProcessEnv: typeof process !== 'undefined' && !!process.env,
     envKeys: Object.keys(import.meta.env).filter(key => key.startsWith('VITE_')),
+    apiKeyFound: !!apiKey,
   });
-
-  const apiKey = import.meta.env.VITE_ANTHROPIC_API_KEY;
   
   if (!apiKey) {
     console.warn('API key not found. Environment details:', {
       apiKeyExists: !!apiKey,
       apiKeyType: typeof apiKey,
-      envType: typeof import.meta.env,
+      viteEnvType: typeof import.meta.env,
+      processEnvType: typeof process !== 'undefined' ? typeof process.env : 'undefined',
     });
     return null;
   }
