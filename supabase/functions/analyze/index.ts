@@ -19,7 +19,7 @@ serve(async (req: Request) => {
     })
 
     const response = await anthropic.messages.create({
-      model: 'claude-3-sonnet-20240229-v1h',
+      model: 'claude-3-7-sonnet-20250219',
       max_tokens: 4096,
       messages: messages,
     })
