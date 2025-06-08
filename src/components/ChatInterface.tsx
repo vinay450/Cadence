@@ -6,6 +6,7 @@ import { ChatMessage } from "@/lib/claude";
 import { analyzeDataset, chatWithClaude } from "@/lib/api";
 import ReactMarkdown from 'react-markdown';
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Loading } from "@/components/ui/Loading";
 
 interface ChatInterfaceProps {
   uploadedFile: string | null;
@@ -16,6 +17,7 @@ const ChatInterface = ({ uploadedFile, fileContent }: ChatInterfaceProps) => {
   const [chatMessage, setChatMessage] = useState("");
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [loadingMessage, setLoadingMessage] = useState("");
 
   const handleSendMessage = async () => {
     if (!chatMessage.trim() || isLoading) return;
@@ -34,6 +36,7 @@ const ChatInterface = ({ uploadedFile, fileContent }: ChatInterfaceProps) => {
       
       // If this is the first message, use analyzeDataset
       if (messages.length === 0 && fileContent) {
+        setLoadingMessage("Analyzing your dataset in detail...");
         const analysis = await analyzeDataset({
           dataContent: fileContent || '',
           fileType: (uploadedFile?.split('.').pop() || 'csv') as 'csv' | 'json' | 'excel',
@@ -42,6 +45,7 @@ const ChatInterface = ({ uploadedFile, fileContent }: ChatInterfaceProps) => {
         response = analysis;
       } else {
         // For follow-up questions, use chatWithClaude
+        setLoadingMessage("Processing your question...");
         response = await chatWithClaude(
           [...messages, userMessage],
           fileContent
@@ -63,6 +67,7 @@ const ChatInterface = ({ uploadedFile, fileContent }: ChatInterfaceProps) => {
       setMessages(prev => [...prev, errorMessage]);
     } finally {
       setIsLoading(false);
+      setLoadingMessage("");
     }
   };
 
@@ -130,8 +135,8 @@ const ChatInterface = ({ uploadedFile, fileContent }: ChatInterfaceProps) => {
           ))}
 
           {isLoading && (
-            <div className="flex items-center justify-center py-4">
-              <Loader2 className="w-6 h-6 text-blue-500 animate-spin" />
+            <div className="rounded-lg bg-gradient-to-r from-gray-50 to-blue-50 p-4">
+              <Loading message={loadingMessage} />
             </div>
           )}
         </div>
