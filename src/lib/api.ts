@@ -29,13 +29,18 @@ export const featureConfig = {
 // Function to analyze dataset
 export async function analyzeDataset(request: DatasetAnalysisRequest): Promise<AnalysisResponse> {
   try {
-    const prompt = `Please analyze this ${request.fileType} data and provide both a text analysis and visualization recommendations.
-    
-For the visualizations, recommend the 2 best ways to display this data graphically. Consider factors like data type, distribution, and relationships between variables.
+    const prompt = `You are a data analysis expert. Your role is to analyze and research this ${request.fileType} data deeply to find any patterns or trends.
+
+In the following order provide:
+1. The two best ways to represent this data graphically
+2. A summary of the data structure
+3. Key statistics and patterns you recognize from your research
+4. Any notable insights or anomalies
+5. Potential correlations between variables
 
 Format your response as follows:
 ---TEXT ANALYSIS---
-[Your detailed analysis of the data]
+[Your detailed analysis following the above 5 points]
 
 ---VISUALIZATION RECOMMENDATIONS---
 {

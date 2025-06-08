@@ -1,97 +1,94 @@
 import { serve } from 'https://deno.land/std@0.177.0/http/server.ts'
-import { Anthropic } from 'npm:@anthropic-ai/sdk@0.18.0'
+import { Anthropic } from 'https://esm.sh/@anthropic-ai/sdk@0.18.0'
 
-interface RequestBody {
-  messages: Array<{
-    role: string;
-    content: string;
-  }>;
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'Access-Control-Max-Age': '86400',
 }
 
-serve(async (req: Request) => {
-  // CORS headers
-  const headers = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  };
-
-  // Handle preflight requests
+serve(async (req) => {
+  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers });
+    return new Response('ok', { headers: corsHeaders })
   }
 
   try {
-    const apiKey = Deno.env.get('ANTHROPIC_API_KEY');
-    if (!apiKey) {
-      throw new Error('ANTHROPIC_API_KEY environment variable is not set');
-    }
+    const { messages } = await req.json()
 
-    const anthropic = new Anthropic({
-      apiKey,
-    });
+    // If this is an initial data analysis request
+    if (messages.length === 1 && messages[0].content.includes('You are a data analysis expert')) {
+      // The prompt is already formatted correctly, just pass it through
+      const anthropic = new Anthropic({
+        apiKey: Deno.env.get('ANTHROPIC_API_KEY'),
+      })
 
-    const body: RequestBody = await req.json();
+      const response = await anthropic.messages.create({
+        model: 'claude-3-sonnet-20240229',
+        max_tokens: 4096,
+        messages: messages,
+        temperature: 0.7, // Add some creativity for insights while maintaining accuracy
+      })
 
-    if (!body.messages || !Array.isArray(body.messages) || body.messages.length === 0) {
-      throw new Error('Invalid request body: messages array is required');
-    }
-
-    // Check if the message contains CSV data
-    const firstMessage = body.messages[0].content;
-    if (firstMessage.includes('Please analyze this csv data:')) {
-      // Extract the CSV data between the markers
-      const csvData = firstMessage.split('\n\n')[1];
-      if (!csvData) {
-        throw new Error('No CSV data found in the message');
+      const content = response.content[0]
+      if ('text' in content) {
+        return new Response(
+          JSON.stringify({ analysis: content.text }),
+          {
+            headers: {
+              ...corsHeaders,
+              'Content-Type': 'application/json',
+            },
+          }
+        )
       }
+    } else {
+      // For follow-up questions, use the default handling
+      const anthropic = new Anthropic({
+        apiKey: Deno.env.get('ANTHROPIC_API_KEY'),
+      })
 
-      // Add specific instructions for CSV analysis
-      body.messages[0].content = `You are a data analysis expert. Please analyze this CSV data and provide insights:\n\n${csvData}\n\nPlease provide:\n1. A summary of the data structure\n2. Key statistics and patterns\n3. Any notable insights or anomalies\n4. Potential correlations between variables`;
+      const response = await anthropic.messages.create({
+        model: 'claude-3-sonnet-20240229',
+        max_tokens: 4096,
+        messages: messages,
+      })
+
+      const content = response.content[0]
+      if ('text' in content) {
+        return new Response(
+          JSON.stringify({ analysis: content.text }),
+          {
+            headers: {
+              ...corsHeaders,
+              'Content-Type': 'application/json',
+            },
+          }
+        )
+      }
     }
-
-    const completion = await anthropic.messages.create({
-      model: 'claude-3-5-sonnet-20241022',
-      max_tokens: 4000,
-      messages: body.messages,
-    });
-
-    if (!completion.content || !completion.content[0] || !completion.content[0].text) {
-      throw new Error('Unexpected response format from Claude API');
-    }
-
-    const responseBody = {
-      analysis: completion.content[0].text,
-      usage: {
-        input_tokens: completion.usage.input_tokens,
-        output_tokens: completion.usage.output_tokens,
-      },
-    };
 
     return new Response(
-      JSON.stringify(responseBody),
-      {
-        headers: {
-          ...headers,
-          'Content-Type': 'application/json',
-        },
-      }
-    );
-  } catch (error: unknown) {
-    const err = error as Error;
-    console.error('Edge Function error:', err.message);
-    
-    return new Response(
-      JSON.stringify({ 
-        error: err.message,
-        details: 'Please check that all required environment variables are set and try again.'
-      }),
+      JSON.stringify({ error: 'Unexpected response format' }),
       {
         status: 500,
         headers: {
-          ...headers,
+          ...corsHeaders,
           'Content-Type': 'application/json',
         },
       }
-    );
+    )
+  } catch (error) {
+    return new Response(
+      JSON.stringify({ error: error.message }),
+      {
+        status: 500,
+        headers: {
+          ...corsHeaders,
+          'Content-Type': 'application/json',
+        },
+      }
+    )
   }
-}); 
+}) 
