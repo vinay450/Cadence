@@ -1,1 +1,5 @@
 project_id = "awuibcrmituuaailkrdl"
+
+[functions]
+[functions.bright-api]
+verify_jwt = false
