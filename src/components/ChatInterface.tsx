@@ -35,7 +35,7 @@ const ChatInterface = ({ uploadedFile, fileContent }: ChatInterfaceProps) => {
       // If this is the first message, use analyzeDataset
       if (messages.length === 0 && fileContent) {
         const analysis = await analyzeDataset({
-          dataContent: uploadedFile || '',
+          dataContent: fileContent || '',
           fileType: (uploadedFile?.split('.').pop() || 'csv') as 'csv' | 'json' | 'excel',
           question: chatMessage
         });

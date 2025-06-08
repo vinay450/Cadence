@@ -36,6 +36,19 @@ serve(async (req: Request) => {
       throw new Error('Invalid request body: messages array is required');
     }
 
+    // Check if the message contains CSV data
+    const firstMessage = body.messages[0].content;
+    if (firstMessage.includes('Please analyze this csv data:')) {
+      // Extract the CSV data between the markers
+      const csvData = firstMessage.split('\n\n')[1];
+      if (!csvData) {
+        throw new Error('No CSV data found in the message');
+      }
+
+      // Add specific instructions for CSV analysis
+      body.messages[0].content = `You are a data analysis expert. Please analyze this CSV data and provide insights:\n\n${csvData}\n\nPlease provide:\n1. A summary of the data structure\n2. Key statistics and patterns\n3. Any notable insights or anomalies\n4. Potential correlations between variables`;
+    }
+
     const completion = await anthropic.messages.create({
       model: 'claude-3-opus-20240229',
       max_tokens: 4000,
