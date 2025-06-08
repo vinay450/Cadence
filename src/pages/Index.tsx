@@ -1,10 +1,42 @@
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Upload, BarChart3, MessageSquare, Search, Zap, Shield, Globe, Users } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Upload, BarChart3, MessageSquare, Search, Zap, Shield, Globe, Users, Send, File, Database } from "lucide-react";
+import { useState } from "react";
 
 const Index = () => {
+  const [isDragOver, setIsDragOver] = useState(false);
+  const [uploadedFile, setUploadedFile] = useState<string | null>(null);
+  const [chatMessage, setChatMessage] = useState("");
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(false);
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+      setUploadedFile(files[0].name);
+    }
+  };
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      setUploadedFile(files[0].name);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
       {/* Navigation */}
@@ -16,13 +48,13 @@ const Index = () => {
                 <BarChart3 className="w-5 h-5 text-white" />
               </div>
               <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                DataChat
+                Cadence
               </span>
             </div>
             <div className="hidden md:flex items-center space-x-8">
               <a href="#features" className="text-gray-600 hover:text-gray-900 transition-colors">Features</a>
+              <a href="#demo" className="text-gray-600 hover:text-gray-900 transition-colors">Demo</a>
               <a href="#how-it-works" className="text-gray-600 hover:text-gray-900 transition-colors">How it Works</a>
-              <a href="#pricing" className="text-gray-600 hover:text-gray-900 transition-colors">Pricing</a>
               <Button variant="outline" className="border-blue-200 text-blue-600 hover:bg-blue-50">
                 Sign In
               </Button>
@@ -48,54 +80,143 @@ const Index = () => {
               </span>
             </h1>
             <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed">
-              Upload your datasets and let our intelligent chat engine create stunning visualizations 
+              Upload your datasets and let Cadence's intelligent chat engine create stunning visualizations 
               and provide deep analytical insights through natural conversation.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
-              <Button size="lg" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 px-8 py-3 text-lg">
-                <Upload className="w-5 h-5 mr-2" />
-                Upload Dataset
-              </Button>
-              <Button size="lg" variant="outline" className="border-gray-300 px-8 py-3 text-lg">
-                <MessageSquare className="w-5 h-5 mr-2" />
-                Try Demo
-              </Button>
-            </div>
-          </div>
-
-          {/* Hero Visual */}
-          <div className="relative mt-16">
-            <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-4xl mx-auto border border-gray-200">
-              <div className="flex items-center space-x-2 mb-6">
-                <div className="w-3 h-3 bg-red-400 rounded-full"></div>
-                <div className="w-3 h-3 bg-yellow-400 rounded-full"></div>
-                <div className="w-3 h-3 bg-green-400 rounded-full"></div>
-                <span className="text-gray-500 text-sm ml-4">DataChat Dashboard</span>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-4">
-                  <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-4 rounded-lg">
-                    <div className="flex items-center space-x-2 mb-2">
-                      <MessageSquare className="w-4 h-4 text-blue-600" />
-                      <span className="text-sm font-medium text-gray-700">Chat Query</span>
-                    </div>
-                    <p className="text-gray-600 text-sm">"Show me sales trends by region"</p>
-                  </div>
-                  <div className="bg-gray-50 p-4 rounded-lg">
-                    <div className="h-24 bg-gradient-to-r from-blue-200 to-purple-200 rounded opacity-80"></div>
-                  </div>
-                </div>
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <div className="h-32 bg-gradient-to-br from-teal-200 to-blue-200 rounded opacity-80"></div>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </section>
 
+      {/* Interactive Demo Section */}
+      <section id="demo" className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+              Try Cadence Now
+            </h2>
+            <p className="text-xl text-gray-600">
+              Drop your dataset and ask questions to see the magic happen
+            </p>
+          </div>
+
+          <Card className="border-2 border-dashed border-gray-200 shadow-2xl">
+            <CardContent className="p-8">
+              {/* File Upload Area */}
+              <div
+                className={`relative border-2 border-dashed rounded-xl p-8 transition-all duration-300 ${
+                  isDragOver 
+                    ? 'border-blue-400 bg-blue-50' 
+                    : uploadedFile 
+                      ? 'border-green-400 bg-green-50'
+                      : 'border-gray-300 bg-gray-50 hover:border-gray-400'
+                }`}
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+              >
+                <input
+                  type="file"
+                  accept=".csv,.xlsx,.json"
+                  onChange={handleFileUpload}
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                />
+                <div className="text-center">
+                  {uploadedFile ? (
+                    <div className="space-y-3">
+                      <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto">
+                        <Database className="w-8 h-8 text-green-600" />
+                      </div>
+                      <p className="text-lg font-medium text-green-700">Dataset Uploaded!</p>
+                      <p className="text-sm text-green-600">{uploadedFile}</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto">
+                        <Upload className="w-8 h-8 text-blue-600" />
+                      </div>
+                      <p className="text-lg font-medium text-gray-700">
+                        Drop your dataset here or click to browse
+                      </p>
+                      <p className="text-sm text-gray-500">
+                        Supports CSV, Excel, JSON files up to 50MB
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Chat Interface */}
+              <div className="mt-8 space-y-4">
+                <div className="bg-gradient-to-r from-gray-50 to-blue-50 rounded-lg p-6">
+                  <div className="flex items-start space-x-3 mb-4">
+                    <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                      <MessageSquare className="w-4 h-4 text-white" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-gray-700 mb-1">Cadence AI</p>
+                      <p className="text-gray-600">
+                        {uploadedFile 
+                          ? `Great! I've analyzed your dataset "${uploadedFile}". What insights would you like me to generate?`
+                          : "Hello! Upload a dataset above and I'll help you discover insights through interactive visualizations."
+                        }
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex space-x-3">
+                  <Textarea
+                    placeholder="Ask me anything about your data... e.g., 'Show me sales trends by region' or 'What are the top performing products?'"
+                    value={chatMessage}
+                    onChange={(e) => setChatMessage(e.target.value)}
+                    className="flex-1 min-h-[60px] resize-none border-gray-300 focus:border-blue-500"
+                    disabled={!uploadedFile}
+                  />
+                  <Button 
+                    size="lg" 
+                    className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 px-6"
+                    disabled={!uploadedFile || !chatMessage.trim()}
+                  >
+                    <Send className="w-5 h-5" />
+                  </Button>
+                </div>
+
+                {uploadedFile && (
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-4">
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="text-left justify-start"
+                      onClick={() => setChatMessage("Show me a summary of the data")}
+                    >
+                      📊 Data Summary
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="text-left justify-start"
+                      onClick={() => setChatMessage("Create a trend analysis")}
+                    >
+                      📈 Trend Analysis
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="text-left justify-start"
+                      onClick={() => setChatMessage("Find correlations in the data")}
+                    >
+                      🔍 Find Patterns
+                    </Button>
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
+
       {/* Features Section */}
-      <section id="features" className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
+      <section id="features" className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-50 to-blue-50">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
@@ -183,11 +304,11 @@ const Index = () => {
       </section>
 
       {/* How It Works Section */}
-      <section id="how-it-works" className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-50 to-blue-50">
+      <section id="how-it-works" className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              How DataChat Works
+              How Cadence Works
             </h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
               Three simple steps to transform your data into actionable insights.
@@ -235,7 +356,7 @@ const Index = () => {
             Ready to Transform Your Data?
           </h2>
           <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
-            Join thousands of data professionals who are already using DataChat to unlock insights from their datasets.
+            Join thousands of data professionals who are already using Cadence to unlock insights from their datasets.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button size="lg" className="bg-white text-blue-600 hover:bg-gray-100 px-8 py-3 text-lg font-semibold">
@@ -257,7 +378,7 @@ const Index = () => {
                 <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
                   <BarChart3 className="w-5 h-5 text-white" />
                 </div>
-                <span className="text-xl font-bold text-white">DataChat</span>
+                <span className="text-xl font-bold text-white">Cadence</span>
               </div>
               <p className="text-gray-400">
                 Transforming data into insights through intelligent conversation.
@@ -297,7 +418,7 @@ const Index = () => {
           
           <div className="border-t border-gray-800 mt-8 pt-8 text-center">
             <p className="text-gray-400">
-              © 2024 DataChat. All rights reserved.
+              © 2024 Cadence. All rights reserved.
             </p>
           </div>
         </div>
