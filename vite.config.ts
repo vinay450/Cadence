@@ -19,5 +19,6 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
-  envDir: '.',
+  envDir: process.cwd(),
+  envPrefix: 'VITE_',
 }));

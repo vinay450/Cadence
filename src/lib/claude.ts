@@ -11,11 +11,26 @@ export const featureConfig = {
 
 // Get API key from environment
 const getApiKey = () => {
+  // Debug logging for environment variables
+  console.debug('Environment check:', {
+    isDev: import.meta.env.DEV,
+    mode: import.meta.env.MODE,
+    hasViteEnv: typeof import.meta.env !== 'undefined',
+    envKeys: Object.keys(import.meta.env).filter(key => key.startsWith('VITE_')),
+  });
+
   const apiKey = import.meta.env.VITE_ANTHROPIC_API_KEY;
+  
   if (!apiKey) {
-    console.warn('API key not found in environment - some features will be disabled');
+    console.warn('API key not found. Environment details:', {
+      apiKeyExists: !!apiKey,
+      apiKeyType: typeof apiKey,
+      envType: typeof import.meta.env,
+    });
     return null;
   }
+  
+  console.debug('API key found with length:', apiKey.length);
   return apiKey;
 };
 
