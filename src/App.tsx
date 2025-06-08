@@ -4,10 +4,23 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { ApiKeyProvider } from "@/contexts/ApiKeyContext";
 import Dashboard from "@/pages/Dashboard";
+import Landing from "@/pages/Landing";
+import Login from "@/pages/Login";
+import AuthCallback from "@/pages/AuthCallback";
 import NotFound from "@/pages/NotFound";
-import FileUpload from "@/components/FileUpload";
-import ChatInterface from '@/components/ChatInterface';
+import { useAuth } from "@/contexts/AuthContext";
+
+const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+  const { user } = useAuth();
+  
+  if (!user) {
+    return <Navigate to="/login" />;
+  }
+  
+  return <>{children}</>;
+};
 
 const queryClient = new QueryClient();
 
@@ -16,31 +29,26 @@ export default function App() {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <AuthProvider>
-          <Toaster />
-          <Sonner />
-          <Router>
-            <Routes>
-              <Route
-                path="/"
-                element={
-                  <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 p-4">
-                    <div className="max-w-4xl mx-auto">
-                      <FileUpload>
-                        {(uploadedFile, fileContent) => (
-                          <ChatInterface
-                            uploadedFile={uploadedFile}
-                            fileContent={fileContent}
-                          />
-                        )}
-                      </FileUpload>
-                    </div>
-                  </div>
-                }
-              />
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </Router>
+          <ApiKeyProvider>
+            <Toaster />
+            <Sonner />
+            <Router>
+              <Routes>
+                <Route path="/" element={<Landing />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/auth/callback" element={<AuthCallback />} />
+                <Route
+                  path="/dashboard"
+                  element={
+                    <ProtectedRoute>
+                      <Dashboard />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </Router>
+          </ApiKeyProvider>
         </AuthProvider>
       </TooltipProvider>
     </QueryClientProvider>

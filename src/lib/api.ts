@@ -65,8 +65,17 @@ Data to analyze:
 ${request.dataContent}
 ${request.question ? `\nSpecific question to address: ${request.question}` : ''}`;
 
+    // Get the user's session
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      throw new Error('No active session');
+    }
+
     const { data, error } = await supabase.functions.invoke('bright-api', {
-      body: { messages: [{ role: 'user', content: prompt }] }
+      body: { messages: [{ role: 'user', content: prompt }] },
+      headers: {
+        Authorization: `Bearer ${session.access_token}`,
+      },
     });
 
     if (error) throw error;
@@ -117,8 +126,17 @@ export async function chatWithClaude(
       ];
     }
 
+    // Get the user's session
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      throw new Error('No active session');
+    }
+
     const { data, error } = await supabase.functions.invoke('bright-api', {
-      body: { messages: allMessages }
+      body: { messages: allMessages },
+      headers: {
+        Authorization: `Bearer ${session.access_token}`,
+      },
     });
 
     if (error) throw error;
@@ -130,8 +148,17 @@ export async function chatWithClaude(
 }
 
 export async function analyzeData(messages: any[]) {
+  // Get the user's session
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) {
+    throw new Error('No active session');
+  }
+
   const { data, error } = await supabase.functions.invoke('analyze', {
     body: { messages },
+    headers: {
+      Authorization: `Bearer ${session.access_token}`,
+    },
   });
 
   if (error) throw error;
@@ -139,8 +166,17 @@ export async function analyzeData(messages: any[]) {
 }
 
 export async function chatWithData(messages: any[]) {
+  // Get the user's session
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) {
+    throw new Error('No active session');
+  }
+
   const { data, error } = await supabase.functions.invoke('analyze', {
     body: { messages },
+    headers: {
+      Authorization: `Bearer ${session.access_token}`,
+    },
   });
 
   if (error) throw error;
