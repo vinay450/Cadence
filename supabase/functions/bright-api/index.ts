@@ -50,7 +50,7 @@ serve(async (req: Request) => {
     }
 
     const completion = await anthropic.messages.create({
-      model: 'claude-3-sonnet-20240229',
+      model: 'claude-3-sonnet-20240229-v1:0',
       max_tokens: 4000,
       messages: body.messages,
     });
