@@ -1,11 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { createClient, User } from '@supabase/supabase-js';
+import { User } from '@supabase/supabase-js';
 import { useToast } from '@/hooks/use-toast';
-
-const supabase = createClient(
-  import.meta.env.VITE_SUPABASE_URL,
-  import.meta.env.VITE_SUPABASE_ANON_KEY
-);
+import { supabase } from '@/lib/supabase';
 
 interface AuthContextType {
   user: User | null;
