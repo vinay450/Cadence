@@ -1,0 +1,11 @@
+patient_id,age,gender,blood_pressure,cholesterol,heart_rate,diagnosis,treatment_response
+P001,45,M,120/80,185,72,Hypertension,Positive
+P002,62,F,145/95,210,78,Hypertension,Moderate
+P003,38,M,118/75,165,68,Normal,N/A
+P004,55,F,160/100,245,82,Hypertension,Negative
+P005,41,M,125/85,190,70,Pre-hypertension,Positive
+P006,58,F,135/88,200,75,Hypertension,Positive
+P007,35,M,115/75,170,65,Normal,N/A
+P008,49,F,140/92,220,80,Hypertension,Moderate
+P009,52,M,130/85,195,73,Pre-hypertension,Positive
+P010,44,F,122/78,175,69,Normal,N/A 
