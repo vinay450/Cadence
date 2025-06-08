@@ -66,10 +66,10 @@ const Index = () => {
         </div>
       </nav>
 
-      {/* Hero Section */}
-      <section className="relative overflow-hidden py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center">
+      {/* Interactive Demo Section - Now First */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-12">
             <Badge className="mb-6 bg-blue-100 text-blue-700 hover:bg-blue-200">
               🚀 AI-Powered Data Analytics
             </Badge>
@@ -82,20 +82,6 @@ const Index = () => {
             <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed">
               Upload your datasets and let Cadence's intelligent chat engine create stunning visualizations 
               and provide deep analytical insights through natural conversation.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Interactive Demo Section */}
-      <section id="demo" className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Try Cadence Now
-            </h2>
-            <p className="text-xl text-gray-600">
-              Drop your dataset and ask questions to see the magic happen
             </p>
           </div>
 
