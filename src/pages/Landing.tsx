@@ -3,33 +3,52 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import ChatInterface from "@/components/ChatInterface";
 import FileUpload from "@/components/FileUpload";
+import { MessageSquare, BarChart } from "lucide-react";
 
 const Landing = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
-      {/* Hero Section */}
-      <div className="container mx-auto px-4 py-16">
-        <div className="text-center">
-          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
-            Medical Data Analysis Made Simple
-          </h1>
-          <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-            Upload your medical datasets and get instant insights through our AI-powered analysis platform.
-          </p>
-          {user && (
-            <Button 
-              size="lg"
-              onClick={() => navigate('/dashboard')}
-              className="bg-blue-600 hover:bg-blue-700"
-            >
-              Go to Dashboard
-            </Button>
-          )}
+    <div className="flex flex-col items-center justify-center min-h-screen p-6 bg-background">
+      <main className="max-w-4xl mx-auto text-center">
+        <h1 className="text-4xl font-bold tracking-tight sm:text-6xl text-foreground">
+          Data Analysis Made Simple
+        </h1>
+        <p className="mt-6 text-lg leading-8 text-muted-foreground">
+          Upload your datasets and get instant insights through our AI-powered analysis platform.
+        </p>
+        {user && (
+          <Button 
+            size="lg"
+            onClick={() => navigate('/dashboard')}
+            className="bg-blue-600 hover:bg-blue-700"
+          >
+            Go to Dashboard
+          </Button>
+        )}
+        <div className="mt-16 grid grid-cols-1 gap-8 sm:grid-cols-2">
+          <div className="flex flex-col items-center p-6 bg-card rounded-lg shadow-sm">
+            <MessageSquare className="h-12 w-12 mb-4 text-primary" />
+            <h3 className="text-xl font-semibold mb-2">Natural Language Analysis</h3>
+            <p className="text-muted-foreground text-center">
+              Upload your datasets and get comprehensive analysis through natural language conversations.
+            </p>
+          </div>
+          <div className="flex flex-col items-center p-6 bg-card rounded-lg shadow-sm">
+            <BarChart className="h-12 w-12 mb-4 text-primary" />
+            <h3 className="text-xl font-semibold mb-2">Advanced Analytics</h3>
+            <p className="text-muted-foreground text-center">
+              Leverage advanced AI to uncover hidden patterns and correlations in your data.
+            </p>
+          </div>
         </div>
-      </div>
+        <div className="mt-8 text-center">
+          <p className="text-muted-foreground">
+            Join professionals who are already using our platform to gain valuable insights.
+          </p>
+        </div>
+      </main>
 
       {/* Chat Interface Section */}
       <div className="container mx-auto px-4 py-8">
@@ -39,6 +58,7 @@ const Landing = () => {
               <ChatInterface
                 uploadedFile={uploadedFile}
                 fileContent={fileContent}
+                dataDomain="general"
               />
             )}
           </FileUpload>

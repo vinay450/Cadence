@@ -1,86 +1,58 @@
-export type DataDomain = 
-  | 'medical' 
-  | 'financial' 
-  | 'software' 
-  | 'scientific' 
-  | 'environmental' 
-  | 'social' 
-  | 'educational' 
-  | 'auto_detect';
+export type DataDomain = 'general' | 'financial' | 'scientific' | 'business' | 'social';
 
-export interface DomainMetadata {
-  name: DataDomain;
+export interface DataDomainInfo {
+  name: string;
   description: string;
   commonMetrics: string[];
-  typicalColumns: string[];
-  specialConsiderations: string[];
+  commonColumns: string[];
+  commonChallenges: string[];
 }
 
-export const domainMetadata: Record<DataDomain, DomainMetadata> = {
-  medical: {
-    name: 'medical',
-    description: 'Healthcare and medical research data',
+export const dataDomains: Record<DataDomain, DataDomainInfo> = {
+  general: {
+    name: 'general',
+    description: 'General purpose data analysis',
     commonMetrics: [
-      'Patient outcomes',
-      'Treatment efficacy',
-      'Mortality rates',
-      'Readmission rates'
+      'Summary statistics',
+      'Trends over time',
+      'Correlations',
+      'Distribution analysis'
     ],
-    typicalColumns: [
-      'Patient ID',
-      'Diagnosis',
-      'Treatment',
-      'Vital signs',
-      'Lab results'
+    commonColumns: [
+      'ID',
+      'Date',
+      'Category',
+      'Value',
+      'Name'
     ],
-    specialConsiderations: [
-      'HIPAA compliance',
-      'Patient privacy',
-      'Statistical significance in clinical trials'
+    commonChallenges: [
+      'Data quality',
+      'Missing values',
+      'Outlier detection',
+      'Data normalization'
     ]
   },
   financial: {
     name: 'financial',
-    description: 'Financial and business data',
+    description: 'Financial and economic data analysis',
     commonMetrics: [
       'ROI',
-      'Revenue growth',
-      'Profit margins',
-      'Market share'
+      'Growth rates',
+      'Risk metrics',
+      'Market trends'
     ],
-    typicalColumns: [
+    commonColumns: [
       'Transaction ID',
       'Amount',
       'Date',
-      'Account type',
-      'Currency'
+      'Account',
+      'Category'
     ],
-    specialConsiderations: [
-      'Currency normalization',
-      'Seasonal adjustments',
-      'Risk metrics'
-    ]
-  },
-  software: {
-    name: 'software',
-    description: 'Software development and performance metrics',
-    commonMetrics: [
-      'Response time',
-      'Error rates',
-      'User engagement',
-      'Code coverage'
-    ],
-    typicalColumns: [
-      'Timestamp',
-      'Event type',
-      'User ID',
-      'Version',
-      'Platform'
-    ],
-    specialConsiderations: [
-      'Performance benchmarks',
-      'Version compatibility',
-      'System dependencies'
+    commonChallenges: [
+      'Data accuracy',
+      'Time series analysis',
+      'Risk assessment',
+      'Regulatory compliance'
     ]
   },
   scientific: {
@@ -88,98 +60,68 @@ export const domainMetadata: Record<DataDomain, DomainMetadata> = {
     description: 'Scientific research and experimental data',
     commonMetrics: [
       'Statistical significance',
-      'Experimental controls',
-      'Measurement accuracy',
-      'Reproducibility'
+      'Error rates',
+      'Experimental outcomes',
+      'Control group comparisons'
     ],
-    typicalColumns: [
+    commonColumns: [
       'Sample ID',
       'Measurement',
-      'Control group',
-      'Variables',
-      'Conditions'
+      'Time',
+      'Condition',
+      'Result'
     ],
-    specialConsiderations: [
+    commonChallenges: [
       'Experimental design',
-      'Measurement uncertainty',
-      'Control variables'
+      'Statistical validity',
+      'Reproducibility',
+      'Data standardization'
     ]
   },
-  environmental: {
-    name: 'environmental',
-    description: 'Environmental and climate data',
+  business: {
+    name: 'business',
+    description: 'Business operations and performance data',
     commonMetrics: [
-      'Temperature changes',
-      'Emission levels',
-      'Biodiversity indices',
-      'Resource consumption'
+      'KPIs',
+      'Sales metrics',
+      'Customer metrics',
+      'Operational efficiency'
     ],
-    typicalColumns: [
-      'Location',
-      'Timestamp',
-      'Measurement type',
-      'Value',
-      'Units'
+    commonColumns: [
+      'Customer ID',
+      'Product',
+      'Sales',
+      'Date',
+      'Region'
     ],
-    specialConsiderations: [
-      'Seasonal variations',
-      'Geographic correlations',
-      'Long-term trends'
+    commonChallenges: [
+      'Data integration',
+      'Real-time analysis',
+      'Performance tracking',
+      'Market analysis'
     ]
   },
   social: {
     name: 'social',
-    description: 'Social media and demographic data',
+    description: 'Social and behavioral data analysis',
     commonMetrics: [
       'Engagement rates',
-      'Demographic distribution',
-      'Sentiment analysis',
-      'Network effects'
+      'Behavioral patterns',
+      'Network analysis',
+      'Sentiment analysis'
     ],
-    typicalColumns: [
+    commonColumns: [
       'User ID',
-      'Interaction type',
+      'Action',
       'Timestamp',
-      'Location',
-      'Demographics'
+      'Platform',
+      'Location'
     ],
-    specialConsiderations: [
+    commonChallenges: [
       'Privacy concerns',
-      'Demographic bias',
-      'Cultural context'
-    ]
-  },
-  educational: {
-    name: 'educational',
-    description: 'Educational and learning analytics',
-    commonMetrics: [
-      'Academic performance',
-      'Completion rates',
-      'Learning outcomes',
-      'Engagement levels'
-    ],
-    typicalColumns: [
-      'Student ID',
-      'Course',
-      'Grade',
-      'Attendance',
-      'Activities'
-    ],
-    specialConsiderations: [
-      'Student privacy',
-      'Learning styles',
-      'Educational standards'
-    ]
-  },
-  auto_detect: {
-    name: 'auto_detect',
-    description: 'Automatically detect the data domain',
-    commonMetrics: [],
-    typicalColumns: [],
-    specialConsiderations: [
-      'Domain will be inferred from data patterns',
-      'May require additional context',
-      'Analysis may be more general'
+      'Data collection',
+      'Pattern recognition',
+      'Behavioral analysis'
     ]
   }
 }; 

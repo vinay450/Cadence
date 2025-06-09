@@ -17,12 +17,12 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 flex items-center justify-center p-4">
+    <div className="flex flex-col items-center justify-center min-h-screen p-6 bg-background">
       <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold">Welcome Back</CardTitle>
+        <CardHeader>
+          <CardTitle>Welcome back</CardTitle>
           <CardDescription>
-            Sign in to access your medical data analysis dashboard
+            Sign in to access your data analysis dashboard
           </CardDescription>
         </CardHeader>
         <CardContent>

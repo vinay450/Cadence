@@ -60,10 +60,12 @@ const Dashboard = () => {
 
   const recentAnalyses = [
     {
-      title: 'Patient Data Analysis',
-      date: '2024-03-15',
-      type: 'Healthcare',
-      insights: 3,
+      id: 1,
+      title: 'Data Analysis',
+      description: 'Analysis of dataset patterns and trends',
+      type: 'Analytics',
+      date: '2024-03-20',
+      status: 'Completed'
     },
     {
       title: 'Sales Performance Q1',
@@ -182,6 +184,7 @@ const Dashboard = () => {
                         <ChatInterface
                           uploadedFile={uploadedFile}
                           fileContent={fileContent}
+                          dataDomain="general"
                         />
                       )}
                     </FileUpload>
