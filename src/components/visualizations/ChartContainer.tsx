@@ -48,26 +48,63 @@ export const ChartContainer = ({
   const renderChart = () => {
     const { chartType, dataPoints, xAxisLabel, yAxisLabel } = recommendation;
 
+    // Convert numeric string values to numbers
+    const processedData = data.map(item => ({
+      ...item,
+      [dataPoints.xAxis]: Number(item[dataPoints.xAxis]) || item[dataPoints.xAxis],
+      ...dataPoints.yAxis.reduce((acc, key) => ({
+        ...acc,
+        [key]: Number(item[key]) || item[key]
+      }), {})
+    }));
+
+    console.log('Chart Rendering:', {
+      type: chartType,
+      data: processedData,
+      xAxis: dataPoints.xAxis,
+      yAxis: dataPoints.yAxis,
+      sampleDataPoint: processedData[0]
+    });
+
     const chartProps = {
-      data,
-      margin: { top: 20, right: 30, left: 20, bottom: 20 },
+      data: processedData,
+      margin: { top: 30, right: 50, left: 50, bottom: 50 },
+      height: 400,
     };
 
     switch (chartType) {
       case 'LineChart':
         return (
           <LineChart {...chartProps}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey={dataPoints.xAxis} label={{ value: xAxisLabel, position: 'bottom' }} />
-            <YAxis label={{ value: yAxisLabel, angle: -90, position: 'left' }} />
-            <Tooltip />
-            <Legend />
+            <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+            <XAxis 
+              dataKey={dataPoints.xAxis} 
+              label={{ value: xAxisLabel, position: 'bottom', offset: 20 }}
+              tick={{ fontSize: 12 }}
+              interval="preserveStartEnd"
+            />
+            <YAxis 
+              label={{ value: yAxisLabel, angle: -90, position: 'left', offset: 20 }}
+              tick={{ fontSize: 12 }}
+            />
+            <Tooltip 
+              contentStyle={{ backgroundColor: 'white', borderRadius: '8px', padding: '10px' }}
+              labelStyle={{ fontWeight: 'bold' }}
+            />
+            <Legend 
+              verticalAlign="top" 
+              height={36}
+              wrapperStyle={{ paddingTop: '10px' }}
+            />
             {dataPoints.yAxis.map((key, index) => (
               <Line
                 key={key}
                 type="monotone"
                 dataKey={key}
                 stroke={`hsl(${(index * 360) / dataPoints.yAxis.length}, 70%, 50%)`}
+                strokeWidth={2}
+                dot={{ r: 4 }}
+                activeDot={{ r: 6 }}
               />
             ))}
           </LineChart>
@@ -76,16 +113,32 @@ export const ChartContainer = ({
       case 'BarChart':
         return (
           <BarChart {...chartProps}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey={dataPoints.xAxis} label={{ value: xAxisLabel, position: 'bottom' }} />
-            <YAxis label={{ value: yAxisLabel, angle: -90, position: 'left' }} />
-            <Tooltip />
-            <Legend />
+            <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+            <XAxis 
+              dataKey={dataPoints.xAxis} 
+              label={{ value: xAxisLabel, position: 'bottom', offset: 20 }}
+              tick={{ fontSize: 12 }}
+              interval="preserveStartEnd"
+            />
+            <YAxis 
+              label={{ value: yAxisLabel, angle: -90, position: 'left', offset: 20 }}
+              tick={{ fontSize: 12 }}
+            />
+            <Tooltip 
+              contentStyle={{ backgroundColor: 'white', borderRadius: '8px', padding: '10px' }}
+              labelStyle={{ fontWeight: 'bold' }}
+            />
+            <Legend 
+              verticalAlign="top" 
+              height={36}
+              wrapperStyle={{ paddingTop: '10px' }}
+            />
             {dataPoints.yAxis.map((key, index) => (
               <Bar
                 key={key}
                 dataKey={key}
                 fill={`hsl(${(index * 360) / dataPoints.yAxis.length}, 70%, 50%)`}
+                radius={[4, 4, 0, 0]}
               />
             ))}
           </BarChart>
@@ -176,10 +229,10 @@ export const ChartContainer = ({
   };
 
   return (
-    <Card className="p-4">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold">{recommendation.title}</h3>
-        <div className="flex items-center space-x-2">
+    <Card className="p-6">
+      <div className="flex items-center justify-between mb-6">
+        <h3 className="text-xl font-semibold">{recommendation.title}</h3>
+        <div className="flex items-center space-x-3">
           <Button
             variant="outline"
             size="sm"
@@ -188,7 +241,7 @@ export const ChartContainer = ({
           >
             <ChevronLeft className="w-4 h-4" />
           </Button>
-          <span className="text-sm text-gray-500">
+          <span className="text-sm text-gray-600 min-w-[80px] text-center">
             {currentChart + 1} of {totalCharts}
           </span>
           <Button
@@ -201,12 +254,12 @@ export const ChartContainer = ({
           </Button>
         </div>
       </div>
-      <div className="h-[400px]">
+      <div className="h-[500px]">
         <ResponsiveContainer width="100%" height="100%">
           {renderChart()}
         </ResponsiveContainer>
       </div>
-      <p className="mt-4 text-sm text-gray-600">{recommendation.reason}</p>
+      <p className="mt-6 text-sm text-gray-600">{recommendation.reason}</p>
     </Card>
   );
 }; 
