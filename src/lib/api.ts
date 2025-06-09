@@ -1,12 +1,14 @@
 import { supabase } from '@/lib/supabase';
 import type { VisualizationResponse } from './types/visualization';
 import { ChatMessage } from './claude';
+import { DataDomain } from './types/dataTypes';
 
 // Types for chat messages and responses
 export interface DatasetAnalysisRequest {
   dataContent: string;
   fileType: 'csv' | 'json' | 'excel';
   question?: string;
+  domain?: DataDomain;
 }
 
 export interface AnalysisResponse {
@@ -18,6 +20,7 @@ interface AnalyzeDatasetParams {
   dataContent: string;
   fileType: 'csv' | 'json' | 'excel';
   question: string;
+  domain?: DataDomain;
 }
 
 // Feature configuration
@@ -33,6 +36,7 @@ export const analyzeDataset = async ({
   dataContent,
   fileType,
   question,
+  domain = 'auto_detect'
 }: AnalyzeDatasetParams): Promise<AnalysisResponse> => {
   try {
     const prompt = `You are a data analysis expert. Your role is to analyze and research this ${fileType} data deeply to find any patterns or trends.
@@ -74,7 +78,8 @@ List any meaningful relationships between variables, ordered by strength of corr
           role: 'user',
           content: prompt
         }],
-        data: dataContent
+        data: dataContent,
+        domain
       }
     });
 

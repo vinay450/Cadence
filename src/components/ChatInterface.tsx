@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { MessageSquare, Send, Loader2 } from "lucide-react";
@@ -11,13 +11,17 @@ import { Loading } from "@/components/ui/Loading";
 import { DataVisualization } from "./visualizations/DataVisualization";
 import { useToast } from '@/components/ui/use-toast';
 import Papa from 'papaparse';
+import { motion, AnimatePresence } from "framer-motion";
+import { ThinkingAnimation } from "@/components/ui/ThinkingAnimation";
+import { DataDomain } from '@/lib/types/dataTypes';
 
 interface ChatInterfaceProps {
   uploadedFile: string | null;
   fileContent?: string;
+  dataDomain: DataDomain;
 }
 
-const ChatInterface = ({ uploadedFile, fileContent }: ChatInterfaceProps) => {
+const ChatInterface = ({ uploadedFile, fileContent, dataDomain }: ChatInterfaceProps) => {
   const [chatMessage, setChatMessage] = useState("");
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -25,7 +29,18 @@ const ChatInterface = ({ uploadedFile, fileContent }: ChatInterfaceProps) => {
   const [loadingMessage, setLoadingMessage] = useState("");
   const [visualizations, setVisualizations] = useState<VisualizationResponse>();
   const [parsedData, setParsedData] = useState<any[]>([]);
+  const [isTyping, setIsTyping] = useState(false);
+  const [hasStartedAnalysis, setHasStartedAnalysis] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   const parseFileContent = (content: string, fileType: string) => {
     try {
@@ -114,6 +129,49 @@ const ChatInterface = ({ uploadedFile, fileContent }: ChatInterfaceProps) => {
     return <ReactMarkdown>{content}</ReactMarkdown>;
   };
 
+  const handleInitialAnalysis = async () => {
+    setIsLoading(true);
+    setIsTyping(true);
+    setLoadingMessage("Analyzing your dataset in detail...");
+
+    try {
+      const fileType = uploadedFile?.split('.').pop() || 'csv';
+      
+      const analysis = await analyzeDataset({
+        dataContent: fileContent!,
+        fileType: fileType as 'csv' | 'json' | 'excel',
+        question: "Analyze this dataset and provide a comprehensive summary including key statistics, patterns, and potential insights.",
+        domain: dataDomain
+      });
+
+      if (analysis.visualizations) {
+        setVisualizations(analysis.visualizations);
+        const data = parseFileContent(fileContent!, fileType);
+        setParsedData(Array.isArray(data) ? data : [data]);
+      }
+
+      const assistantMessage: ChatMessage = {
+        role: 'assistant',
+        content: analysis.textAnalysis,
+      };
+
+      setMessages([assistantMessage]);
+      setIsInitialAnalysis(false);
+      setHasStartedAnalysis(true);
+    } catch (error) {
+      console.error('Error in initial analysis:', error);
+      toast({
+        title: 'Error',
+        description: 'An error occurred while analyzing your dataset. Please try again.',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsLoading(false);
+      setLoadingMessage("");
+      setIsTyping(false);
+    }
+  };
+
   const handleSendMessage = async () => {
     if (!chatMessage.trim() || isLoading) return;
 
@@ -125,45 +183,21 @@ const ChatInterface = ({ uploadedFile, fileContent }: ChatInterfaceProps) => {
     setIsLoading(true);
     setMessages(prev => [...prev, userMessage]);
     setChatMessage("");
+    setIsTyping(true);
 
     try {
-      if (messages.length === 0 && fileContent) {
-        setLoadingMessage("Analyzing your dataset in detail...");
-        const fileType = uploadedFile?.split('.').pop() || 'csv';
-        
-        const analysis = await analyzeDataset({
-          dataContent: fileContent,
-          fileType: fileType as 'csv' | 'json' | 'excel',
-          question: chatMessage
-        });
+      setLoadingMessage("Processing your question...");
+      const response = await chatWithClaude(
+        [...messages, userMessage],
+        fileContent
+      );
 
-        if (analysis.visualizations) {
-          setVisualizations(analysis.visualizations);
-          const data = parseFileContent(fileContent, fileType);
-          setParsedData(Array.isArray(data) ? data : [data]);
-        }
+      const assistantMessage: ChatMessage = {
+        role: 'assistant',
+        content: response,
+      };
 
-        const assistantMessage: ChatMessage = {
-          role: 'assistant',
-          content: analysis.textAnalysis,
-        };
-
-        setMessages(prev => [...prev, assistantMessage]);
-        setIsInitialAnalysis(false);
-      } else {
-        setLoadingMessage("Processing your question...");
-        const response = await chatWithClaude(
-          [...messages, userMessage],
-          fileContent
-        );
-
-        const assistantMessage: ChatMessage = {
-          role: 'assistant',
-          content: response,
-        };
-
-        setMessages(prev => [...prev, assistantMessage]);
-      }
+      setMessages(prev => [...prev, assistantMessage]);
     } catch (error) {
       console.error('Error in chat:', error);
       toast({
@@ -174,6 +208,7 @@ const ChatInterface = ({ uploadedFile, fileContent }: ChatInterfaceProps) => {
     } finally {
       setIsLoading(false);
       setLoadingMessage("");
+      setIsTyping(false);
     }
   };
 
@@ -184,137 +219,225 @@ const ChatInterface = ({ uploadedFile, fileContent }: ChatInterfaceProps) => {
     }
   };
 
+  const MessageBubble = ({ message, index }: { message: ChatMessage; index: number }) => {
+    const isUser = message.role === 'user';
+    
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: 20, scale: 0.95 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ duration: 0.2, delay: index * 0.1 }}
+        className={`flex ${isUser ? 'justify-end' : 'justify-start'} mb-4`}
+      >
+        <div className={`flex items-start space-x-2 max-w-[80%] ${isUser ? 'flex-row-reverse' : 'flex-row'}`}>
+          <div
+            className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
+              isUser
+                ? 'bg-blue-600'
+                : 'bg-gradient-to-br from-blue-500 to-purple-600'
+            }`}
+          >
+            {isUser ? (
+              <span className="text-white text-sm">You</span>
+            ) : (
+              <MessageSquare className="w-4 h-4 text-white" />
+            )}
+          </div>
+          <div
+            className={`rounded-2xl px-4 py-3 ${
+              isUser
+                ? 'bg-blue-600 text-white rounded-br-none'
+                : 'bg-gray-100 text-gray-900 rounded-bl-none'
+            }`}
+          >
+            <div className="prose prose-sm max-w-none">
+              {message.role === 'assistant' 
+                ? formatAnalysisContent(message.content)
+                : <p className="m-0">{message.content}</p>
+              }
+            </div>
+          </div>
+        </div>
+      </motion.div>
+    );
+  };
+
+  const TypingIndicator = () => (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="flex items-center space-x-2 text-gray-500 mb-4"
+    >
+      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+        <MessageSquare className="w-4 h-4 text-white" />
+      </div>
+      <div className="bg-gray-100 rounded-full px-4 py-2">
+        <div className="flex space-x-1">
+          <motion.div
+            className="w-2 h-2 bg-gray-400 rounded-full"
+            animate={{ y: [0, -5, 0] }}
+            transition={{ duration: 0.5, repeat: Infinity, repeatType: "reverse" }}
+          />
+          <motion.div
+            className="w-2 h-2 bg-gray-400 rounded-full"
+            animate={{ y: [0, -5, 0] }}
+            transition={{ duration: 0.5, repeat: Infinity, repeatType: "reverse", delay: 0.1 }}
+          />
+          <motion.div
+            className="w-2 h-2 bg-gray-400 rounded-full"
+            animate={{ y: [0, -5, 0] }}
+            transition={{ duration: 0.5, repeat: Infinity, repeatType: "reverse", delay: 0.2 }}
+          />
+        </div>
+      </div>
+    </motion.div>
+  );
+
   return (
-    <div className="mt-8 space-y-4">
-      <ScrollArea className="relative h-[400px] rounded-lg border bg-white p-4">
-        {isLoading && isInitialAnalysis ? (
-          <Loading message={loadingMessage} />
-        ) : (
+    <div className="mt-8 space-y-6">
+      {/* Chat Section */}
+      <div className="flex flex-col h-[500px]">
+        <ScrollArea className="flex-1 px-4 py-4 bg-white rounded-t-lg border">
           <div className="space-y-4">
-            <div className="bg-gradient-to-r from-gray-50 to-blue-50 rounded-lg p-6">
-              <div className="flex items-start space-x-3">
-                <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-                  <MessageSquare className="w-4 h-4 text-white" />
-                </div>
-                <div className="flex-1">
-                  <p className="text-sm font-medium text-gray-700 mb-1">Cadence AI</p>
-                  <p className="text-gray-600">
+            {!hasStartedAnalysis ? (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="flex flex-col items-center justify-center h-full space-y-4"
+              >
+                <div className="text-center">
+                  <h3 className="text-xl font-semibold text-gray-900 mb-2">
                     {uploadedFile 
-                      ? `Great! I've received your dataset "${uploadedFile}". What insights would you like me to generate?`
-                      : "Hello! Upload a dataset above and I'll help you discover insights through interactive visualizations."
+                      ? `Dataset "${uploadedFile}" uploaded successfully!`
+                      : "Upload a dataset to get started"
+                    }
+                  </h3>
+                  <p className="text-gray-600 mb-4">
+                    {uploadedFile
+                      ? "Click the button below to begin analyzing your data"
+                      : "Upload a CSV, JSON, or Excel file to analyze"
                     }
                   </p>
                 </div>
-              </div>
-            </div>
-
-            {messages.map((message, index) => (
-              <div
-                key={index}
-                className={`rounded-lg p-6 ${
-                  message.role === 'user'
-                    ? 'bg-blue-50'
-                    : 'bg-gradient-to-r from-gray-50 to-blue-50'
-                }`}
-              >
-                <div className="flex items-start space-x-3">
-                  <div
-                    className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                      message.role === 'user'
-                        ? 'bg-blue-600'
-                        : 'bg-gradient-to-br from-blue-500 to-purple-600'
-                    }`}
+                {uploadedFile && !isLoading && (
+                  <Button
+                    size="lg"
+                    onClick={handleInitialAnalysis}
+                    className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
                   >
-                    {message.role === 'user' ? (
-                      <span className="text-white text-sm">You</span>
-                    ) : (
-                      <MessageSquare className="w-4 h-4 text-white" />
-                    )}
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-700 mb-1">
-                      {message.role === 'user' ? 'You' : 'Cadence AI'}
-                    </p>
-                    <div className="prose prose-sm max-w-none">
-                      {message.role === 'assistant' 
-                        ? formatAnalysisContent(message.content)
-                        : <p>{message.content}</p>
-                      }
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-
-            {isLoading && !isInitialAnalysis && (
-              <div className="rounded-lg bg-gradient-to-r from-gray-50 to-blue-50 p-4">
-                <div className="flex items-center justify-center space-x-2">
-                  <Loader2 className="w-5 h-5 animate-spin text-primary" />
-                  <span className="text-sm text-primary">{loadingMessage}</span>
-                </div>
-              </div>
+                    {isLoading ? (
+                      <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                    ) : null}
+                    Start Researching
+                  </Button>
+                )}
+              </motion.div>
+            ) : (
+              <AnimatePresence mode="wait">
+                {isLoading && isInitialAnalysis ? (
+                  <motion.div
+                    key="thinking"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="h-full flex items-center justify-center"
+                  >
+                    <ThinkingAnimation />
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="messages"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                  >
+                    {messages.map((message, index) => (
+                      <MessageBubble key={index} message={message} index={index} />
+                    ))}
+                    {isTyping && <TypingIndicator />}
+                  </motion.div>
+                )}
+              </AnimatePresence>
             )}
-
-            {visualizations && parsedData.length > 0 && (
-              <DataVisualization
-                visualizations={visualizations}
-                data={parsedData}
-              />
-            )}
+            <div ref={messagesEndRef} />
           </div>
-        )}
-      </ScrollArea>
+        </ScrollArea>
 
-      <div className="flex space-x-3">
-        <Textarea
-          placeholder="Ask me anything about your data... e.g., 'Show me sales trends by region' or 'What are the top performing products?'"
-          value={chatMessage}
-          onChange={(e) => setChatMessage(e.target.value)}
-          onKeyDown={handleKeyPress}
-          className="flex-1 min-h-[60px] resize-none border-gray-300 focus:border-blue-500"
-          disabled={!uploadedFile || isLoading}
-        />
-        <Button 
-          size="lg" 
-          className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 px-6"
-          disabled={!uploadedFile || !chatMessage.trim() || isLoading}
-          onClick={handleSendMessage}
-        >
-          {isLoading ? (
-            <Loader2 className="w-5 h-5 animate-spin" />
-          ) : (
-            <Send className="w-5 h-5" />
-          )}
-        </Button>
+        <div className="p-4 border-t bg-white rounded-b-lg">
+          <div className="flex space-x-4">
+            <Textarea
+              value={chatMessage}
+              onChange={(e) => setChatMessage(e.target.value)}
+              onKeyDown={handleKeyPress}
+              placeholder={hasStartedAnalysis ? "Ask a question about your data..." : "Start researching to begin the conversation..."}
+              className="flex-1 min-h-[50px] max-h-[200px] resize-none"
+              disabled={isLoading || !hasStartedAnalysis}
+            />
+            <Button
+              onClick={handleSendMessage}
+              disabled={!chatMessage.trim() || isLoading || !hasStartedAnalysis}
+              className="self-end"
+            >
+              {isLoading ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <Send className="w-4 h-4" />
+              )}
+            </Button>
+          </div>
+        </div>
       </div>
 
-      {uploadedFile && !isLoading && (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-4">
-          <Button 
-            variant="outline" 
-            size="sm" 
-            className="text-left justify-start"
-            onClick={() => setChatMessage("Show me a summary of the data")}
-          >
-            📊 Data Summary
-          </Button>
-          <Button 
-            variant="outline" 
-            size="sm" 
-            className="text-left justify-start"
-            onClick={() => setChatMessage("Create a trend analysis")}
-          >
-            📈 Trend Analysis
-          </Button>
-          <Button 
-            variant="outline" 
-            size="sm" 
-            className="text-left justify-start"
-            onClick={() => setChatMessage("Find correlations in the data")}
-          >
-            🔍 Find Patterns
-          </Button>
-        </div>
+      {/* Visualizations Section */}
+      {visualizations && parsedData.length > 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-white rounded-lg border p-6"
+        >
+          <h2 className="text-2xl font-semibold mb-6 text-gray-900">Data Visualizations</h2>
+          <DataVisualization
+            visualizations={visualizations}
+            data={parsedData}
+          />
+        </motion.div>
+      )}
+
+      {/* Quick Actions */}
+      {hasStartedAnalysis && !isLoading && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-white rounded-lg border p-4"
+        >
+          <h3 className="text-lg font-semibold mb-4 text-gray-900">Quick Actions</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="text-left justify-start"
+              onClick={() => setChatMessage("Show me a summary of the data")}
+            >
+              📊 Data Summary
+            </Button>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="text-left justify-start"
+              onClick={() => setChatMessage("Create a trend analysis")}
+            >
+              📈 Trend Analysis
+            </Button>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="text-left justify-start"
+              onClick={() => setChatMessage("Find correlations in the data")}
+            >
+              🔍 Find Patterns
+            </Button>
+          </div>
+        </motion.div>
       )}
     </div>
   );

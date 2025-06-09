@@ -1,75 +1,156 @@
 import { supabase } from '@/lib/supabase';
 import type { VisualizationResponse } from '@/lib/types/visualization';
+import { DataDomain, domainMetadata } from '@/lib/types/dataTypes';
 
 export async function POST(request: Request) {
   try {
-    const { data: dataContent, fileType, question } = await request.json();
+    const { data: dataContent, fileType, question, domain = 'auto_detect' } = await request.json();
 
-    const prompt = `You are a data analysis expert. Your role is to analyze and research this ${fileType} data deeply to find any patterns or trends.
+    // Get domain-specific context
+    const domainContext = domain !== 'auto_detect' 
+      ? `\nData Domain Context:
+- Domain: ${domainMetadata[domain as DataDomain].description}
+- Common Metrics: ${domainMetadata[domain as DataDomain].commonMetrics.join(', ')}
+- Expected Columns: ${domainMetadata[domain as DataDomain].typicalColumns.join(', ')}
+- Special Considerations: ${domainMetadata[domain as DataDomain].specialConsiderations.join(', ')}
+
+Please optimize your analysis for this specific domain, paying special attention to domain-specific metrics, patterns, and best practices.`
+      : '\nPlease analyze the data and infer the most appropriate domain for analysis.';
+
+    const prompt = `You are a data analysis expert. Your role is to analyze and research this ${fileType} data deeply to find any patterns and trends.${domainContext}
 
 Please provide your analysis in the following strictly formatted sections, each separated by dividers:
 
 [VISUALIZATION METHODS]
-List the two best ways to represent this data graphically, with a brief explanation for each choice.
-1.
-2.
+List the three most effective ways to represent this data graphically, with technical justification:
+1. Primary Visualization: [Chart Type]
+   - Technical Reason:
+   - Key Variables:
+   - Expected Insights:
+
+2. Secondary Visualization: [Chart Type]
+   - Technical Reason:
+   - Key Variables:
+   - Expected Insights:
+
+3. Supplementary Visualization: [Chart Type]
+   - Technical Reason:
+   - Key Variables:
+   - Expected Insights:
 
 [DATA STRUCTURE]
-Provide a clear summary of:
-- Number of records and variables
-- Data types present
-- Format of special fields
-- Any missing data patterns
+Technical Overview:
+- Record Count: [exact number]
+- Variable Count: [exact number]
+- Memory Usage Estimate: [size in KB/MB]
+- Schema Definition:
+  {column_name}: {data_type} [null_count] [unique_values_count]
+
+Data Quality Metrics:
+- Completeness: [% of non-null values per column]
+- Uniqueness: [% of unique values per column]
+- Consistency: [data format consistency score]
+- Accuracy: [range validation results]
 
 [KEY STATISTICS]
-Present the main statistical findings:
-- Ranges and means of numerical variables
-- Distribution of categorical variables
-- Key percentages and counts
+Numerical Variables:
+{for each numerical column}
+- Column: [name]
+  - Mean: [value]
+  - Median: [value]
+  - Mode: [value]
+  - Standard Deviation: [value]
+  - Quartiles: [Q1, Q3]
+  - Skewness: [value]
+  - Kurtosis: [value]
+  - Outliers: [count and range]
+
+Categorical Variables:
+{for each categorical column}
+- Column: [name]
+  - Unique Categories: [count]
+  - Mode: [most frequent]
+  - Category Distribution: [top 5 with percentages]
+  - Entropy: [information entropy score]
+
+Time Series Metrics (if applicable):
+- Seasonality: [detected patterns]
+- Trend: [direction and magnitude]
+- Cyclical Patterns: [period length]
+- Stationarity Test: [result]
 
 [NOTABLE INSIGHTS]
-Highlight 3-5 significant findings or anomalies discovered in the data.
-- 
-- 
-- 
+Statistical Significance:
+- Highlight statistically significant findings (p < 0.05)
+- List confidence intervals for key metrics
+- Document any hypothesis tests performed
+
+Key Findings:
+1. [Primary Finding]
+   - Statistical Evidence:
+   - Confidence Level:
+   - Business Impact:
+
+2. [Secondary Finding]
+   - Statistical Evidence:
+   - Confidence Level:
+   - Business Impact:
+
+3. [Tertiary Finding]
+   - Statistical Evidence:
+   - Confidence Level:
+   - Business Impact:
 
 [CORRELATIONS]
-List any meaningful relationships between variables, ordered by strength of correlation.
-- 
-- 
+Correlation Matrix:
+- Strong Correlations (|r| > 0.7):
+  {var1} ~ {var2}: [correlation coefficient]
+  - Direction: [positive/negative]
+  - Statistical Significance: [p-value]
+  - Relationship Type: [linear/non-linear]
+
+Feature Importance:
+- Primary Drivers: [top 3 influential variables]
+- Secondary Factors: [next 3 influential variables]
+- Interaction Effects: [significant variable interactions]
+
+[RECOMMENDATIONS]
+Data Quality:
+- Specific actions to improve data quality
+- Suggested data collection improvements
+- Recommended validation rules
+
+Analysis Opportunities:
+- Suggested deep-dive areas
+- Potential predictive modeling approaches
+- Additional data points that could enhance analysis
 
 Format your response as follows:
 ---TEXT ANALYSIS---
-[VISUALIZATION METHODS]
-{Your analysis}
-
-[DATA STRUCTURE]
-{Your analysis}
-
-[KEY STATISTICS]
-{Your analysis}
-
-[NOTABLE INSIGHTS]
-{Your analysis}
-
-[CORRELATIONS]
-{Your analysis}
+[Include all sections above with their analysis]
 
 ---VISUALIZATION RECOMMENDATIONS---
 {
   "recommendations": [
     {
       "chartType": "[One of: LineChart, BarChart, AreaChart, PieChart, ScatterChart, ComposedChart]",
-      "reason": "[Explanation why this chart type is appropriate]",
+      "reason": "[Technical justification for this chart type]",
       "dataPoints": {
         "xAxis": "[Column name for x-axis]",
         "yAxis": ["Column(s) for y-axis"],
         "groupBy": "[Optional: Column to group by]",
-        "aggregation": "[Optional: sum, average, or count]"
+        "aggregation": "[Optional: sum, average, count]",
+        "statisticalOverlays": ["confidence_intervals", "trend_lines", "outlier_markers"],
+        "transformations": ["log", "normalize", "standardize"]
       },
       "title": "[Suggested chart title]",
       "xAxisLabel": "[Label for x-axis]",
-      "yAxisLabel": "[Label for y-axis]"
+      "yAxisLabel": "[Label for y-axis]",
+      "technicalNotes": {
+        "dataPreparation": "[Required data transformations]",
+        "statisticalTests": "[Relevant statistical tests]",
+        "limitations": "[Data or visualization limitations]"
+      }
     }
   ]
 }
