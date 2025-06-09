@@ -2,6 +2,57 @@ import { supabase } from '@/lib/supabase';
 import type { VisualizationResponse } from '@/lib/types/visualization';
 import { DataDomain, domainMetadata } from '@/lib/types/dataTypes';
 
+const VISUALIZATION_FORMAT = `{
+  "recommendations": [
+    {
+      "title": "[Clear, descriptive chart title]",
+      "chartType": "[One of: LineChart, BarChart, AreaChart, PieChart, ScatterChart, ComposedChart]",
+      "dataPoints": {
+        "xAxis": "[Column name for x-axis]",
+        "yAxis": ["Array of column names for y-axis"],
+        "xAxisLabel": "[Descriptive x-axis label with units]",
+        "yAxisLabel": "[Descriptive y-axis label with units]",
+        "aggregation": "[Optional: sum, average, count]",
+        "groupBy": ["Optional: Array of columns to group by"],
+        "statisticalOverlays": ["Optional: confidence_intervals, trend_lines, outlier_markers"]
+      },
+      "reason": "[Technical justification for this chart type]",
+      "technicalNotes": {
+        "dataPreparation": "[Required data transformations]",
+        "limitations": "[Data or visualization limitations]"
+      }
+    }
+  ],
+  "dataQualityMetrics": {
+    "completeness": {
+      "[column_name]": [percentage]
+    },
+    "uniqueness": {
+      "[column_name]": [percentage]
+    },
+    "consistency": [overall_score]
+  },
+  "correlationMatrix": {
+    "[variable1]": {
+      "[variable2]": [correlation_coefficient]
+    }
+  },
+  "timeSeriesMetrics": {
+    "seasonality": {
+      "pattern": "[pattern_description]",
+      "period": [number]
+    },
+    "trend": {
+      "direction": "[increasing/decreasing/stable]",
+      "magnitude": [number]
+    },
+    "stationarity": {
+      "isStationary": [boolean],
+      "pValue": [number]
+    }
+  }
+}`;
+
 export async function POST(request: Request) {
   try {
     const { data: dataContent, fileType, question, domain = 'auto_detect' } = await request.json();
@@ -17,143 +68,87 @@ export async function POST(request: Request) {
 Please optimize your analysis for this specific domain, paying special attention to domain-specific metrics, patterns, and best practices.`
       : '\nPlease analyze the data and infer the most appropriate domain for analysis.';
 
-    const prompt = `You are a data analysis expert. Your role is to analyze and research this ${fileType} data deeply to find any patterns and trends.${domainContext}
+    const prompt = `You are a data analysis expert specializing in enterprise-level data visualization. Your role is to analyze this ${fileType} data deeply and provide professional, insightful visualizations that follow best practices.${domainContext}
 
-Please provide your analysis in the following strictly formatted sections, each separated by dividers:
+Please provide your analysis in the following strictly formatted sections:
 
 [VISUALIZATION METHODS]
-List the three most effective ways to represent this data graphically, with technical justification:
-1. Primary Visualization: [Chart Type]
-   - Technical Reason:
-   - Key Variables:
-   - Expected Insights:
+For each visualization, carefully consider:
+1. Data Distribution: Is the data continuous, discrete, categorical, or time-series?
+2. Relationship Types: Are we showing trends, comparisons, compositions, or distributions?
+3. Scale Considerations: Linear vs logarithmic, handling outliers, appropriate units
+4. Visual Clarity: Avoiding chart junk, maintaining data-ink ratio, color accessibility
 
-2. Secondary Visualization: [Chart Type]
-   - Technical Reason:
-   - Key Variables:
-   - Expected Insights:
-
-3. Supplementary Visualization: [Chart Type]
-   - Technical Reason:
-   - Key Variables:
-   - Expected Insights:
+Recommend EXACTLY TWO visualizations that best represent the key insights from the data.
+For each recommended visualization, provide:
+- Technical Justification: Why this chart type is optimal
+- Key Variables: The specific variables and their roles
+- Data Preparation: Any necessary transformations or aggregations
+- Statistical Context: Relevant statistical overlays or annotations
+- Limitations: Any potential issues or considerations
 
 [DATA STRUCTURE]
 Technical Overview:
 - Record Count: [exact number]
-- Variable Count: [exact number]
-- Memory Usage Estimate: [size in KB/MB]
-- Schema Definition:
-  {column_name}: {data_type} [null_count] [unique_values_count]
-
-Data Quality Metrics:
-- Completeness: [% of non-null values per column]
-- Uniqueness: [% of unique values per column]
-- Consistency: [data format consistency score]
-- Accuracy: [range validation results]
+- Variable Types: [Detailed type information for each column]
+- Data Quality:
+  * Completeness: [% per column]
+  * Type Consistency: [Any mixed types or format issues]
+  * Value Ranges: [Min, Max, Outliers]
+  * Special Values: [Nulls, Defaults, Placeholders]
 
 [KEY STATISTICS]
-Numerical Variables:
+For Numerical Variables:
 {for each numerical column}
 - Column: [name]
-  - Mean: [value]
-  - Median: [value]
-  - Mode: [value]
-  - Standard Deviation: [value]
-  - Quartiles: [Q1, Q3]
-  - Skewness: [value]
-  - Kurtosis: [value]
-  - Outliers: [count and range]
+  * Distribution Type: [normal, skewed, multimodal, etc.]
+  * Central Tendency: [mean, median, mode]
+  * Spread: [std dev, IQR, range]
+  * Outliers: [count, range, significance]
+  * Quality Metrics: [% valid, % complete]
 
-Categorical Variables:
+For Categorical Variables:
 {for each categorical column}
 - Column: [name]
-  - Unique Categories: [count]
-  - Mode: [most frequent]
-  - Category Distribution: [top 5 with percentages]
-  - Entropy: [information entropy score]
+  * Cardinality: [unique values count]
+  * Mode: [most frequent]
+  * Distribution: [top categories with %]
+  * Special Cases: [empty, invalid, other]
 
-Time Series Metrics (if applicable):
-- Seasonality: [detected patterns]
-- Trend: [direction and magnitude]
-- Cyclical Patterns: [period length]
-- Stationarity Test: [result]
-
-[NOTABLE INSIGHTS]
-Statistical Significance:
-- Highlight statistically significant findings (p < 0.05)
-- List confidence intervals for key metrics
-- Document any hypothesis tests performed
-
-Key Findings:
-1. [Primary Finding]
-   - Statistical Evidence:
-   - Confidence Level:
-   - Business Impact:
-
-2. [Secondary Finding]
-   - Statistical Evidence:
-   - Confidence Level:
-   - Business Impact:
-
-3. [Tertiary Finding]
-   - Statistical Evidence:
-   - Confidence Level:
-   - Business Impact:
+For Time Series (if applicable):
+- Temporal Patterns:
+  * Seasonality: [period, strength]
+  * Trend: [direction, magnitude]
+  * Cycles: [length, significance]
+  * Anomalies: [points of interest]
 
 [CORRELATIONS]
-Correlation Matrix:
+Relationship Analysis:
 - Strong Correlations (|r| > 0.7):
-  {var1} ~ {var2}: [correlation coefficient]
-  - Direction: [positive/negative]
-  - Statistical Significance: [p-value]
-  - Relationship Type: [linear/non-linear]
+  * Variable Pairs: [names and coefficients]
+  * Relationship Type: [linear, non-linear, categorical]
+  * Statistical Significance: [p-value]
+  * Visualization Recommendation: [best chart type]
 
-Feature Importance:
-- Primary Drivers: [top 3 influential variables]
-- Secondary Factors: [next 3 influential variables]
-- Interaction Effects: [significant variable interactions]
+[TECHNICAL RECOMMENDATIONS]
+Data Preparation:
+- Cleaning Steps: [specific actions needed]
+- Transformations: [log, normalize, bin, etc.]
+- Aggregations: [recommended grouping]
+- Format Standardization: [date formats, units, etc.]
 
-[RECOMMENDATIONS]
-Data Quality:
-- Specific actions to improve data quality
-- Suggested data collection improvements
-- Recommended validation rules
-
-Analysis Opportunities:
-- Suggested deep-dive areas
-- Potential predictive modeling approaches
-- Additional data points that could enhance analysis
+Visualization Best Practices:
+- Scale Selection: [linear, log, categorical]
+- Color Schemes: [recommended palettes]
+- Annotation Needs: [trend lines, confidence intervals]
+- Interactive Features: [zoom, filter, drill-down]
 
 Format your response as follows:
 ---TEXT ANALYSIS---
 [Include all sections above with their analysis]
 
 ---VISUALIZATION RECOMMENDATIONS---
-{
-  "recommendations": [
-    {
-      "chartType": "[One of: LineChart, BarChart, AreaChart, PieChart, ScatterChart, ComposedChart]",
-      "reason": "[Technical justification for this chart type]",
-      "dataPoints": {
-        "xAxis": "[Column name for x-axis]",
-        "yAxis": ["Column(s) for y-axis"],
-        "groupBy": "[Optional: Column to group by]",
-        "aggregation": "[Optional: sum, average, count]",
-        "statisticalOverlays": ["confidence_intervals", "trend_lines", "outlier_markers"],
-        "transformations": ["log", "normalize", "standardize"]
-      },
-      "title": "[Suggested chart title]",
-      "xAxisLabel": "[Label for x-axis]",
-      "yAxisLabel": "[Label for y-axis]",
-      "technicalNotes": {
-        "dataPreparation": "[Required data transformations]",
-        "statisticalTests": "[Relevant statistical tests]",
-        "limitations": "[Data or visualization limitations]"
-      }
-    }
-  ]
-}
+${VISUALIZATION_FORMAT}
 
 Data to analyze:
 ${dataContent}
@@ -179,8 +174,13 @@ ${question ? `\nSpecific question to address: ${question}` : ''}`;
 
     // Parse the response to separate text analysis and visualization recommendations
     const response = data.analysis || '';
+    console.log('Raw API response:', response);
+
     const textAnalysisMatch = response.match(/---TEXT ANALYSIS---([\s\S]*?)(?=---VISUALIZATION RECOMMENDATIONS---)/);
     const visualizationMatch = response.match(/---VISUALIZATION RECOMMENDATIONS---([\s\S]*)/);
+
+    console.log('Text analysis match:', textAnalysisMatch);
+    console.log('Visualization match:', visualizationMatch);
 
     const textAnalysis = textAnalysisMatch ? textAnalysisMatch[1].trim() : 'No analysis received';
     let visualizations: VisualizationResponse | undefined;
@@ -188,7 +188,9 @@ ${question ? `\nSpecific question to address: ${question}` : ''}`;
     if (visualizationMatch) {
       try {
         const jsonStr = visualizationMatch[1].trim();
+        console.log('Visualization JSON string:', jsonStr);
         visualizations = JSON.parse(jsonStr);
+        console.log('Parsed visualizations:', visualizations);
       } catch (e) {
         console.error('Error parsing visualization recommendations:', e);
       }

@@ -136,6 +136,8 @@ const ChatInterface = ({ uploadedFile, fileContent, dataDomain }: ChatInterfaceP
 
     try {
       const fileType = uploadedFile?.split('.').pop() || 'csv';
+      console.log('Starting analysis with file type:', fileType);
+      console.log('Raw file content:', fileContent?.substring(0, 200) + '...');
       
       const analysis = await analyzeDataset({
         dataContent: fileContent!,
@@ -144,10 +146,19 @@ const ChatInterface = ({ uploadedFile, fileContent, dataDomain }: ChatInterfaceP
         domain: dataDomain
       });
 
+      console.log('Analysis response:', analysis);
+      console.log('Visualizations:', analysis.visualizations);
+
       if (analysis.visualizations) {
+        console.log('Setting visualizations:', analysis.visualizations);
         setVisualizations(analysis.visualizations);
         const data = parseFileContent(fileContent!, fileType);
-        setParsedData(Array.isArray(data) ? data : [data]);
+        console.log('Parsed data:', data);
+        const processedData = Array.isArray(data) ? data : [data];
+        console.log('Processed data:', processedData);
+        setParsedData(processedData);
+      } else {
+        console.error('No visualizations received from analysis');
       }
 
       const assistantMessage: ChatMessage = {

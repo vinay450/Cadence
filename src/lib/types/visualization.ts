@@ -6,10 +6,11 @@ export type DataTransformation = 'log' | 'normalize' | 'standardize';
 export interface DataPoint {
   xAxis: string;
   yAxis: string[];
-  groupBy?: string;
-  aggregation?: 'sum' | 'average' | 'count';
-  statisticalOverlays?: StatisticalOverlay[];
-  transformations?: DataTransformation[];
+  xAxisLabel: string;
+  yAxisLabel: string;
+  aggregation?: string;
+  groupBy?: string[];
+  statisticalOverlays?: string[];
 }
 
 export interface TechnicalNotes {
@@ -39,32 +40,28 @@ export interface DataQualityMetrics {
 }
 
 export interface VisualizationRecommendation {
-  chartType: ChartType;
-  reason: string;
-  dataPoints: DataPoint;
   title: string;
-  xAxisLabel: string;
-  yAxisLabel: string;
-  technicalNotes: TechnicalNotes;
-  statisticalMetrics?: StatisticalMetrics;
+  chartType: 'LineChart' | 'BarChart' | 'AreaChart' | 'ScatterChart' | 'ComposedChart' | 'PieChart';
+  dataPoints: {
+    xAxis: string;
+    yAxis: string[];
+    xAxisLabel: string;
+    yAxisLabel: string;
+    aggregation?: string;
+    groupBy?: string[];
+    statisticalOverlays?: string[];
+  };
+  reason: string;
+  technicalNotes?: {
+    dataPreparation?: string;
+    limitations?: string;
+  };
+  statisticalMetrics?: any;
 }
 
 export interface VisualizationResponse {
   recommendations: VisualizationRecommendation[];
-  dataQualityMetrics?: DataQualityMetrics;
-  correlationMatrix?: Record<string, Record<string, number>>;
-  timeSeriesMetrics?: {
-    seasonality?: {
-      pattern: string;
-      period: number;
-    };
-    trend?: {
-      direction: 'increasing' | 'decreasing' | 'stable';
-      magnitude: number;
-    };
-    stationarity?: {
-      isStationary: boolean;
-      pValue: number;
-    };
-  };
+  dataQualityMetrics?: any;
+  correlationMatrix?: any;
+  timeSeriesMetrics?: any;
 } 

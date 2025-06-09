@@ -39,6 +39,12 @@ export const analyzeDataset = async ({
   domain = 'auto_detect'
 }: AnalyzeDatasetParams): Promise<AnalysisResponse> => {
   try {
+    console.log('Analyzing dataset:', {
+      fileType,
+      domain,
+      dataContentPreview: dataContent.substring(0, 200) + '...'
+    });
+
     const prompt = `You are a data analysis expert. Your role is to analyze and research this ${fileType} data deeply to find any patterns or trends.
 
 Please provide your analysis in the following strictly formatted sections, each separated by dividers:
@@ -83,26 +89,43 @@ List any meaningful relationships between variables, ordered by strength of corr
       }
     });
 
-    if (error) throw error;
+    if (error) {
+      console.error('Supabase function error:', error);
+      throw error;
+    }
 
     if (!data || !data.analysis) {
+      console.error('No analysis received from API');
       throw new Error('No analysis received from API');
     }
+
+    console.log('Raw API response:', data.analysis);
 
     const response = data.analysis;
     const textAnalysisMatch = response.match(/---TEXT ANALYSIS---([\s\S]*?)(?=---VISUALIZATION RECOMMENDATIONS---)/);
     const visualizationMatch = response.match(/---VISUALIZATION RECOMMENDATIONS---([\s\S]*)/);
 
+    console.log('Text analysis match:', textAnalysisMatch?.[1]?.substring(0, 200));
+    console.log('Visualization match:', visualizationMatch?.[1]?.substring(0, 200));
+
     const textAnalysis = textAnalysisMatch ? textAnalysisMatch[1].trim() : 'No analysis received';
     let visualizations: VisualizationResponse | undefined;
 
     if (visualizationMatch) {
+      const jsonStr = visualizationMatch[1].trim();
       try {
-        const jsonStr = visualizationMatch[1].trim();
+        console.log('Attempting to parse visualization JSON:', jsonStr.substring(0, 200));
         visualizations = JSON.parse(jsonStr);
+        console.log('Successfully parsed visualizations:', {
+          recommendationsCount: visualizations?.recommendations?.length,
+          firstRecommendation: visualizations?.recommendations?.[0]
+        });
       } catch (e) {
         console.error('Error parsing visualization recommendations:', e);
+        console.error('Invalid JSON string:', jsonStr);
       }
+    } else {
+      console.error('No visualization section found in response');
     }
 
     return {
