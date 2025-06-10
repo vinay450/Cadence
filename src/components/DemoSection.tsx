@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import { BarChart3, TrendingUp, PieChart, Users, Activity } from "lucide-react"
+import { BarChart3, TrendingUp, PieChart, Users, Activity, Stethoscope } from "lucide-react"
 
 interface DemoDataset {
   id: string
@@ -18,10 +18,10 @@ interface DemoSectionProps {
 const sampleDatasets: DemoDataset[] = [
   {
     id: "sales-performance",
-    title: "Sales Performance Data",
+    title: "Company Sales Data",
     description: "Quarterly sales data with revenue, regions, and product categories",
     icon: TrendingUp,
-    recordCount: "7k-10k tokens used with Claude.\n1k-2k tokens used with Cadence AI.",
+    recordCount: "7k-10k tokens used with Claude. 1k-2k tokens used with Cadence.",
     category: "Business Analytics"
   },
   {
@@ -29,16 +29,16 @@ const sampleDatasets: DemoDataset[] = [
     title: "Hardware Sensor Data",
     description: "Real-time sensor readings from industrial equipment with temperature, vibration, pressure, and power metrics",
     icon: Activity,
-    recordCount: "400 records with anomalies",
-    category: "IoT Analytics"
+    recordCount: "12k-15k tokens used with Claude. 2k-3k tokens used with Cadence.",
+    category: "Engineering Analytics"
   },
   {
-    id: "financial-metrics",
-    title: "Financial Metrics",
-    description: "Monthly financial performance with expenses, revenue, and growth rates",
-    icon: BarChart3,
-    recordCount: "1,200 records",
-    category: "Financial Analytics"
+    id: "medical-research",
+    title: "Medical Research Data",
+    description: "Clinical trial outcomes, patient responses, and treatment efficacy across multiple studies",
+    icon: Stethoscope,
+    recordCount: "16k-21k tokens used with Claude. 6k-8k tokens used with Cadence.",
+    category: "Healthcare Analytics"
   },
   {
     id: "product-analysis",
@@ -75,7 +75,7 @@ export default function DemoSection({ onSelectDataset }: DemoSectionProps) {
                 className="relative group hover:shadow-lg transition-all duration-300 cursor-pointer bg-white/70 dark:bg-gray-800/70 border border-indigo-200 dark:border-indigo-800 hover:border-indigo-300 dark:hover:border-indigo-600"
                 onClick={() => onSelectDataset(dataset)}
               >
-                <div className="p-6">
+                <div className="p-6 flex flex-col h-full">
                   <div className="flex items-center justify-between mb-4">
                     <Icon className="h-8 w-8 text-indigo-600 dark:text-indigo-400" />
                     <span className="text-xs px-2 py-1 bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300 rounded-full">
@@ -91,8 +91,8 @@ export default function DemoSection({ onSelectDataset }: DemoSectionProps) {
                     {dataset.description}
                   </p>
                   
-                  <div className="flex flex-col space-y-3">
-                    <div className="text-xs text-gray-500 dark:text-gray-400 whitespace-pre-line whitespace-nowrap">
+                  <div className="flex flex-col mt-auto">
+                    <div className="text-xs text-gray-500 dark:text-gray-400 mb-3">
                       {dataset.recordCount}
                     </div>
                     <Button 
