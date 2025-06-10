@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadence Data Pulse Logo</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 40px;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #1e293b;
+            font-size: 2.5rem;
+            margin-bottom: 50px;
+            font-weight: 700;
+        }
+        
+        .logo-showcase {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+        
+        .logo-variant {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        
+        .logo-variant:hover {
+            transform: translateY(-5px);
+        }
+        
+        .variant-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 30px;
+            color: #334155;
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 30px;
+            min-height: 100px;
+        }
+        
+        .usage-note {
+            color: #64748b;
+            font-size: 0.9rem;
+            font-style: italic;
+        }
+        
+        /* Main Logo Animations */
+        .pulse-logo .bar {
+            animation: dataPulse 2s ease-in-out infinite;
+            transform-origin: bottom;
+        }
+        
+        .pulse-logo .bar:nth-child(1) { animation-delay: 0s; }
+        .pulse-logo .bar:nth-child(2) { animation-delay: 0.2s; }
+        .pulse-logo .bar:nth-child(3) { animation-delay: 0.4s; }
+        .pulse-logo .bar:nth-child(4) { animation-delay: 0.6s; }
+        .pulse-logo .bar:nth-child(5) { animation-delay: 0.8s; }
+        .pulse-logo .bar:nth-child(6) { animation-delay: 1s; }
+        .pulse-logo .bar:nth-child(7) { animation-delay: 1.2s; }
+        
+        @keyframes dataPulse {
+            0%, 100% { 
+                transform: scaleY(1); 
+                opacity: 0.7; 
+            }
+            50% { 
+                transform: scaleY(1.4); 
+                opacity: 1; 
+            }
+        }
+        
+        .circle-glow {
+            animation: circleGlow 3s ease-in-out infinite;
+        }
+        
+        @keyframes circleGlow {
+            0%, 100% { 
+                stroke-width: 3;
+                opacity: 0.8;
+            }
+            50% { 
+                stroke-width: 4;
+                opacity: 1;
+            }
+        }
+        
+        .logo-text {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-weight: 700;
+            font-size: 28px;
+            fill: #1e293b;
+            letter-spacing: -0.5px;
+        }
+        
+        .tagline-text {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-weight: 400;
+            font-size: 12px;
+            fill: #64748b;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+        
+        /* Color variations */
+        .primary-bars { fill: #8b5cf6; }
+        .dark-bars { fill: #1e293b; }
+        .gradient-bars { fill: url(#primaryGradient); }
+        .tech-bars { fill: #06b6d4; }
+        
+        .primary-circle { stroke: #8b5cf6; }
+        .dark-circle { stroke: #1e293b; }
+        .gradient-circle { stroke: url(#primaryGradient); }
+        .tech-circle { stroke: #06b6d4; }
+        
+        .download-section {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-top: 30px;
+        }
+        
+        .download-section h2 {
+            color: #1e293b;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .download-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .download-btn {
+            background: #8b5cf6;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        
+        .download-btn:hover {
+            background: #7c3aed;
+        }
+        
+        .specifications {
+            background: #f8fafc;
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 30px;
+        }
+        
+        .spec-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        
+        .spec-item {
+            text-align: center;
+        }
+        
+        .spec-label {
+            font-weight: 600;
+            color: #334155;
+            margin-bottom: 5px;
+        }
+        
+        .spec-value {
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Cadence Data Pulse Logo</h1>
+        
+        <div class="logo-showcase">
+            <!-- Primary Version -->
+            <div class="logo-variant">
+                <div class="variant-title">Primary Logo</div>
+                <div class="logo-container">
+                    <svg width="320" height="100" viewBox="0 0 320 100">
+                        <defs>
+                            <linearGradient id="primaryGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" style="stop-color:#8b5cf6"/>
+                                <stop offset="100%" style="stop-color:#06b6d4"/>
+                            </linearGradient>
+                        </defs>
+                        
+                        <!-- Data bars -->
+                        <g class="pulse-logo">
+                            <rect class="bar primary-bars" x="20" y="55" width="6" height="25" rx="3"/>
+                            <rect class="bar primary-bars" x="28" y="45" width="6" height="35" rx="3"/>
+                            <rect class="bar primary-bars" x="36" y="35" width="6" height="45" rx="3"/>
+                            <rect class="bar primary-bars" x="44" y="50" width="6" height="30" rx="3"/>
+                            <rect class="bar primary-bars" x="52" y="40" width="6" height="40" rx="3"/>
+                            <rect class="bar primary-bars" x="60" y="60" width="6" height="20" rx="3"/>
+                            <rect class="bar primary-bars" x="68" y="45" width="6" height="35" rx="3"/>
+                        </g>
+                        
+                        <!-- Company name -->
+                        <text class="logo-text" x="90" y="45">Cadence</text>
+                        <text class="tagline-text" x="90" y="62">Data Analysis Platform</text>
+                    </svg>
+                </div>
+                <div class="usage-note">Main brand logo for websites and applications</div>
+            </div>
+            
+            <!-- Dark Version -->
+            <div class="logo-variant">
+                <div class="variant-title">Dark Version</div>
+                <div class="logo-container">
+                    <svg width="320" height="100" viewBox="0 0 320 100">
+                        <!-- Data bars -->
+                        <g class="pulse-logo">
+                            <rect class="bar dark-bars" x="20" y="55" width="6" height="25" rx="3"/>
+                            <rect class="bar dark-bars" x="28" y="45" width="6" height="35" rx="3"/>
+                            <rect class="bar dark-bars" x="36" y="35" width="6" height="45" rx="3"/>
+                            <rect class="bar dark-bars" x="44" y="50" width="6" height="30" rx="3"/>
+                            <rect class="bar dark-bars" x="52" y="40" width="6" height="40" rx="3"/>
+                            <rect class="bar dark-bars" x="60" y="60" width="6" height="20" rx="3"/>
+                            <rect class="bar dark-bars" x="68" y="45" width="6" height="35" rx="3"/>
+                        </g>
+                        
+                        <!-- Company name -->
+                        <text class="logo-text" x="90" y="45" fill="#1e293b">Cadence</text>
+                        <text class="tagline-text" x="90" y="62" fill="#64748b">Data Analysis Platform</text>
+                    </svg>
+                </div>
+                <div class="usage-note">For light backgrounds and print materials</div>
+            </div>
+            
+            <!-- Gradient Version -->
+            <div class="logo-variant">
+                <div class="variant-title">Gradient Version</div>
+                <div class="logo-container">
+                    <svg width="320" height="100" viewBox="0 0 320 100">
+                        <defs>
+                            <linearGradient id="gradientVersion" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" style="stop-color:#8b5cf6"/>
+                                <stop offset="100%" style="stop-color:#06b6d4"/>
+                            </linearGradient>
+                        </defs>
+                        
+                        <!-- Data bars -->
+                        <g class="pulse-logo">
+                            <rect class="bar" x="20" y="55" width="6" height="25" rx="3" fill="url(#gradientVersion)"/>
+                            <rect class="bar" x="28" y="45" width="6" height="35" rx="3" fill="url(#gradientVersion)"/>
+                            <rect class="bar" x="36" y="35" width="6" height="45" rx="3" fill="url(#gradientVersion)"/>
+                            <rect class="bar" x="44" y="50" width="6" height="30" rx="3" fill="url(#gradientVersion)"/>
+                            <rect class="bar" x="52" y="40" width="6" height="40" rx="3" fill="url(#gradientVersion)"/>
+                            <rect class="bar" x="60" y="60" width="6" height="20" rx="3" fill="url(#gradientVersion)"/>
+                            <rect class="bar" x="68" y="45" width="6" height="35" rx="3" fill="url(#gradientVersion)"/>
+                        </g>
+                        
+                        <!-- Company name -->
+                        <text class="logo-text" x="90" y="45">Cadence</text>
+                        <text class="tagline-text" x="90" y="62">Data Analysis Platform</text>
+                    </svg>
+                </div>
+                <div class="usage-note">Premium version for marketing materials</div>
+            </div>
+            
+            <!-- Icon Only -->
+            <div class="logo-variant">
+                <div class="variant-title">Icon Only</div>
+                <div class="logo-container">
+                    <svg width="100" height="100" viewBox="0 0 100 100">
+                        <!-- Data bars -->
+                        <g class="pulse-logo">
+                            <rect class="bar primary-bars" x="15" y="55" width="8" height="25" rx="4"/>
+                            <rect class="bar primary-bars" x="25" y="45" width="8" height="35" rx="4"/>
+                            <rect class="bar primary-bars" x="35" y="35" width="8" height="45" rx="4"/>
+                            <rect class="bar primary-bars" x="45" y="50" width="8" height="30" rx="4"/>
+                            <rect class="bar primary-bars" x="55" y="40" width="8" height="40" rx="4"/>
+                            <rect class="bar primary-bars" x="65" y="60" width="8" height="20" rx="4"/>
+                            <rect class="bar primary-bars" x="75" y="45" width="8" height="35" rx="4"/>
+                        </g>
+                    </svg>
+                </div>
+                <div class="usage-note">For favicons, app icons, and small spaces</div>
+            </div>
+        </div>
+        
+        <div class="download-section">
+            <h2>Logo Specifications</h2>
+            <div class="specifications">
+                <div class="spec-grid">
+                    <div class="spec-item">
+                        <div class="spec-label">Primary Color</div>
+                        <div class="spec-value">#8B5CF6 (Purple)</div>
+                    </div>
+                    <div class="spec-item">
+                        <div class="spec-label">Secondary Color</div>
+                        <div class="spec-value">#06B6D4 (Cyan)</div>
+                    </div>
+                    <div class="spec-item">
+                        <div class="spec-label">Typography</div>
+                        <div class="spec-value">Inter (Bold)</div>
+                    </div>
+                    <div class="spec-item">
+                        <div class="spec-label">Minimum Size</div>
+                        <div class="spec-value">120px wide</div>
+                    </div>
+                    <div class="spec-item">
+                        <div class="spec-label">File Formats</div>
+                        <div class="spec-value">SVG, PNG, PDF</div>
+                    </div>
+                    <div class="spec-item">
+                        <div class="spec-label">Clear Space</div>
+                        <div class="spec-value">Logo height × 0.5</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="margin-top: 30px; text-align: center;">
+                <p style="color: #64748b; margin-bottom: 20px;">
+                    <strong>Usage Guidelines:</strong> Maintain clear space around the logo. Don't stretch, rotate, or modify colors. 
+                    Use the appropriate version for your background (dark logo on light backgrounds, light logo on dark backgrounds).
+                </p>
+                <button class="download-btn" onclick="downloadSVG()">Download SVG</button>
+                <button class="download-btn" onclick="downloadPNG()">Download PNG</button>
+                <button class="download-btn" onclick="alert('Brand guidelines would be provided as a separate document')">Brand Guidelines</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function downloadSVG() {
+            const svg = document.querySelector('svg');
+            const svgData = new XMLSerializer().serializeToString(svg);
+            const svgBlob = new Blob([svgData], {type: 'image/svg+xml;charset=utf-8'});
+            const svgUrl = URL.createObjectURL(svgBlob);
+            const downloadLink = document.createElement('a');
+            downloadLink.href = svgUrl;
+            downloadLink.download = 'cadence-logo.svg';
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+        }
+        
+        function downloadPNG() {
+            alert('PNG export would require server-side conversion. SVG is recommended for web use.');
+        }
+    </script>
+</body>
+</html>
