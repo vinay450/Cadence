@@ -2,6 +2,7 @@
 import DataAnalysisDashboard from '@/components/DataAnalysisDashboard'
 import AnimatedTextAnalysis from '@/components/AnimatedTextAnalysis'
 import ChatBot from '@/components/ChatBot'
+import DataNavigationSection from '@/components/DataNavigationSection'
 import { useState } from 'react'
 import {
   Table,
@@ -152,13 +153,22 @@ export default function AnalysisApp() {
 
       {(analysisData || isAnalyzing) && (
         <div className="space-y-8">
-          <AnimatedTextAnalysis text={analysisData} isAnalyzing={isAnalyzing} />
+          {/* Navigation Section */}
+          <DataNavigationSection />
+
+          {/* AI Analysis Section */}
+          <div id="ai-analysis">
+            <AnimatedTextAnalysis text={analysisData} isAnalyzing={isAnalyzing} />
+          </div>
 
           {/* ChatBot Section */}
-          <ChatBot />
+          <div id="chat-section">
+            <ChatBot />
+          </div>
 
+          {/* Data Preview Section */}
           {tableData && (
-            <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
+            <div id="data-preview" className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
               <h2 className="text-2xl font-semibold mb-4 dark:text-white">Data Preview</h2>
               <input
                 type="text"
@@ -214,7 +224,7 @@ export default function AnalysisApp() {
 
           {/* Chart Recommendations Section */}
           {claudeLog?.visualizations?.recommendations && parsedData.length > 0 && (
-            <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
+            <div id="visualizations" className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
               <h2 className="text-2xl font-semibold mb-4 dark:text-white">Recommended Visualizations</h2>
               <div className="grid grid-cols-1 gap-8">
                 {claudeLog.visualizations.recommendations.slice(0, 2).map((rec: any, idx: number) => {
