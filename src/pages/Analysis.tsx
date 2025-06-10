@@ -11,6 +11,9 @@ import {
 import { LineChart } from '@/components/visualizations/LineChart'
 import { ComposedChart } from '@/components/visualizations/ComposedChart'
 import { ScatterChart } from '@/components/visualizations/ScatterChart'
+import { Badge } from "@/components/ui/badge"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Zap, BarChart3, Clock } from "lucide-react"
 
 // Helper: get chart component by type
 const chartComponentMap: Record<string, any> = {
@@ -19,7 +22,7 @@ const chartComponentMap: Record<string, any> = {
   ScatterChart,
 }
 
-export default function Analysis() {
+export default function AnalysisApp() {
   const [analysisData, setAnalysisData] = useState('')
   const [isAnalyzing, setIsAnalyzing] = useState(false)
   const [tableData, setTableData] = useState<{ headers: string[], rows: string[][] } | null>(null)
@@ -92,15 +95,70 @@ export default function Analysis() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div id="analytics-app" className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Platform Header */}
         <div className="text-center mb-12">
+          <div className="flex justify-center items-center gap-4 mb-6">
+            <Badge className="bg-green-100 text-green-800 hover:bg-green-200">
+              <Zap className="h-3 w-3 mr-1" />
+              5x Token Efficiency
+            </Badge>
+            <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-200">
+              <BarChart3 className="h-3 w-3 mr-1" />
+              Enterprise Grade
+            </Badge>
+            <Badge className="bg-purple-100 text-purple-800 hover:bg-purple-200">
+              <Clock className="h-3 w-3 mr-1" />
+              Real-time Processing
+            </Badge>
+          </div>
           <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            Data Analysis Made Simple
+            DataOptima Analytics Platform
           </h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Upload your datasets and get instant insights through our AI-powered analysis platform.
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            Experience the power of our revolutionary analytics engine. Upload your datasets and witness 
+            the same high-quality insights as Claude and OpenAI, delivered using only 20% of the tokens.
           </p>
+        </div>
+
+        {/* Efficiency Metrics */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+          <Card className="border-l-4 border-l-green-500">
+            <CardHeader className="pb-2">
+              <CardDescription className="text-xs uppercase tracking-wide font-semibold text-green-600">
+                Token Efficiency
+              </CardDescription>
+              <CardTitle className="text-2xl font-bold text-gray-900">80% Reduction</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-gray-600">Uses 1/5th the tokens of traditional platforms</p>
+            </CardContent>
+          </Card>
+          
+          <Card className="border-l-4 border-l-blue-500">
+            <CardHeader className="pb-2">
+              <CardDescription className="text-xs uppercase tracking-wide font-semibold text-blue-600">
+                Processing Speed
+              </CardDescription>
+              <CardTitle className="text-2xl font-bold text-gray-900">&lt; 2 Seconds</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-gray-600">Lightning-fast analysis and visualization</p>
+            </CardContent>
+          </Card>
+          
+          <Card className="border-l-4 border-l-purple-500">
+            <CardHeader className="pb-2">
+              <CardDescription className="text-xs uppercase tracking-wide font-semibold text-purple-600">
+                Cost Savings
+              </CardDescription>
+              <CardTitle className="text-2xl font-bold text-gray-900">5x Cheaper</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-gray-600">Dramatic reduction in operational costs</p>
+            </CardContent>
+          </Card>
         </div>
 
         <DataAnalysisDashboard onAnalysis={handleAnalysis} isAnalyzing={isAnalyzing} />
@@ -246,4 +304,4 @@ export default function Analysis() {
       </div>
     </div>
   )
-} 
+}
