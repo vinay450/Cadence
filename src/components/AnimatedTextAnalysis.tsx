@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react'
 import { Card } from '@/components/ui/card'
 import { Loader2, Brain, TrendingUp, BarChart3 } from 'lucide-react'
@@ -26,7 +25,7 @@ export default function AnimatedTextAnalysis({ text, isAnalyzing }: AnimatedText
       const timer = setTimeout(() => {
         setDisplayText(prev => prev + text[currentIndex])
         setCurrentIndex(prev => prev + 1)
-      }, 15) // Adjust speed here (15ms per character)
+      }, 27) // Set to 27ms for faster typing
 
       return () => clearTimeout(timer)
     } else if (currentIndex >= text.length) {

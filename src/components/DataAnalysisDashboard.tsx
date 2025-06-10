@@ -17,7 +17,6 @@ export default function DataAnalysisDashboard({ onAnalysis, isAnalyzing }: DataA
     reader.onload = (e) => {
       const fileData = e.target?.result as string
       setData(fileData)
-      onAnalysis(fileData)
     }
     reader.readAsText(file)
   }
