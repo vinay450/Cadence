@@ -68,10 +68,10 @@ export default function AnimatedTextAnalysis({ text, isAnalyzing }: AnimatedText
           <div className="mt-6 bg-white/50 dark:bg-gray-800/50 rounded-lg p-4 border border-blue-200 dark:border-blue-800">
             <div className="flex items-center space-x-2 text-sm text-blue-700 dark:text-blue-300">
               <TrendingUp className="h-4 w-4" />
-              <span className="font-medium">5x Token Efficiency in Action</span>
+              <span className="font-medium">Advanced Analytics Processing</span>
             </div>
             <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
-              Our AI is delivering enterprise-grade analysis using 80% fewer computational resources
+              Our AI is delivering comprehensive analysis with optimized computational efficiency
             </p>
           </div>
         </div>
@@ -99,7 +99,7 @@ export default function AnimatedTextAnalysis({ text, isAnalyzing }: AnimatedText
           {!isTyping && (
             <div className="ml-auto">
               <div className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-emerald-100 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-300">
-                ✓ 5x More Efficient
+                ✓ Analysis Ready
               </div>
             </div>
           )}
@@ -121,25 +121,25 @@ export default function AnimatedTextAnalysis({ text, isAnalyzing }: AnimatedText
             <div className="bg-white/50 dark:bg-gray-800/50 rounded-lg p-4 border border-emerald-200 dark:border-emerald-800">
               <div className="flex items-center space-x-2 text-sm text-emerald-700 dark:text-emerald-300">
                 <Brain className="h-4 w-4" />
-                <span className="font-medium">Token Efficiency</span>
+                <span className="font-medium">Smart Processing</span>
               </div>
               <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
-                Used 80% fewer tokens than traditional models
+                Optimized computational efficiency
               </p>
             </div>
             <div className="bg-white/50 dark:bg-gray-800/50 rounded-lg p-4 border border-emerald-200 dark:border-emerald-800">
               <div className="flex items-center space-x-2 text-sm text-emerald-700 dark:text-emerald-300">
                 <TrendingUp className="h-4 w-4" />
-                <span className="font-medium">Processing Speed</span>
+                <span className="font-medium">Fast Analysis</span>
               </div>
               <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
-                5x faster analysis completion
+                Rapid insights generation
               </p>
             </div>
             <div className="bg-white/50 dark:bg-gray-800/50 rounded-lg p-4 border border-emerald-200 dark:border-emerald-800">
               <div className="flex items-center space-x-2 text-sm text-emerald-700 dark:text-emerald-300">
                 <BarChart3 className="h-4 w-4" />
-                <span className="font-medium">Insight Quality</span>
+                <span className="font-medium">Quality Insights</span>
               </div>
               <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
                 Enterprise-grade analysis precision
