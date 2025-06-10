@@ -1,9 +1,8 @@
-
 import { useState, useEffect } from 'react'
 
 const phrases = [
   "80% Fewer Tokens",
-  "Intelligent Data Processing", 
+  "Intelligent Data Pre-Processing", 
   "Multi-Chart Visualization",
   "Advanced Data Insights"
 ]
@@ -50,9 +49,10 @@ export default function CyclingTypingAnimation() {
   }, [currentPhraseIndex, charIndex, isTyping])
 
   return (
-    <span className="text-indigo-600 dark:text-indigo-400">
-      Using {currentText}
-      <span className="animate-pulse">|</span>
-    </span>
+    <div className="flex justify-center w-full">
+      <span className="text-indigo-600 dark:text-indigo-400 whitespace-nowrap">
+        Using {currentText}
+      </span>
+    </div>
   )
 }

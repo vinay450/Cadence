@@ -1,4 +1,3 @@
-
 import { useState } from 'react'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -13,9 +12,14 @@ interface DataAnalysisDashboardProps {
 export default function DataAnalysisDashboard({ onAnalysis, isAnalyzing }: DataAnalysisDashboardProps) {
   const [data, setData] = useState('')
 
-  const handleFileUpload = (fileData: string) => {
-    setData(fileData)
-    onAnalysis(fileData)
+  const handleFileUpload = (file: File) => {
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      const fileData = e.target?.result as string
+      setData(fileData)
+      onAnalysis(fileData)
+    }
+    reader.readAsText(file)
   }
 
   const handleAnalyze = () => {
@@ -45,7 +49,7 @@ export default function DataAnalysisDashboard({ onAnalysis, isAnalyzing }: DataA
               <Upload className="h-5 w-5 mr-2 text-blue-600 dark:text-blue-400" />
               Upload Your Dataset
             </h3>
-            <FileUpload onFileUpload={handleFileUpload} />
+            <FileUpload onUpload={handleFileUpload} loading={isAnalyzing} />
           </div>
 
           {data && (
