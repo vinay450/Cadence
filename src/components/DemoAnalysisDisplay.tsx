@@ -38,6 +38,29 @@ interface CustomerData {
   averageSpend: number
 }
 
+interface MedicalData {
+  studyId: string
+  treatment: string
+  phase: string
+  patients: number
+  responseRate: number
+  adverseEvents: number
+  followUpMonths: number
+  age: number
+  gender: string
+  baselineScore: number
+  finalScore: number
+  dosage: number
+  visitNumber: number
+  bloodPressure: number
+  heartRate: number
+  temperature: number
+  weight: number
+  labResult1: number
+  labResult2: number
+  labResult3: number
+}
+
 interface LineChartDataPoints {
   xAxis: string
   yAxis: string[]
@@ -73,6 +96,16 @@ interface DemoData<T> {
 interface AggregatedRegionData {
   quarter: string
   [key: string]: string | number
+}
+
+interface TreatmentMetrics {
+  baseResponse: number;
+  baseAdverse: number;
+  baseDosage: number;
+}
+
+interface TreatmentMetricsMap {
+  [key: string]: TreatmentMetrics;
 }
 
 const customerData: CustomerData[] = [
@@ -124,7 +157,7 @@ const aggregateDataByProductCategory = (data: SalesData[]): AggregatedRegionData
   })
 }
 
-type DemoDataType = SalesData | AggregatedRegionData | CustomerData | SensorData;
+type DemoDataType = SalesData | AggregatedRegionData | CustomerData | SensorData | MedicalData;
 
 const getDemoData = (datasetId: string): DemoData<DemoDataType> => {
   switch (datasetId) {
@@ -269,6 +302,153 @@ This analysis reveals a well-instrumented system with clear failure signatures t
       }
     }
     
+    case 'medical-research': {
+      // Generate static medical data
+      const generateMedicalData = () => {
+        const data: MedicalData[] = [];
+        const treatments = ['Treatment A', 'Treatment B', 'Treatment C', 'Treatment D', 'Treatment E'];
+        const phases = ['Phase 2', 'Phase 3'];
+        const genders = ['Male', 'Female'];
+        
+        // Base metrics for each treatment
+        const treatmentMetrics: TreatmentMetricsMap = {
+          'Treatment A': { baseResponse: 78.5, baseAdverse: 12.3, baseDosage: 100 },
+          'Treatment B': { baseResponse: 82.1, baseAdverse: 9.8, baseDosage: 120 },
+          'Treatment C': { baseResponse: 65.4, baseAdverse: 15.6, baseDosage: 80 },
+          'Treatment D': { baseResponse: 75.9, baseAdverse: 11.2, baseDosage: 90 },
+          'Treatment E': { baseResponse: 68.7, baseAdverse: 14.5, baseDosage: 85 }
+        };
+
+        // Generate 700 rows of data
+        for (let i = 0; i < 700; i++) {
+          const treatment = treatments[i % 5];
+          const metrics = treatmentMetrics[treatment];
+          const phase = i < 140 ? 'Phase 2' : 'Phase 3';
+          const visitNumber = Math.floor(i / 50) + 1;
+          const age = Math.floor(Math.random() * 40) + 18; // 18-57 years
+          const gender = genders[Math.floor(Math.random() * 2)];
+          
+          // Generate realistic variations in metrics
+          const responseVariation = (Math.random() - 0.5) * 10;
+          const adverseVariation = (Math.random() - 0.5) * 4;
+          const dosageVariation = (Math.random() - 0.5) * 10;
+          
+          // Calculate visit-specific metrics
+          const baselineScore = Math.floor(Math.random() * 50) + 50;
+          const improvement = (metrics.baseResponse / 100) * baselineScore;
+          const finalScore = Math.min(100, Math.floor(baselineScore + improvement + (Math.random() * 10 - 5)));
+          
+          data.push({
+            studyId: `ST-${String(Math.floor(i / 140) + 1).padStart(3, '0')}`,
+            treatment,
+            phase,
+            patients: phase === 'Phase 2' ? 150 : 450,
+            responseRate: Math.max(0, Math.min(100, metrics.baseResponse + responseVariation)),
+            adverseEvents: Math.max(0, Math.min(100, metrics.baseAdverse + adverseVariation)),
+            followUpMonths: phase === 'Phase 2' ? 12 : 24,
+            age,
+            gender,
+            baselineScore,
+            finalScore,
+            dosage: Math.max(0, Math.min(200, metrics.baseDosage + dosageVariation)),
+            visitNumber,
+            bloodPressure: Math.floor(Math.random() * 40) + 100, // 100-140
+            heartRate: Math.floor(Math.random() * 40) + 60, // 60-100
+            temperature: 36.5 + (Math.random() * 1.5), // 36.5-38.0
+            weight: Math.floor(Math.random() * 30) + 50, // 50-80 kg
+            labResult1: Math.floor(Math.random() * 100) + 50, // 50-150
+            labResult2: Math.floor(Math.random() * 100) + 30, // 30-130
+            labResult3: Math.floor(Math.random() * 100) + 40  // 40-140
+          });
+        }
+        return data;
+      };
+
+      const medicalData = generateMedicalData();
+
+      return {
+        analysisText: `Dataset Overview and Study Design
+This dataset represents a robust clinical research portfolio spanning 5 distinct studies (ST-001 through ST-005) evaluating 5 different treatments (A through E) across Phase 2 and Phase 3 trials. The dataset demonstrates excellent methodological rigor with balanced patient enrollment of 140 records per treatment arm and a representative demographic distribution of 51% female participants across a broad age spectrum of 18-57 years (mean age 37.5 years). The studies employed extended follow-up periods ranging from 12-24 months (average 21.6 months), indicating commitment to long-term safety and efficacy assessment.
+
+Treatment Efficacy Analysis
+The efficacy analysis reveals significant performance differences across the five treatment regimens. Treatment B emerges as the clear leader with an 81.7% response rate, representing a clinically meaningful advantage over the other treatments. Treatment A follows with a 78.6% response rate, while Treatment D achieves 75.9%. The lower-performing treatments include Treatment E (68.7%) and Treatment C (64.8%). These response rates demonstrate substantial therapeutic benefit across all treatments, with even the lowest-performing option exceeding typical response thresholds for many therapeutic areas.
+
+The patient improvement metrics are particularly compelling, with 100% of patients showing measurable improvement from baseline to final assessment scores. The average improvement of 24.1 points (±13.0 standard deviation) across all treatments suggests robust therapeutic effect sizes. This universal improvement pattern, combined with relatively narrow confidence intervals, indicates consistent treatment benefits across the diverse patient population.
+
+Safety and Tolerability Profile
+The safety analysis reveals an inverse relationship between efficacy and adverse events, with Treatment B not only demonstrating the highest response rate but also the most favorable safety profile at 9.8% adverse events. This represents an optimal therapeutic window that is highly desirable in clinical development. Treatment A maintains reasonable safety at 12.3% adverse events, while Treatment C shows the highest adverse event rate at 15.6%. The overall adverse event rates ranging from 7.9% to 17.6% across all treatments suggest manageable safety profiles, though Treatment B clearly offers the best risk-benefit ratio.
+
+Demographic and Population Insights
+The demographic analysis reveals minimal age-related efficacy differences, with young adults (18-30), middle-aged (31-45), and older adults (46-57) showing remarkably consistent response rates of 74.4%, 73.6%, and 73.8% respectively. This age-independent efficacy pattern suggests broad therapeutic applicability across adult populations. Similarly, gender analysis shows virtually identical response rates between males (74.0%) and females (73.9%), indicating no gender-specific treatment considerations are necessary.
+
+Clinical Monitoring and Dosage Patterns
+The dosage analysis reveals a strategic dose-finding approach with dosages ranging from 75-125 mg across treatments, suggesting ongoing optimization studies. The clinical monitoring data shows appropriate vital sign surveillance with blood pressure averaging 120 mmHg, heart rate at 80 bpm, and normal body temperatures around 37°C, indicating good overall patient health status throughout the trials. The laboratory results demonstrate diverse biomarker monitoring across three different parameters, suggesting comprehensive safety and mechanistic assessments.
+
+Strategic Research Implications
+This dataset represents a mature clinical development program with Treatment B positioned as the lead candidate for regulatory advancement based on its superior safety-efficacy profile. The consistent improvement across all patients and treatments suggests a validated therapeutic approach with multiple viable candidates. The balanced study design across phases and demographics provides robust evidence for regulatory submissions and supports broad label claims. The extended follow-up periods and comprehensive monitoring data demonstrate commitment to thorough safety characterization, which will be crucial for long-term clinical success and market acceptance.
+
+The research portfolio's strength lies in its systematic comparison of multiple treatment options within a controlled framework, providing clear differentiation data that will inform clinical and commercial decision-making. Treatment B's emergence as the optimal candidate, combined with the demonstrated efficacy of backup options, positions this program well for continued development and potential market success.`,
+        tableColumns: [
+          { key: 'studyId', header: 'Study ID', sortable: true },
+          { key: 'treatment', header: 'Treatment', sortable: true },
+          { key: 'phase', header: 'Phase', sortable: true },
+          { key: 'patients', header: 'Patients', sortable: true },
+          { key: 'responseRate', header: 'Response Rate (%)', sortable: true },
+          { key: 'adverseEvents', header: 'Adverse Events (%)', sortable: true },
+          { key: 'followUpMonths', header: 'Follow-up (Months)', sortable: true },
+          { key: 'age', header: 'Age', sortable: true },
+          { key: 'gender', header: 'Gender', sortable: true },
+          { key: 'baselineScore', header: 'Baseline Score', sortable: true },
+          { key: 'finalScore', header: 'Final Score', sortable: true },
+          { key: 'dosage', header: 'Dosage (mg)', sortable: true },
+          { key: 'visitNumber', header: 'Visit #', sortable: true },
+          { key: 'bloodPressure', header: 'BP (mmHg)', sortable: true },
+          { key: 'heartRate', header: 'HR (bpm)', sortable: true },
+          { key: 'temperature', header: 'Temp (°C)', sortable: true },
+          { key: 'weight', header: 'Weight (kg)', sortable: true },
+          { key: 'labResult1', header: 'Lab 1', sortable: true },
+          { key: 'labResult2', header: 'Lab 2', sortable: true },
+          { key: 'labResult3', header: 'Lab 3', sortable: true }
+        ] as TableColumn<DemoDataType>[],
+        chartData: medicalData as DemoDataType[],
+        recommendations: [
+          {
+            title: "Treatment Response Rates",
+            chartType: "BarChart",
+            dataPoints: {
+              xAxis: "treatment",
+              yAxis: ["responseRate"],
+              xAxisLabel: "Treatment",
+              yAxisLabel: "Response Rate (%)"
+            } as BarChartDataPoints,
+            insights: "Comparison of response rates across different treatments, highlighting efficacy differences"
+          },
+          {
+            title: "Safety Profile Analysis",
+            chartType: "LineChart",
+            dataPoints: {
+              xAxis: "treatment",
+              yAxis: ["responseRate", "adverseEvents"],
+              xAxisLabel: "Treatment",
+              yAxisLabel: "Percentage (%)"
+            } as LineChartDataPoints,
+            insights: "Balanced view of efficacy and safety, showing the risk-benefit ratio for each treatment"
+          },
+          {
+            title: "Treatment Progress Over Time",
+            chartType: "LineChart",
+            dataPoints: {
+              xAxis: "visitNumber",
+              yAxis: ["baselineScore", "finalScore"],
+              xAxisLabel: "Visit Number",
+              yAxisLabel: "Score"
+            } as LineChartDataPoints,
+            insights: "Progression of patient scores from baseline to final assessment across treatment visits"
+          }
+        ]
+      }
+    }
+
     default:
       return {
         analysisText: "Loading analysis...",
@@ -375,7 +555,7 @@ export default function DemoAnalysisDisplay({ dataset, onBack }: DemoAnalysisDis
 
       {/* Navigation Section */}
       <div id="data-navigation">
-        <DataNavigationSection />
+      <DataNavigationSection />
       </div>
 
       {/* Loading State */}
@@ -391,10 +571,10 @@ export default function DemoAnalysisDisplay({ dataset, onBack }: DemoAnalysisDis
       {/* Content Section */}
       {showContent && (
         <>
-          {/* AI Analysis Section */}
-          <div id="ai-analysis">
-            <AnimatedTextAnalysis text={demoData.analysisText} isAnalyzing={isAnalyzing} />
-          </div>
+      {/* AI Analysis Section */}
+      <div id="ai-analysis">
+        <AnimatedTextAnalysis text={demoData.analysisText} isAnalyzing={isAnalyzing} />
+      </div>
 
           {/* Disabled Chat Interface */}
           <div id="chat-section" className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
@@ -474,41 +654,41 @@ export default function DemoAnalysisDisplay({ dataset, onBack }: DemoAnalysisDis
                   data={demoData.chartData}
                   columns={demoData.tableColumns}
                 />
-              </div>
-            </div>
-          )}
+          </div>
+        </div>
+      )}
 
-          {/* Chart Recommendations Section */}
-          {demoData.recommendations.length > 0 && (
-            <div id="visualizations" className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
+      {/* Chart Recommendations Section */}
+      {demoData.recommendations.length > 0 && (
+        <div id="visualizations" className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
               <h2 className="text-2xl font-semibold mb-4 dark:text-white">Graphical Analysis</h2>
-              <div className="grid grid-cols-1 gap-8">
-                {demoData.recommendations.map((rec, idx) => (
-                  <div key={idx} className="flex flex-col">
-                    <h3 className="text-lg font-bold mb-2 dark:text-white">{rec.title}</h3>
-                    <p className="mb-2 text-gray-600 dark:text-gray-300">{rec.insights}</p>
-                    <div className="h-80 min-w-[600px]">
-                      {rec.chartType === 'LineChart' && (
-                        <LineChart
-                          data={demoData.chartData}
-                          dataPoints={rec.dataPoints as LineChartDataPoints}
-                          xAxisLabel={rec.dataPoints.xAxisLabel}
-                          yAxisLabel={rec.dataPoints.yAxisLabel}
-                        />
-                      )}
-                      {rec.chartType === 'BarChart' && (
-                        <BarChart
-                          data={demoData.chartData}
+          <div className="grid grid-cols-1 gap-8">
+            {demoData.recommendations.map((rec, idx) => (
+              <div key={idx} className="flex flex-col">
+                <h3 className="text-lg font-bold mb-2 dark:text-white">{rec.title}</h3>
+                <p className="mb-2 text-gray-600 dark:text-gray-300">{rec.insights}</p>
+                <div className="h-80 min-w-[600px]">
+                  {rec.chartType === 'LineChart' && (
+                    <LineChart
+                      data={rec.title === "Product Category Revenue Comparison" ? aggregatedCategoryData : demoData.chartData}
+                      dataPoints={rec.dataPoints as LineChartDataPoints}
+                      xAxisLabel={rec.dataPoints.xAxisLabel}
+                      yAxisLabel={rec.dataPoints.yAxisLabel}
+                    />
+                  )}
+                  {rec.chartType === 'BarChart' && (
+                    <BarChart
+                      data={demoData.chartData}
                           dataPoints={rec.dataPoints as BarChartDataPoints}
                           xAxisLabel={rec.dataPoints.xAxisLabel}
                           yAxisLabel={rec.dataPoints.yAxisLabel}
-                        />
-                      )}
-                    </div>
-                  </div>
-                ))}
+                    />
+                  )}
+                </div>
               </div>
-            </div>
+            ))}
+          </div>
+        </div>
           )}
         </>
       )}

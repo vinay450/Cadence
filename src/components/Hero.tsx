@@ -8,6 +8,11 @@ export default function Hero() {
     appSection?.scrollIntoView({ behavior: 'smooth' })
   }
 
+  const scrollToDemo = () => {
+    const demoSection = document.querySelector('section:nth-of-type(2)')
+    demoSection?.scrollIntoView({ behavior: 'smooth' })
+  }
+
   return (
     <section className="relative pt-16 pb-10 overflow-hidden bg-gradient-to-br from-blue-50 via-white to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       <div className="absolute inset-0 bg-grid-slate-100 dark:bg-grid-slate-800 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))] dark:[mask-image:linear-gradient(0deg,rgb(31,41,55),rgba(31,41,55,0.6))] -z-10" />
@@ -30,8 +35,9 @@ export default function Hero() {
               Try Analytics Platform
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
-            <Button variant="outline" size="lg" className="dark:border-gray-600 dark:text-gray-300">
-              View Documentation
+            <Button onClick={scrollToDemo} variant="outline" size="lg" className="dark:border-gray-600 dark:text-gray-300">
+              Try Our Free Demo
+              <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </div>
           

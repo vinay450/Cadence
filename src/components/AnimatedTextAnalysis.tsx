@@ -117,19 +117,21 @@ export default function AnimatedTextAnalysis({ text, isAnalyzing }: AnimatedText
         </div>
         
         <div className="bg-white/70 dark:bg-gray-800/70 rounded-lg p-6 border border-emerald-200 dark:border-emerald-800 relative">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="absolute top-2 right-2 text-gray-500 hover:text-emerald-600 dark:text-gray-400 dark:hover:text-emerald-400"
-            onClick={handleCopy}
-            title="Copy analysis"
-          >
-            {copied ? (
-              <Check className="h-4 w-4" />
-            ) : (
-              <Copy className="h-4 w-4" />
-            )}
-          </Button>
+          {!isTyping && (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="absolute top-2 right-2 text-gray-500 hover:text-emerald-600 dark:text-gray-400 dark:hover:text-emerald-400"
+              onClick={handleCopy}
+              title="Copy analysis"
+            >
+              {copied ? (
+                <Check className="h-4 w-4" />
+              ) : (
+                <Copy className="h-4 w-4" />
+              )}
+            </Button>
+          )}
           <div className="prose dark:prose-invert max-w-none">
             <div className="whitespace-pre-wrap font-mono text-sm leading-relaxed text-gray-800 dark:text-gray-200">
               {displayText}
