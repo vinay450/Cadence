@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Card } from '@/components/ui/card'
-import { Loader2, Brain, TrendingUp, BarChart3 } from 'lucide-react'
+import { Loader2, Brain, TrendingUp, BarChart3, Copy, Check } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 interface AnimatedTextAnalysisProps {
   text: string
@@ -11,6 +12,17 @@ export default function AnimatedTextAnalysis({ text, isAnalyzing }: AnimatedText
   const [displayText, setDisplayText] = useState('')
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isTyping, setIsTyping] = useState(false)
+  const [copied, setCopied] = useState(false)
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(text)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    } catch (err) {
+      console.error('Failed to copy text:', err)
+    }
+  }
 
   useEffect(() => {
     if (text && !isAnalyzing) {
@@ -25,7 +37,7 @@ export default function AnimatedTextAnalysis({ text, isAnalyzing }: AnimatedText
       const timer = setTimeout(() => {
         setDisplayText(prev => prev + text[currentIndex])
         setCurrentIndex(prev => prev + 1)
-      }, 23) // Increased typing speed by 15%
+      }, 21) // Increased typing speed by 10%
 
       return () => clearTimeout(timer)
     } else if (currentIndex >= text.length) {
@@ -104,7 +116,20 @@ export default function AnimatedTextAnalysis({ text, isAnalyzing }: AnimatedText
           )}
         </div>
         
-        <div className="bg-white/70 dark:bg-gray-800/70 rounded-lg p-6 border border-emerald-200 dark:border-emerald-800">
+        <div className="bg-white/70 dark:bg-gray-800/70 rounded-lg p-6 border border-emerald-200 dark:border-emerald-800 relative">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="absolute top-2 right-2 text-gray-500 hover:text-emerald-600 dark:text-gray-400 dark:hover:text-emerald-400"
+            onClick={handleCopy}
+            title="Copy analysis"
+          >
+            {copied ? (
+              <Check className="h-4 w-4" />
+            ) : (
+              <Copy className="h-4 w-4" />
+            )}
+          </Button>
           <div className="prose dark:prose-invert max-w-none">
             <div className="whitespace-pre-wrap font-mono text-sm leading-relaxed text-gray-800 dark:text-gray-200">
               {displayText}
