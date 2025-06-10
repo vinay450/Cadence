@@ -8,6 +8,7 @@ import { DataTable } from './DataTable'
 import { LineChart } from '@/components/visualizations/LineChart'
 import { BarChart } from '@/components/visualizations/BarChart'
 import { salesData, SalesData } from '@/data/sampleData'
+import { sensorData, SensorData } from '@/data/sensorData'
 
 interface DemoDataset {
   id: string
@@ -123,7 +124,7 @@ const aggregateDataByProductCategory = (data: SalesData[]): AggregatedRegionData
   })
 }
 
-type DemoDataType = SalesData | AggregatedRegionData | CustomerData;
+type DemoDataType = SalesData | AggregatedRegionData | CustomerData | SensorData;
 
 const getDemoData = (datasetId: string): DemoData<DemoDataType> => {
   switch (datasetId) {
@@ -209,6 +210,64 @@ The data collectively suggests a technology company that has achieved market mat
               yAxisLabel: "Number of Customers"
             } as unknown as BarChartDataPoints,
             insights: "Distribution of customers across different age groups"
+          }
+        ]
+      }
+    }
+    
+    case 'hardware-sensors': {
+      return {
+        analysisText: `Dataset Overview and Sensor Structure
+This dataset represents real-time sensor readings from industrial equipment, capturing 400 data points across 4 devices over a 100-hour period. The data includes temperature, vibration, pressure, and power consumption metrics, with readings taken every 15 minutes. The dataset contains several anomalies and failure patterns that demonstrate the system's ability to detect and classify different types of equipment issues.
+
+Anomaly Detection and Pattern Analysis
+The data reveals several distinct types of anomalies:
+- Temperature spikes reaching 85-95°C (normal range: 65-75°C)
+- Vibration increases to 0.8-1.2 units (normal range: 0.1-0.3)
+- Pressure surges to 95-105 PSI (normal range: 80-90 PSI)
+- Power consumption spikes to 70-80 kW (normal range: 45-55 kW)
+- Multiple concurrent anomalies indicating potential system-wide issues
+
+Device Performance and Health Metrics
+Device 1 shows the most stable performance with only one minor anomaly. Device 2 experienced two critical temperature events. Device 3 had multiple vibration warnings, while Device 4 showed the most concerning pattern with a combination of pressure and power anomalies. The data suggests potential maintenance needs for Devices 3 and 4.
+
+Recommendations and Action Items
+1. Schedule immediate maintenance for Device 4 due to multiple critical anomalies
+2. Monitor Device 3's vibration patterns more closely
+3. Review cooling systems for Device 2
+4. Consider implementing predictive maintenance for all devices based on the identified patterns`,
+        tableColumns: [
+          { key: 'timestamp', header: 'Timestamp', sortable: true },
+          { key: 'deviceId', header: 'Device ID', sortable: true },
+          { key: 'temperature', header: 'Temperature (°C)', sortable: true },
+          { key: 'vibration', header: 'Vibration', sortable: true },
+          { key: 'pressure', header: 'Pressure (PSI)', sortable: true },
+          { key: 'powerConsumption', header: 'Power (kW)', sortable: true },
+          { key: 'status', header: 'Status', sortable: true }
+        ] as TableColumn<DemoDataType>[],
+        chartData: sensorData as DemoDataType[],
+        recommendations: [
+          {
+            title: "Temperature Trends by Device",
+            chartType: "LineChart",
+            dataPoints: { 
+              xAxis: "timestamp", 
+              yAxis: ["temperature"],
+              xAxisLabel: "Time",
+              yAxisLabel: "Temperature (°C)"
+            } as LineChartDataPoints,
+            insights: "Temperature readings over time, highlighting critical spikes and normal operating ranges"
+          },
+          {
+            title: "Multi-Metric Analysis",
+            chartType: "LineChart",
+            dataPoints: { 
+              xAxis: "timestamp", 
+              yAxis: ["vibration", "pressure", "powerConsumption"],
+              xAxisLabel: "Time",
+              yAxisLabel: "Sensor Readings"
+            } as LineChartDataPoints,
+            insights: "Combined view of vibration, pressure, and power consumption to identify correlated anomalies"
           }
         ]
       }
@@ -393,7 +452,7 @@ export default function DemoAnalysisDisplay({ dataset, onBack }: DemoAnalysisDis
                     <div className="h-80 min-w-[600px]">
                       {rec.chartType === 'LineChart' && (
                         <LineChart
-                          data={idx === 0 ? demoData.chartData : aggregatedCategoryData}
+                          data={demoData.chartData}
                           dataPoints={rec.dataPoints as LineChartDataPoints}
                           xAxisLabel={rec.dataPoints.xAxisLabel}
                           yAxisLabel={rec.dataPoints.yAxisLabel}
