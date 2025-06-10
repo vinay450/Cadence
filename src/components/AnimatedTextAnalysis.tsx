@@ -25,7 +25,7 @@ export default function AnimatedTextAnalysis({ text, isAnalyzing }: AnimatedText
       const timer = setTimeout(() => {
         setDisplayText(prev => prev + text[currentIndex])
         setCurrentIndex(prev => prev + 1)
-      }, 27) // Set to 27ms for faster typing
+      }, 23) // Increased typing speed by 15%
 
       return () => clearTimeout(timer)
     } else if (currentIndex >= text.length) {

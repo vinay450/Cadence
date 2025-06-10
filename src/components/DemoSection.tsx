@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { BarChart3, TrendingUp, PieChart, Users } from "lucide-react"
@@ -22,7 +21,7 @@ const sampleDatasets: DemoDataset[] = [
     title: "Sales Performance Data",
     description: "Quarterly sales data with revenue, regions, and product categories",
     icon: TrendingUp,
-    recordCount: "2,500 records",
+    recordCount: "7k-10k tokens used with Claude.\n1k-2k tokens used with Cadence AI.",
     category: "Business Analytics"
   },
   {
@@ -92,14 +91,14 @@ export default function DemoSection({ onSelectDataset }: DemoSectionProps) {
                     {dataset.description}
                   </p>
                   
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs text-gray-500 dark:text-gray-400">
+                  <div className="flex flex-col space-y-3">
+                    <div className="text-xs text-gray-500 dark:text-gray-400 whitespace-pre-line whitespace-nowrap">
                       {dataset.recordCount}
-                    </span>
+                    </div>
                     <Button 
                       variant="outline" 
                       size="sm"
-                      className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 border-indigo-300 text-indigo-600 hover:bg-indigo-50 dark:border-indigo-600 dark:text-indigo-400 dark:hover:bg-indigo-900/20"
+                      className="w-full border-indigo-300 text-indigo-600 hover:bg-indigo-50 dark:border-indigo-600 dark:text-indigo-400 dark:hover:bg-indigo-900/20"
                       onClick={(e) => {
                         e.stopPropagation()
                         onSelectDataset(dataset)
