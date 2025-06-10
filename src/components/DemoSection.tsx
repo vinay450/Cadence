@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import { BarChart3, TrendingUp, PieChart, Users } from "lucide-react"
+import { BarChart3, TrendingUp, PieChart, Users, Activity } from "lucide-react"
 
 interface DemoDataset {
   id: string
@@ -25,12 +25,12 @@ const sampleDatasets: DemoDataset[] = [
     category: "Business Analytics"
   },
   {
-    id: "customer-demographics",
-    title: "Customer Demographics",
-    description: "Customer segmentation data with age, location, and purchasing behavior",
-    icon: Users,
-    recordCount: "5,000 records",
-    category: "Marketing Analytics"
+    id: "hardware-sensors",
+    title: "Hardware Sensor Data",
+    description: "Real-time sensor readings from industrial equipment with temperature, vibration, pressure, and power metrics",
+    icon: Activity,
+    recordCount: "400 records with anomalies",
+    category: "IoT Analytics"
   },
   {
     id: "financial-metrics",
@@ -87,7 +87,7 @@ export default function DemoSection({ onSelectDataset }: DemoSectionProps) {
                     {dataset.title}
                   </h3>
                   
-                  <p className="text-sm text-gray-600 dark:text-gray-300 mb-4 line-clamp-3">
+                  <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
                     {dataset.description}
                   </p>
                   
