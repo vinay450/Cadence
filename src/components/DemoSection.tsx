@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import { BarChart3, TrendingUp, PieChart, Users, Activity } from "lucide-react"
+import { BarChart3, TrendingUp, PieChart, Users, Activity, Stethoscope } from "lucide-react"
 
 interface DemoDataset {
   id: string
@@ -33,12 +33,12 @@ const sampleDatasets: DemoDataset[] = [
     category: "Engineering Analytics"
   },
   {
-    id: "financial-metrics",
-    title: "Financial Metrics",
-    description: "Monthly financial performance with expenses, revenue, and growth rates",
-    icon: BarChart3,
-    recordCount: "1,200 records",
-    category: "Financial Analytics"
+    id: "medical-research",
+    title: "Medical Research Data",
+    description: "Clinical trial outcomes, patient responses, and treatment efficacy across multiple studies",
+    icon: Stethoscope,
+    recordCount: "16k-21k tokens used with Claude. 6k-8k tokens used with Cadence.",
+    category: "Healthcare Analytics"
   },
   {
     id: "product-analysis",
