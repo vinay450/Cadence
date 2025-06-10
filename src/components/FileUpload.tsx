@@ -31,9 +31,14 @@ export default function FileUpload({ onUpload, loading }: FileUploadProps) {
       ) : (
         <>
           <File className="h-10 w-10 text-gray-500 dark:text-gray-400 mb-4" />
-          <p className="text-gray-600 dark:text-gray-400">
-            Drag 'n' drop some files here, or click to select files
-          </p>
+          <div className="text-center">
+            <p className="text-gray-600 dark:text-gray-400 mb-2">
+              Drag files here or click to select files.
+            </p>
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              Cadence AI understands .csv, .json, and .xlsx.
+            </p>
+          </div>
         </>
       )}
       <Button disabled={loading} className="mt-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700">

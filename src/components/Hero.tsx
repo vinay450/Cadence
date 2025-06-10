@@ -9,7 +9,7 @@ export default function Hero() {
   }
 
   return (
-    <section className="relative overflow-hidden bg-gradient-to-br from-blue-50 via-white to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 py-20 sm:py-32">
+    <section className="relative pt-16 pb-10 overflow-hidden bg-gradient-to-br from-blue-50 via-white to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       <div className="absolute inset-0 bg-grid-slate-100 dark:bg-grid-slate-800 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))] dark:[mask-image:linear-gradient(0deg,rgb(31,41,55),rgba(31,41,55,0.6))] -z-10" />
       
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
@@ -22,7 +22,7 @@ export default function Hero() {
           </h1>
           
           <p className="mt-6 text-lg leading-8 text-gray-600 dark:text-gray-300">
-            Cadence AI builds your analytics with 80% fewer tokens than Claude or OpenAI through our rigorous preprocessing and server-side graph rendering.
+            Cadence AI builds your analytics with up to 80% fewer tokens than Claude or OpenAI through our rigorous preprocessing and server-side graph rendering.
           </p>
           
           <div className="mt-10 flex items-center justify-center gap-x-6">

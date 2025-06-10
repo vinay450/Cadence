@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button"
-import { BarChart3, Menu, Sun, Moon } from "lucide-react"
+import { Menu, Sun, Moon } from "lucide-react"
 import { useState, useEffect } from "react"
+import Logo from "./Logo"
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -41,10 +42,9 @@ export default function Header() {
   return (
     <header className="fixed top-0 w-full bg-white/80 dark:bg-gray-800/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-700 z-50">
       <nav className="mx-auto max-w-7xl px-6 lg:px-8">
-        <div className="flex h-16 items-center justify-between">
+        <div className="flex h-28 items-center justify-between">
           <div className="flex items-center gap-2">
-            <BarChart3 className="h-8 w-8 text-indigo-600 dark:text-indigo-400" />
-            <span className="text-xl font-bold text-gray-900 dark:text-white">Cadence AI</span>
+            <Logo variant={isDarkMode ? 'dark' : 'primary'} className="h-20" />
           </div>
           
           <div className="hidden md:flex items-center space-x-8">

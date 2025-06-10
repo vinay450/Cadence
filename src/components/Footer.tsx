@@ -1,5 +1,5 @@
-
-import { BarChart3, Github, Twitter, Linkedin } from "lucide-react"
+import { Github, Twitter, Linkedin } from "lucide-react"
+import Logo from "./Logo"
 
 export default function Footer() {
   return (
@@ -8,8 +8,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="col-span-1 md:col-span-2">
             <div className="flex items-center gap-2 mb-4">
-              <BarChart3 className="h-8 w-8 text-indigo-400" />
-              <span className="text-xl font-bold">DataOptima</span>
+              <Logo variant="dark" className="h-20" />
             </div>
             <p className="text-gray-400 mb-4 max-w-md">
               Revolutionary data analytics platform that delivers enterprise-grade insights 
@@ -46,7 +45,7 @@ export default function Footer() {
         <div className="border-t border-gray-800 pt-8 mt-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <p className="text-sm text-gray-400">
-              © 2024 DataOptima. All rights reserved.
+              © 2024 Cadence AI. All rights reserved.
             </p>
             <div className="flex space-x-6 mt-4 md:mt-0">
               <a href="#" className="text-sm text-gray-400 hover:text-white transition-colors">
