@@ -1,5 +1,7 @@
+
 import DataAnalysisDashboard from '@/components/DataAnalysisDashboard'
 import AnimatedTextAnalysis from '@/components/AnimatedTextAnalysis'
+import ChatBot from '@/components/ChatBot'
 import { useState } from 'react'
 import {
   Table,
@@ -151,6 +153,9 @@ export default function AnalysisApp() {
       {(analysisData || isAnalyzing) && (
         <div className="space-y-8">
           <AnimatedTextAnalysis text={analysisData} isAnalyzing={isAnalyzing} />
+
+          {/* ChatBot Section */}
+          <ChatBot />
 
           {tableData && (
             <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
