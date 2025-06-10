@@ -1,6 +1,7 @@
 
 import { Button } from "@/components/ui/button"
 import { ArrowRight, BarChart3, Zap, TrendingUp } from "lucide-react"
+import CyclingTypingAnimation from "./CyclingTypingAnimation"
 
 export default function Hero() {
   const scrollToApp = () => {
@@ -16,7 +17,7 @@ export default function Hero() {
         <div className="mx-auto max-w-2xl text-center">
           <div className="mb-8 flex justify-center">
             <div className="relative rounded-full px-3 py-1 text-sm leading-6 text-gray-600 dark:text-gray-300 ring-1 ring-gray-900/10 dark:ring-gray-100/20 hover:ring-gray-900/20 dark:hover:ring-gray-100/30">
-              5x More Efficient Than Claude & OpenAI{' '}
+              Advanced Analytics Platform{' '}
               <span className="font-semibold text-indigo-600 dark:text-indigo-400">
                 <span className="absolute inset-0" aria-hidden="true" />
                 Learn more <ArrowRight className="inline h-4 w-4" />
@@ -26,11 +27,13 @@ export default function Hero() {
           
           <h1 className="text-4xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-6xl">
             Advanced Data Analytics
-            <span className="text-indigo-600 dark:text-indigo-400 block">Using 80% Fewer Tokens</span>
+            <span className="block mt-2">
+              <CyclingTypingAnimation />
+            </span>
           </h1>
           
           <p className="mt-6 text-lg leading-8 text-gray-600 dark:text-gray-300">
-            Revolutionary AI-powered analytics platform that delivers the same high-quality insights as industry leaders while consuming only 1/5th of the computational resources. Built for enterprises that demand efficiency without compromise.
+            Revolutionary AI-powered analytics platform that delivers high-quality insights with efficient computational processing. Built for enterprises that demand performance without compromise.
           </p>
           
           <div className="mt-10 flex items-center justify-center gap-x-6">
@@ -46,7 +49,7 @@ export default function Hero() {
           <div className="mt-16 flex items-center justify-center gap-x-8 text-sm font-semibold text-gray-900 dark:text-white">
             <div className="flex items-center gap-2">
               <Zap className="h-5 w-5 text-yellow-500" />
-              <span>5x Faster Processing</span>
+              <span>Fast Processing</span>
             </div>
             <div className="flex items-center gap-2">
               <BarChart3 className="h-5 w-5 text-blue-500" />

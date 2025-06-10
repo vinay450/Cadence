@@ -1,10 +1,7 @@
+
 import * as React from "react"
-import { cn } from "@/lib/utils"
-import * as ToastPrimitives from "@radix-ui/react-toast"
-import type {
-  ToastActionElement,
-  ToastProps,
-} from "@/components/ui/toast"
+
+import { Button } from "@/components/ui/button"
 
 const TOAST_LIMIT = 1
 const TOAST_REMOVE_DELAY = 1000000
@@ -14,8 +11,6 @@ type ToasterToast = {
   title?: React.ReactNode
   description?: React.ReactNode
   action?: React.ReactElement
-  open?: boolean
-  onOpenChange?: (open: boolean) => void
   variant?: "default" | "destructive"
 }
 
@@ -29,7 +24,7 @@ const actionTypes = {
 let count = 0
 
 function genId() {
-  count = (count + 1) % Number.MAX_VALUE
+  count = (count + 1) % Number.MAX_SAFE_INTEGER
   return count.toString()
 }
 
