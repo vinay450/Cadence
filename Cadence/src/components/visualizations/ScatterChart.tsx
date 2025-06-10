@@ -2,6 +2,7 @@ import React from 'react'
 import { Scatter, ScatterChart as RechartsScatterChart, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 
 interface ScatterChartProps {
+  data: any[]
   dataPoints: {
     xAxis: string
     yAxis: string[]
@@ -12,10 +13,10 @@ interface ScatterChartProps {
   yAxisLabel: string
 }
 
-export function ScatterChart({ dataPoints, xAxisLabel, yAxisLabel }: ScatterChartProps) {
+export function ScatterChart({ data, dataPoints, xAxisLabel, yAxisLabel }: ScatterChartProps) {
   return (
     <ResponsiveContainer width="100%" height="100%">
-      <RechartsScatterChart data={[]}>
+      <RechartsScatterChart data={data}>
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis 
           dataKey={dataPoints.xAxis} 
