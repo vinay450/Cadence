@@ -217,25 +217,21 @@ The data collectively suggests a technology company that has achieved market mat
     
     case 'hardware-sensors': {
       return {
-        analysisText: `Dataset Overview and Sensor Structure
-This dataset represents real-time sensor readings from industrial equipment, capturing 400 data points across 4 devices over a 100-hour period. The data includes temperature, vibration, pressure, and power consumption metrics, with readings taken every 15 minutes. The dataset contains several anomalies and failure patterns that demonstrate the system's ability to detect and classify different types of equipment issues.
-
-Anomaly Detection and Pattern Analysis
-The data reveals several distinct types of anomalies:
-- Temperature spikes reaching 85-95°C (normal range: 65-75°C)
-- Vibration increases to 0.8-1.2 units (normal range: 0.1-0.3)
-- Pressure surges to 95-105 PSI (normal range: 80-90 PSI)
-- Power consumption spikes to 70-80 kW (normal range: 45-55 kW)
-- Multiple concurrent anomalies indicating potential system-wide issues
-
-Device Performance and Health Metrics
-Device 1 shows the most stable performance with only one minor anomaly. Device 2 experienced two critical temperature events. Device 3 had multiple vibration warnings, while Device 4 showed the most concerning pattern with a combination of pressure and power anomalies. The data suggests potential maintenance needs for Devices 3 and 4.
-
-Recommendations and Action Items
-1. Schedule immediate maintenance for Device 4 due to multiple critical anomalies
-2. Monitor Device 3's vibration patterns more closely
-3. Review cooling systems for Device 2
-4. Consider implementing predictive maintenance for all devices based on the identified patterns`,
+        analysisText: `Dataset Overview and Structure
+This dataset represents a robust industrial sensor monitoring system capturing 400 data points across four identical devices (DEV-1 through DEV-4) over a continuous monitoring period. Each device contributed exactly 100 readings, indicating systematic data collection with balanced representation across the hardware fleet. The monitoring captures four critical operational parameters: temperature, vibration, pressure, and power consumption, alongside operational status classifications and anomaly type identification.
+Operational Baseline and Normal Operating Conditions
+The analysis reveals well-defined normal operating ranges that suggest properly calibrated industrial equipment. Temperature readings during normal operations cluster tightly around 69.9°C with a standard deviation of 3.87°C, maintaining a narrow operational band between 65.0°C and 75.0°C. This tight distribution indicates stable thermal management under normal conditions. Vibration measurements show typical industrial machinery patterns, averaging 0.20 units with most readings concentrated in the 0.10-0.30 range, suggesting well-maintained mechanical systems. Pressure readings demonstrate consistent performance around 85.4 units with a 3.28-unit standard deviation, while power consumption maintains remarkable stability at 49.9W average during normal operations.
+Anomaly Patterns and Critical Thresholds
+The dataset reveals a concerning but manageable anomaly rate of 4.3%, with 13 critical incidents and 4 warning-level events across the monitoring period. Temperature emerges as the primary failure mode, accounting for 1.8% of all readings and representing 7 distinct thermal anomaly events. The temperature threshold analysis reveals a clear demarcation point around 85°C, above which all readings are classified as anomalous. The temperature anomalies range from 85.0°C to 90.4°C, representing substantial deviations from the normal range and indicating potential thermal runaway conditions or cooling system failures.
+Pressure anomalies constitute the second most frequent failure mode at 1.3% occurrence rate, while vibration anomalies appear in 0.8% of readings. Notably, power consumption anomalies are rare (0.3%), and one instance of multiple simultaneous parameter failures was detected, suggesting cascading failure scenarios. This pattern indicates that temperature monitoring serves as an effective early warning system, as thermal issues often precede or trigger other operational problems.
+Power Consumption and Performance Correlations
+A significant finding emerges from the power consumption analysis during anomalous conditions. While normal operations consume an average of 49.9W, anomalous conditions show a 4.5% increase to 52.1W average consumption. This correlation suggests that system stress manifests not only in the primary sensor readings but also in increased energy demand, potentially due to compensatory mechanisms like increased cooling efforts, higher operational loads, or system inefficiencies during stress conditions. This power signature could serve as an additional diagnostic indicator for predictive maintenance algorithms.
+Device Reliability and Fleet Performance
+The four-device fleet demonstrates remarkably consistent reliability profiles, with uptime percentages ranging from 95.0% to 96.0%. DEV-3 shows slightly higher anomaly susceptibility with 5 incidents compared to 4 for the other three devices, though this difference falls within statistical variation given the limited sample size. The uniform distribution of anomalies across devices suggests systematic rather than device-specific issues, pointing toward environmental factors, operational conditions, or maintenance schedules as primary drivers rather than manufacturing defects or individual device degradation.
+Temporal and Operational Insights
+The balanced nature of the anomaly distribution across devices, combined with the clear threshold-based failure patterns, suggests this system operates in a challenging but predictable environment. The predominance of temperature-based failures indicates either high ambient conditions, intensive operational loads, or potential cooling system limitations. The fact that 95.8% of all readings fall within normal parameters demonstrates overall system resilience, while the clear failure thresholds provide actionable intelligence for preventive maintenance scheduling.
+Strategic Recommendations
+This analysis reveals a well-instrumented system with clear failure signatures that could significantly benefit from predictive maintenance strategies. The distinct temperature threshold at 85°C provides a precise trigger point for maintenance alerts, while the power consumption correlation offers a secondary validation metric. The consistent cross-device failure patterns suggest that environmental or operational modifications could yield fleet-wide reliability improvements, potentially reducing the 4.3% anomaly rate through targeted interventions in thermal management or operational protocols.`,
         tableColumns: [
           { key: 'timestamp', header: 'Timestamp', sortable: true },
           { key: 'deviceId', header: 'Device ID', sortable: true },
@@ -283,6 +279,17 @@ Recommendations and Action Items
   }
 }
 
+// Utility function to convert array of objects to CSV
+function arrayToCSV(data: any[]): string {
+  if (!data || data.length === 0) return '';
+  const keys = Object.keys(data[0]);
+  const csvRows = [keys.join(',')];
+  for (const row of data) {
+    csvRows.push(keys.map(k => JSON.stringify(row[k] ?? '')).join(','));
+  }
+  return csvRows.join('\n');
+}
+
 export default function DemoAnalysisDisplay({ dataset, onBack }: DemoAnalysisDisplayProps) {
   const [isAnalyzing, setIsAnalyzing] = useState(true)
   const [showContent, setShowContent] = useState(false)
@@ -312,6 +319,19 @@ export default function DemoAnalysisDisplay({ dataset, onBack }: DemoAnalysisDis
       window.scrollTo({top: y, behavior: 'smooth'});
     }
   }, [dataset.id])
+
+  const handleDownloadCSV = () => {
+    const csv = arrayToCSV(demoData.chartData);
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${dataset.title.replace(/\s+/g, '_').toLowerCase()}_data.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
 
   return (
     <div className="space-y-8">
@@ -412,7 +432,16 @@ export default function DemoAnalysisDisplay({ dataset, onBack }: DemoAnalysisDis
           {/* Data Preview Section */}
           {dataset.id === 'sales-performance' ? (
             <div id="data-preview" className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
-              <h2 className="text-2xl font-semibold mb-4 dark:text-white">Data Preview</h2>
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-lg font-semibold">Data Preview</h3>
+                <button
+                  onClick={handleDownloadCSV}
+                  className="flex items-center gap-1 px-3 py-1 bg-indigo-600 text-white rounded hover:bg-indigo-700 text-sm"
+                  title="Download CSV"
+                >
+                  <Download className="w-4 h-4" /> Download CSV
+                </button>
+              </div>
               <div className="max-h-[400px] overflow-auto">
                 <DataTable<SalesData>
                   data={salesData}
@@ -430,7 +459,16 @@ export default function DemoAnalysisDisplay({ dataset, onBack }: DemoAnalysisDis
             </div>
           ) : demoData.tableColumns.length > 0 && (
             <div id="data-preview" className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
-              <h2 className="text-2xl font-semibold mb-4 dark:text-white">Data Preview</h2>
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-lg font-semibold">Data Preview</h3>
+                <button
+                  onClick={handleDownloadCSV}
+                  className="flex items-center gap-1 px-3 py-1 bg-indigo-600 text-white rounded hover:bg-indigo-700 text-sm"
+                  title="Download CSV"
+                >
+                  <Download className="w-4 h-4" /> Download CSV
+                </button>
+              </div>
               <div className="max-h-[400px] overflow-auto">
                 <DataTable
                   data={demoData.chartData}
