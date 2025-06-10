@@ -1,0 +1,141 @@
+quarter,region,productCategory,revenue,unitsSold,profitMargin,customerCount
+Q1 2024,North America,Software Solutions,520000,1050,28,525
+Q1 2024,North America,Hardware Products,480000,480,25,240
+Q1 2024,North America,Cloud Services,450000,900,27,450
+Q1 2024,North America,Professional Services,380000,380,24,190
+Q1 2024,North America,Support & Maintenance,420000,840,26,420
+Q1 2024,Europe,Software Solutions,460000,920,26,460
+Q1 2024,Europe,Hardware Products,420000,420,24,210
+Q1 2024,Europe,Cloud Services,400000,800,25,400
+Q1 2024,Europe,Professional Services,340000,340,23,170
+Q1 2024,Europe,Support & Maintenance,380000,760,25,380
+Q1 2024,Asia Pacific,Software Solutions,410000,820,25,410
+Q1 2024,Asia Pacific,Hardware Products,380000,380,23,190
+Q1 2024,Asia Pacific,Cloud Services,360000,720,24,360
+Q1 2024,Asia Pacific,Professional Services,300000,300,22,150
+Q1 2024,Asia Pacific,Support & Maintenance,340000,680,24,340
+Q1 2024,Latin America,Software Solutions,350000,700,24,350
+Q1 2024,Latin America,Hardware Products,320000,320,22,160
+Q1 2024,Latin America,Cloud Services,300000,600,23,300
+Q1 2024,Latin America,Professional Services,250000,250,21,125
+Q1 2024,Latin America,Support & Maintenance,280000,560,23,280
+Q1 2024,Middle East & Africa,Software Solutions,300000,600,23,300
+Q1 2024,Middle East & Africa,Hardware Products,280000,280,21,140
+Q1 2024,Middle East & Africa,Cloud Services,260000,520,22,260
+Q1 2024,Middle East & Africa,Professional Services,220000,220,20,110
+Q1 2024,Middle East & Africa,Support & Maintenance,240000,480,22,240
+Q1 2024,South Asia,Software Solutions,330000,660,23,330
+Q1 2024,South Asia,Hardware Products,300000,300,21,150
+Q1 2024,South Asia,Cloud Services,280000,560,22,280
+Q1 2024,South Asia,Professional Services,240000,240,20,120
+Q1 2024,South Asia,Support & Maintenance,260000,520,22,260
+Q1 2024,Oceania,Software Solutions,290000,580,22,290
+Q1 2024,Oceania,Hardware Products,260000,260,20,130
+Q1 2024,Oceania,Cloud Services,240000,480,21,240
+Q1 2024,Oceania,Professional Services,210000,210,19,105
+Q1 2024,Oceania,Support & Maintenance,230000,460,21,230
+Q2 2024,North America,Software Solutions,546000,1103,28,551
+Q2 2024,North America,Hardware Products,504000,504,25,252
+Q2 2024,North America,Cloud Services,472500,945,27,473
+Q2 2024,North America,Professional Services,399000,399,24,200
+Q2 2024,North America,Support & Maintenance,441000,882,26,441
+Q2 2024,Europe,Software Solutions,483000,966,26,483
+Q2 2024,Europe,Hardware Products,441000,441,24,221
+Q2 2024,Europe,Cloud Services,420000,840,25,420
+Q2 2024,Europe,Professional Services,357000,357,23,179
+Q2 2024,Europe,Support & Maintenance,399000,798,25,399
+Q2 2024,Asia Pacific,Software Solutions,430500,861,25,431
+Q2 2024,Asia Pacific,Hardware Products,399000,399,23,200
+Q2 2024,Asia Pacific,Cloud Services,378000,756,24,378
+Q2 2024,Asia Pacific,Professional Services,315000,315,22,158
+Q2 2024,Asia Pacific,Support & Maintenance,357000,714,24,357
+Q2 2024,Latin America,Software Solutions,367500,735,24,368
+Q2 2024,Latin America,Hardware Products,336000,336,22,168
+Q2 2024,Latin America,Cloud Services,315000,630,23,315
+Q2 2024,Latin America,Professional Services,262500,263,21,131
+Q2 2024,Latin America,Support & Maintenance,294000,588,23,294
+Q2 2024,Middle East & Africa,Software Solutions,315000,630,23,315
+Q2 2024,Middle East & Africa,Hardware Products,294000,294,21,147
+Q2 2024,Middle East & Africa,Cloud Services,273000,546,22,273
+Q2 2024,Middle East & Africa,Professional Services,231000,231,20,116
+Q2 2024,Middle East & Africa,Support & Maintenance,252000,504,22,252
+Q2 2024,South Asia,Software Solutions,346500,693,23,347
+Q2 2024,South Asia,Hardware Products,315000,315,21,158
+Q2 2024,South Asia,Cloud Services,294000,588,22,294
+Q2 2024,South Asia,Professional Services,252000,252,20,126
+Q2 2024,South Asia,Support & Maintenance,273000,546,22,273
+Q2 2024,Oceania,Software Solutions,304500,609,22,305
+Q2 2024,Oceania,Hardware Products,273000,273,20,137
+Q2 2024,Oceania,Cloud Services,252000,504,21,252
+Q2 2024,Oceania,Professional Services,220500,221,19,110
+Q2 2024,Oceania,Support & Maintenance,241500,483,21,242
+Q3 2024,North America,Software Solutions,573300,1158,28,579
+Q3 2024,North America,Hardware Products,529200,529,25,265
+Q3 2024,North America,Cloud Services,496125,992,27,496
+Q3 2024,North America,Professional Services,418950,419,24,210
+Q3 2024,North America,Support & Maintenance,463050,926,26,463
+Q3 2024,Europe,Software Solutions,507150,1014,26,507
+Q3 2024,Europe,Hardware Products,463050,463,24,232
+Q3 2024,Europe,Cloud Services,441000,882,25,441
+Q3 2024,Europe,Professional Services,374850,375,23,188
+Q3 2024,Europe,Support & Maintenance,418950,838,25,419
+Q3 2024,Asia Pacific,Software Solutions,452025,904,25,452
+Q3 2024,Asia Pacific,Hardware Products,418950,419,23,210
+Q3 2024,Asia Pacific,Cloud Services,396900,794,24,397
+Q3 2024,Asia Pacific,Professional Services,330750,331,22,166
+Q3 2024,Asia Pacific,Support & Maintenance,374850,750,24,375
+Q3 2024,Latin America,Software Solutions,385875,772,24,386
+Q3 2024,Latin America,Hardware Products,352800,353,22,176
+Q3 2024,Latin America,Cloud Services,330750,662,23,331
+Q3 2024,Latin America,Professional Services,275625,276,21,138
+Q3 2024,Latin America,Support & Maintenance,308700,617,23,309
+Q3 2024,Middle East & Africa,Software Solutions,330750,662,23,331
+Q3 2024,Middle East & Africa,Hardware Products,308700,309,21,154
+Q3 2024,Middle East & Africa,Cloud Services,286650,573,22,287
+Q3 2024,Middle East & Africa,Professional Services,242550,243,20,122
+Q3 2024,Middle East & Africa,Support & Maintenance,264600,529,22,265
+Q3 2024,South Asia,Software Solutions,363825,728,23,364
+Q3 2024,South Asia,Hardware Products,330750,331,21,166
+Q3 2024,South Asia,Cloud Services,308700,617,22,309
+Q3 2024,South Asia,Professional Services,264600,265,20,132
+Q3 2024,South Asia,Support & Maintenance,286650,573,22,287
+Q3 2024,Oceania,Software Solutions,319725,639,22,320
+Q3 2024,Oceania,Hardware Products,286650,287,20,144
+Q3 2024,Oceania,Cloud Services,264600,529,21,265
+Q3 2024,Oceania,Professional Services,231525,232,19,116
+Q3 2024,Oceania,Support & Maintenance,253575,507,21,254
+Q4 2024,North America,Software Solutions,601965,1216,28,608
+Q4 2024,North America,Hardware Products,555660,555,25,278
+Q4 2024,North America,Cloud Services,520931,1042,27,521
+Q4 2024,North America,Professional Services,439898,440,24,221
+Q4 2024,North America,Support & Maintenance,486203,972,26,486
+Q4 2024,Europe,Software Solutions,532508,1065,26,532
+Q4 2024,Europe,Hardware Products,486203,486,24,244
+Q4 2024,Europe,Cloud Services,463050,926,25,463
+Q4 2024,Europe,Professional Services,393593,394,23,197
+Q4 2024,Europe,Support & Maintenance,439898,880,25,440
+Q4 2024,Asia Pacific,Software Solutions,474626,949,25,475
+Q4 2024,Asia Pacific,Hardware Products,439898,440,23,221
+Q4 2024,Asia Pacific,Cloud Services,416745,834,24,417
+Q4 2024,Asia Pacific,Professional Services,347288,347,22,174
+Q4 2024,Asia Pacific,Support & Maintenance,393593,787,24,394
+Q4 2024,Latin America,Software Solutions,405169,810,24,405
+Q4 2024,Latin America,Hardware Products,370440,370,22,185
+Q4 2024,Latin America,Cloud Services,347288,695,23,347
+Q4 2024,Latin America,Professional Services,289406,290,21,145
+Q4 2024,Latin America,Support & Maintenance,324135,648,23,324
+Q4 2024,Middle East & Africa,Software Solutions,347288,695,23,347
+Q4 2024,Middle East & Africa,Hardware Products,324135,324,21,162
+Q4 2024,Middle East & Africa,Cloud Services,300982,602,22,301
+Q4 2024,Middle East & Africa,Professional Services,254678,255,20,128
+Q4 2024,Middle East & Africa,Support & Maintenance,277830,556,22,278
+Q4 2024,South Asia,Software Solutions,382016,764,23,382
+Q4 2024,South Asia,Hardware Products,347288,347,21,174
+Q4 2024,South Asia,Cloud Services,324135,648,22,324
+Q4 2024,South Asia,Professional Services,277830,278,20,139
+Q4 2024,South Asia,Support & Maintenance,300982,602,22,301
+Q4 2024,Oceania,Software Solutions,335710,671,22,336
+Q4 2024,Oceania,Hardware Products,300982,301,20,151
+Q4 2024,Oceania,Cloud Services,277830,556,21,278
+Q4 2024,Oceania,Professional Services,243101,244,19,122
+Q4 2024,Oceania,Support & Maintenance,266253,532,21,266 
