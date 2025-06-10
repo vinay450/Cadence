@@ -1,217 +1,115 @@
-import { supabase } from '@/lib/supabase';
-import type { VisualizationResponse } from './types/visualization';
-import { ChatMessage } from './claude';
-import { DataDomain } from './types/dataTypes';
+import { supabase } from './supabase'
+import { Json } from '@/types/supabase'
 
-// Debug logger function
-const debugLog = (stage: string, data: any) => {
-  console.log(`🔍 [Frontend Debug - ${stage}]`, JSON.stringify(data, null, 2));
-};
-
-// Types for chat messages and responses
-export interface DatasetAnalysisRequest {
-  dataContent: string;
-  fileType: 'csv' | 'json' | 'excel';
-  question?: string;
-  domain?: DataDomain;
-}
-
-export interface AnalysisResponse {
-  textAnalysis: string;
-  visualizations?: VisualizationResponse;
-}
-
-// Function to analyze dataset
-export const analyzeDataset = async ({ dataContent, fileType, question, domain }: DatasetAnalysisRequest) => {
-  const requestId = crypto.randomUUID();
-  debugLog('Analysis Request Started', {
-    requestId,
-    timestamp: new Date().toISOString(),
-    fileType,
-    domain,
-    dataContentLength: dataContent?.length || 0,
-    hasQuestion: !!question
-  });
-
-  const messages = [{
-    role: 'user' as const,
-    content: `You are a data analysis assistant specializing in time series analysis and anomaly detection. You are analyzing ${fileType.toUpperCase()} data${domain ? ` in the ${domain} domain` : ''}.
-
-Your task is to:
-1. Analyze the data for patterns, trends, and seasonality
-2. Identify any anomalies or outliers in the dataset
-3. Detect correlations between different variables
-4. Assess data quality and completeness
-5. Provide actionable insights based on the analysis
-
-Analyze this data:\n\n${dataContent}`
-  }];
-
-  try {
-    debugLog('Preparing Request', {
-      requestId,
-      messageCount: messages.length,
-      firstMessagePreview: messages[0].content.substring(0, 200) + '...'
-    });
-
-    const requestPayload = {
-      messages,
-      data: dataContent,
-      requestType: 'analysis',
-      analysisOptions: {
-        timeSeriesAnalysis: true,
-        anomalyDetection: true,
-        correlationAnalysis: true,
-        dataQualityMetrics: true,
-        statisticalAnalysis: {
-          basic: true,
-          distribution: true,
-          confidenceIntervals: true
-        }
-      }
-    };
-
-    debugLog('Invoking Edge Function', {
-      requestId,
-      functionName: 'bright-api',
-      payloadSize: JSON.stringify(requestPayload).length,
-      options: requestPayload.analysisOptions
-    });
-
-    const { data, error } = await supabase.functions.invoke('bright-api', {
-      body: requestPayload
-    });
-
-    debugLog('Edge Function Response', {
-      requestId,
-      hasError: !!error,
-      hasData: !!data,
-      dataType: typeof data,
-      errorMessage: error?.message,
-      responseKeys: data ? Object.keys(data) : [],
-      rawResponse: data
-    });
-
-    if (error) {
-      debugLog('Edge Function Error', {
-        requestId,
-        error,
-        message: error.message,
-        details: error.details,
-        hint: error.hint
-      });
-      throw new Error(`Edge function error: ${error.message}`);
-    }
-
-    if (!data) {
-      debugLog('No Data Received', {
-        requestId,
-        response: data
-      });
-      throw new Error('No data received from Edge Function');
-    }
-
-    if (!data.analysis) {
-      debugLog('No Analysis in Response', {
-        requestId,
-        response: data
-      });
-      throw new Error('No analysis received from API');
-    }
-
-    // Return the raw analysis as textAnalysis
-    return {
-      textAnalysis: data.analysis,
-      visualizations: undefined
-    };
-  } catch (error) {
-    debugLog('Analysis Error', {
-      requestId,
-      error: error instanceof Error ? {
-        message: error.message,
-        stack: error.stack
-      } : error,
-      type: error instanceof Error ? 'Error' : typeof error
-    });
-    throw error;
+export interface VisualizationRecommendation {
+  title: string
+  chartType: 'LineChart' | 'BarChart' | 'ScatterChart' | 'AreaChart' | 'PieChart' | 'ComposedChart'
+  dataPoints: {
+    xAxis: string
+    yAxis: string[]
+    xAxisLabel: string
+    yAxisLabel: string
   }
-};
+  insights: string
+  priority: string
+}
 
-// Function to continue chat conversation
-export const chatWithClaude = async (
-  messages: ChatMessage[],
-  dataContent?: string
-): Promise<string> => {
-  const requestId = crypto.randomUUID();
-  debugLog('Chat Request Started', {
-    requestId,
-    messageCount: messages.length,
-    hasDataContent: !!dataContent
-  });
+export interface DataQualityMetrics {
+  completeness: Record<string, number>
+  outlierCount: number
+  anomalies: string[]
+}
 
+export interface StatisticalSummary {
+  correlations: string[]
+  trends: string[]
+}
+
+export interface BusinessInsights {
+  keyFindings: string[]
+  recommendations: string[]
+  riskFactors: string[]
+}
+
+export interface AnalysisResult {
+  analysis: string
+  visualizations: {
+    recommendations: VisualizationRecommendation[]
+    dataQualityMetrics: DataQualityMetrics
+    statisticalSummary: StatisticalSummary
+    businessInsights: BusinessInsights
+  }
+}
+
+export async function analyzeDataset(file: File): Promise<AnalysisResult> {
   try {
+    // Get the session
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession()
+    if (sessionError) throw sessionError
+
+    // Convert file to base64
+    const fileContent = await readFileAsBase64(file)
+    
+    // Prepare the analysis request
+    const messages = [{
+      role: 'user',
+      content: 'You are a data analysis expert. Please analyze this dataset.'
+    }]
+
+    // Call the bright-api function with authorization header
     const { data, error } = await supabase.functions.invoke('bright-api', {
       body: {
         messages,
-        data: dataContent,
-        requestType: 'chat',
-        includeEnhancedAnalytics: true,
-        analysisOptions: {
-          timeSeriesAnalysis: true,
-          anomalyDetection: true,
-          correlationAnalysis: true,
-          predictiveInsights: true,
-          dataQualityMetrics: true,
-          statisticalAnalysis: {
-            basic: true,
-            distribution: true,
-            confidenceIntervals: true,
-            hypothesisTests: true,
-            distributionFitting: true,
-            parameters: true
-          }
-        }
+        data: fileContent
+      },
+      headers: {
+        Authorization: `Bearer ${session?.access_token}`
       }
-    });
+    })
 
-    debugLog('Chat Response Received', {
-      requestId,
-      hasError: !!error,
-      hasData: !!data,
-      hasAnalysis: data?.analysis !== undefined
-    });
-
-    if (error) {
-      debugLog('Chat Error', {
-        requestId,
-        error,
-        message: error.message
-      });
-      throw error;
-    }
+    if (error) throw error
 
     if (!data || !data.analysis) {
-      debugLog('Invalid Chat Response', {
-        requestId,
-        data
-      });
-      throw new Error('No response received from API');
+      throw new Error('No analysis received from API')
     }
 
-    debugLog('Chat Success', {
-      requestId,
-      responseLength: data.analysis.length
-    });
+    // Save the analysis results
+    const { error: saveError } = await supabase
+      .from('analysis_results')
+      .insert({
+        user_id: session?.user?.id || 'anonymous',
+        file_name: file.name,
+        file_type: file.type,
+        dataset_overview: data.visualizations.dataQualityMetrics,
+        statistical_summary: data.visualizations.statisticalSummary,
+        pattern_recognition: data.visualizations.recommendations,
+        data_quality: data.visualizations.dataQualityMetrics,
+        key_insights: data.visualizations.businessInsights.keyFindings,
+        recommendations: data.visualizations.businessInsights.recommendations
+      })
 
-    return data.analysis;
+    if (saveError) throw saveError
+
+    return data as AnalysisResult
   } catch (error) {
-    debugLog('Chat Error', {
-      requestId,
-      error: error instanceof Error ? {
-        message: error.message,
-        stack: error.stack
-      } : error
-    });
-    throw error;
+    console.error('Error analyzing dataset:', error)
+    throw error
   }
-}; 
+}
+
+async function readFileAsBase64(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onload = () => {
+      if (typeof reader.result === 'string') {
+        // Remove the data URL prefix (e.g., "data:application/json;base64,")
+        const base64 = reader.result.split(',')[1]
+        resolve(base64)
+      } else {
+        reject(new Error('Failed to read file as base64'))
+      }
+    }
+    reader.onerror = () => reject(reader.error)
+    reader.readAsDataURL(file)
+  })
+} 

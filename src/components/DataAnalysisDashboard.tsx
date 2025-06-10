@@ -1,181 +1,249 @@
-import { useState } from 'react';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Loader2 } from 'lucide-react';
-import { analyzeDataset } from '@/lib/api';
-import { useToast } from '@/components/ui/use-toast';
+import React, { useState } from 'react'
+import { Card } from '@/components/ui/card'
+import FileUpload from './FileUpload'
+import { analyzeDataset, AnalysisResult } from '@/lib/api'
+import { useToast } from '@/components/ui/use-toast'
+import { LineChart } from './visualizations/LineChart'
+import { BarChart } from './visualizations/BarChart'
+import { ScatterChart } from './visualizations/ScatterChart'
+import { AreaChart } from './visualizations/AreaChart'
+import { PieChart } from './visualizations/PieChart'
+import { ComposedChart } from './visualizations/ComposedChart'
+import { Button } from '@/components/ui/button'
+import { Loader2, CheckCircle2, FileText, Upload } from 'lucide-react'
 
-interface DataCategory {
-  title: string;
-  icon: string;
-  content: string | null;
-  isLoading: boolean;
+const ChartComponents = {
+  LineChart,
+  BarChart,
+  ScatterChart,
+  AreaChart,
+  PieChart,
+  ComposedChart
 }
 
 interface DataAnalysisDashboardProps {
-  uploadedFile: string | null;
-  fileContent?: string;
+  onAnalysis: (data: string) => void;
+  isAnalyzing: boolean;
 }
 
-const DataAnalysisDashboard = ({ uploadedFile, fileContent }: DataAnalysisDashboardProps) => {
-  const { toast } = useToast();
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [categories, setCategories] = useState<DataCategory[]>([
-    {
-      title: 'Dataset Overview',
-      icon: '📊',
-      content: null,
-      isLoading: false
-    },
-    {
-      title: 'Statistical Summary',
-      icon: '📈',
-      content: null,
-      isLoading: false
-    },
-    {
-      title: 'Pattern Recognition',
-      icon: '🔍',
-      content: null,
-      isLoading: false
-    },
-    {
-      title: 'Data Quality',
-      icon: '✨',
-      content: null,
-      isLoading: false
-    },
-    {
-      title: 'Key Insights',
-      icon: '💡',
-      content: null,
-      isLoading: false
-    },
-    {
-      title: 'Recommendations',
-      icon: '🎯',
-      content: null,
-      isLoading: false
-    }
-  ]);
+export default function DataAnalysisDashboard({ onAnalysis, isAnalyzing }: DataAnalysisDashboardProps) {
+  const [loading, setLoading] = useState(false)
+  const [fileContent, setFileContent] = useState<string | null>(null)
+  const [fileName, setFileName] = useState<string | null>(null)
+  const [result, setResult] = useState<AnalysisResult | null>(null)
+  const { toast } = useToast()
 
-  const handleAnalysis = async () => {
-    if (!fileContent || !uploadedFile) {
+  const handleFileUpload = async (file: File) => {
+    setLoading(true)
+    try {
+      const reader = new FileReader()
+      reader.onload = async (e) => {
+        const text = e.target?.result as string
+        if (text) {
+          setFileContent(text)
+          setFileName(file.name)
+          toast({
+            title: 'Success',
+            description: 'File uploaded successfully. Click "Start Analysis" to begin.',
+            variant: 'default'
+          })
+        }
+      }
+      reader.readAsText(file)
+    } catch (error) {
+      console.error('Upload failed:', error)
       toast({
         title: 'Error',
-        description: 'Please upload a file first',
-        variant: 'destructive',
-      });
-      return;
-    }
-
-    setIsAnalyzing(true);
-    setCategories(prev => prev.map(cat => ({ ...cat, isLoading: true })));
-
-    try {
-      const fileType = uploadedFile.split('.').pop() || 'csv';
-      const response = await analyzeDataset({
-        dataContent: fileContent,
-        fileType: fileType as 'csv' | 'json' | 'excel',
-        question: "Provide a comprehensive analysis with clear sections for overview, statistics, patterns, quality, insights, and recommendations."
-      });
-
-      // Parse the response into sections
-      const sections = response.textAnalysis.split('\n\n');
-      const updatedCategories = [...categories];
-      
-      sections.forEach(section => {
-        if (section.includes('Dataset Overview')) {
-          updatedCategories[0].content = section.replace('Dataset Overview:', '').trim();
-        } else if (section.includes('Statistical Summary')) {
-          updatedCategories[1].content = section.replace('Statistical Summary:', '').trim();
-        } else if (section.includes('Pattern Recognition')) {
-          updatedCategories[2].content = section.replace('Pattern Recognition:', '').trim();
-        } else if (section.includes('Data Quality')) {
-          updatedCategories[3].content = section.replace('Data Quality:', '').trim();
-        } else if (section.includes('Key Insights')) {
-          updatedCategories[4].content = section.replace('Key Insights:', '').trim();
-        } else if (section.includes('Recommendations')) {
-          updatedCategories[5].content = section.replace('Recommendations:', '').trim();
-        }
-      });
-
-      setCategories(updatedCategories.map(cat => ({ ...cat, isLoading: false })));
-    } catch (error) {
-      toast({
-        title: 'Analysis Error',
-        description: error instanceof Error ? error.message : 'An error occurred during analysis',
-        variant: 'destructive',
-      });
-      setCategories(prev => prev.map(cat => ({ ...cat, isLoading: false })));
+        description: 'Failed to upload file',
+        variant: 'destructive'
+      })
     } finally {
-      setIsAnalyzing(false);
+      setLoading(false)
     }
-  };
+  }
+
+  const handleStartAnalysis = () => {
+    if (fileContent) {
+      onAnalysis(fileContent)
+    }
+  }
+
+  const handleReplaceFile = () => {
+    setFileContent(null)
+    setFileName(null)
+  }
 
   return (
-    <div className="space-y-6">
-      {/* Upload Status and Analysis Button */}
-      <div className="bg-white rounded-lg p-6 shadow-sm border">
-        <div className="flex items-center justify-between">
-          <div className="space-y-1">
-            <h2 className="text-xl font-semibold text-gray-900">
-              {uploadedFile ? 'File Ready for Analysis' : 'Upload a File'}
-            </h2>
-            <p className="text-sm text-gray-500">
-              {uploadedFile 
-                ? `Selected file: ${uploadedFile}`
-                : 'Upload a CSV, JSON, or Excel file to begin analysis'
-              }
-            </p>
-          </div>
-          <Button
-            onClick={handleAnalysis}
-            disabled={!uploadedFile || isAnalyzing}
-            className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
-          >
-            {isAnalyzing ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Analyzing...
-              </>
-            ) : (
-              'Begin Research'
-            )}
-          </Button>
-        </div>
-      </div>
-
-      {/* Analysis Categories Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {categories.map((category, index) => (
-          <Card key={index} className="overflow-hidden">
-            <div className="p-6 space-y-4">
-              <div className="flex items-center space-x-3">
-                <span className="text-2xl">{category.icon}</span>
-                <h3 className="text-lg font-semibold text-gray-900">{category.title}</h3>
+    <div className="p-6 space-y-6">
+      {!fileName ? (
+        <FileUpload onUpload={handleFileUpload} loading={loading} />
+      ) : (
+        <Card className="p-6">
+          <div className="flex items-center space-x-4">
+            <div className="flex-shrink-0">
+              <CheckCircle2 className="h-8 w-8 text-green-500" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center space-x-2">
+                <FileText className="h-5 w-5 text-gray-400" />
+                <p className="text-sm font-medium text-gray-900 truncate">
+                  {fileName}
+                </p>
               </div>
-              <div className="h-[200px] overflow-y-auto">
-                {category.isLoading ? (
-                  <div className="flex items-center justify-center h-full">
-                    <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
-                  </div>
-                ) : category.content ? (
-                  <div className="prose prose-sm max-w-none">
-                    <p className="text-gray-600 whitespace-pre-wrap">{category.content}</p>
-                  </div>
+              <p className="text-sm text-gray-500">
+                File uploaded successfully
+              </p>
+            </div>
+            <div className="flex space-x-3">
+              <Button
+                variant="outline"
+                onClick={handleReplaceFile}
+                className="flex items-center space-x-2"
+              >
+                <Upload className="h-4 w-4" />
+                <span>Replace File</span>
+              </Button>
+              <Button
+                onClick={handleStartAnalysis}
+                className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
+                disabled={loading || isAnalyzing}
+              >
+                {(loading || isAnalyzing) ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Analyzing...
+                  </>
                 ) : (
-                  <div className="flex items-center justify-center h-full text-gray-400 text-sm">
-                    No data available
-                  </div>
+                  'Start Analysis'
                 )}
-              </div>
+              </Button>
+            </div>
+          </div>
+        </Card>
+      )}
+
+      {result && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Dataset Overview */}
+          <Card className="col-span-2">
+            <h2 className="text-2xl font-bold mb-4">Dataset Overview</h2>
+            <div className="prose dark:prose-invert">
+              <p>{result.analysis}</p>
             </div>
           </Card>
-        ))}
-      </div>
-    </div>
-  );
-};
 
-export default DataAnalysisDashboard; 
+          {/* Data Quality */}
+          <Card>
+            <h2 className="text-2xl font-bold mb-4">Data Quality</h2>
+            <div className="space-y-4">
+              <div>
+                <h3 className="text-lg font-semibold">Completeness</h3>
+                <ul className="list-disc list-inside">
+                  {Object.entries(result.visualizations.dataQualityMetrics.completeness).map(([column, value]) => (
+                    <li key={column}>{column}: {value}%</li>
+                  ))}
+                </ul>
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold">Outliers</h3>
+                <p>Total outliers found: {result.visualizations.dataQualityMetrics.outlierCount}</p>
+              </div>
+              {result.visualizations.dataQualityMetrics.anomalies.length > 0 && (
+                <div>
+                  <h3 className="text-lg font-semibold">Anomalies</h3>
+                  <ul className="list-disc list-inside">
+                    {result.visualizations.dataQualityMetrics.anomalies.map((anomaly, index) => (
+                      <li key={index}>{anomaly}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          </Card>
+
+          {/* Statistical Summary */}
+          <Card>
+            <h2 className="text-2xl font-bold mb-4">Statistical Summary</h2>
+            <div className="space-y-4">
+              {result.visualizations.statisticalSummary.correlations.length > 0 && (
+                <div>
+                  <h3 className="text-lg font-semibold">Correlations</h3>
+                  <ul className="list-disc list-inside">
+                    {result.visualizations.statisticalSummary.correlations.map((correlation, index) => (
+                      <li key={index}>{correlation}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              {result.visualizations.statisticalSummary.trends.length > 0 && (
+                <div>
+                  <h3 className="text-lg font-semibold">Trends</h3>
+                  <ul className="list-disc list-inside">
+                    {result.visualizations.statisticalSummary.trends.map((trend, index) => (
+                      <li key={index}>{trend}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          </Card>
+
+          {/* Visualizations */}
+          {result.visualizations.recommendations.map((recommendation, index) => {
+            const ChartComponent = ChartComponents[recommendation.chartType]
+            return (
+              <Card key={index}>
+                <h2 className="text-2xl font-bold mb-4">{recommendation.title}</h2>
+                <p className="mb-4">{recommendation.insights}</p>
+                {ChartComponent && (
+                  <div className="h-64">
+                    <ChartComponent
+                      dataPoints={recommendation.dataPoints}
+                      xAxisLabel={recommendation.dataPoints.xAxisLabel}
+                      yAxisLabel={recommendation.dataPoints.yAxisLabel}
+                    />
+                  </div>
+                )}
+              </Card>
+            )
+          })}
+
+          {/* Key Insights */}
+          <Card>
+            <h2 className="text-2xl font-bold mb-4">Key Insights</h2>
+            <ul className="list-disc list-inside space-y-2">
+              {result.visualizations.businessInsights.keyFindings.map((finding, index) => (
+                <li key={index}>{finding}</li>
+              ))}
+            </ul>
+          </Card>
+
+          {/* Recommendations */}
+          <Card>
+            <h2 className="text-2xl font-bold mb-4">Recommendations</h2>
+            <div className="space-y-4">
+              <div>
+                <h3 className="text-lg font-semibold">Actions</h3>
+                <ul className="list-disc list-inside">
+                  {result.visualizations.businessInsights.recommendations.map((recommendation, index) => (
+                    <li key={index}>{recommendation}</li>
+                  ))}
+                </ul>
+              </div>
+              {result.visualizations.businessInsights.riskFactors.length > 0 && (
+                <div>
+                  <h3 className="text-lg font-semibold">Risk Factors</h3>
+                  <ul className="list-disc list-inside">
+                    {result.visualizations.businessInsights.riskFactors.map((risk, index) => (
+                      <li key={index}>{risk}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          </Card>
+        </div>
+      )}
+    </div>
+  )
+} 
