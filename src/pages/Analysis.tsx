@@ -11,6 +11,7 @@ import {
 import { LineChart } from '@/components/visualizations/LineChart'
 import { ComposedChart } from '@/components/visualizations/ComposedChart'
 import { ScatterChart } from '@/components/visualizations/ScatterChart'
+import { BarChart } from '@/components/visualizations/BarChart'
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Zap, BarChart3, Clock } from "lucide-react"
@@ -20,6 +21,7 @@ const chartComponentMap: Record<string, any> = {
   LineChart,
   ComposedChart,
   ScatterChart,
+  BarChart,
 }
 
 export default function AnalysisApp() {
@@ -39,14 +41,20 @@ export default function AnalysisApp() {
       const headers = rows[0]
       const dataRows = rows.slice(1)
       setTableData({ headers, rows: dataRows })
+      
       // Parse CSV into array of objects for charting
       const objects = dataRows.map(row => {
         const obj: any = {}
         headers.forEach((header, i) => {
-          obj[header] = row[i]
+          // Convert numeric strings to numbers
+          const value = row[i]
+          obj[header] = !isNaN(Number(value)) ? Number(value) : value
         })
         return obj
       })
+      
+      console.log('Parsed Objects:', objects)
+      
       // If we have a recommendation, sort by its x-axis key
       let sortedObjects = objects
       if (claudeLog?.visualizations?.recommendations?.[0]?.dataPoints?.xAxis) {
@@ -60,6 +68,8 @@ export default function AnalysisApp() {
           return 0
         })
       }
+      
+      console.log('Sorted Objects:', sortedObjects)
       setParsedData(sortedObjects)
 
       const response = await fetch('https://awuibcrmituuaailkrdl.supabase.co/functions/v1/bright-api', {
@@ -228,6 +238,9 @@ export default function AnalysisApp() {
                 <div className="grid grid-cols-1 gap-8">
                   {claudeLog.visualizations.recommendations.slice(0, 2).map((rec: any, idx: number) => {
                     const ChartComponent = chartComponentMap[rec.chartType]
+                    console.log('Chart Recommendation:', rec)
+                    console.log('Chart Data:', parsedData)
+                    
                     // Sort data by the x-axis key for this chart, handling numbers as numbers
                     let sortedData = parsedData
                     if (rec.dataPoints?.xAxis) {
@@ -246,6 +259,10 @@ export default function AnalysisApp() {
                         sortedData = sortedData.map(row => ({ ...row, [xKey]: Number(row[xKey]) }))
                       }
                     }
+                    
+                    console.log('Final Chart Data:', sortedData)
+                    console.log('Chart DataPoints:', rec.dataPoints)
+                    
                     return (
                       <div key={idx} className="flex flex-col">
                         <h3 className="text-lg font-bold mb-2 dark:text-white">{rec.title}</h3>
