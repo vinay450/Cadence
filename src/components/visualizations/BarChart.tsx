@@ -1,7 +1,9 @@
+
 import React from 'react'
 import { Bar, BarChart as RechartsBarChart, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 
 interface BarChartProps {
+  data?: any[]
   dataPoints: {
     xAxis: string
     yAxis: string[]
@@ -12,10 +14,10 @@ interface BarChartProps {
   yAxisLabel: string
 }
 
-export function BarChart({ dataPoints, xAxisLabel, yAxisLabel }: BarChartProps) {
+export function BarChart({ data = [], dataPoints, xAxisLabel, yAxisLabel }: BarChartProps) {
   return (
     <ResponsiveContainer width="100%" height="100%">
-      <RechartsBarChart data={[]}>
+      <RechartsBarChart data={data}>
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis 
           dataKey={dataPoints.xAxis} 
@@ -33,4 +35,4 @@ export function BarChart({ dataPoints, xAxisLabel, yAxisLabel }: BarChartProps) 
       </RechartsBarChart>
     </ResponsiveContainer>
   )
-} 
+}

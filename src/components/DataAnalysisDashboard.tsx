@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react'
 import { Card } from '@/components/ui/card'
 import FileUpload from './FileUpload'
@@ -78,7 +79,7 @@ export default function DataAnalysisDashboard({ onAnalysis, isAnalyzing }: DataA
       {!fileName ? (
         <FileUpload onUpload={handleFileUpload} loading={loading} />
       ) : (
-        <Card className="p-6">
+        <Card className="p-6 dark:bg-gray-800">
           <div className="flex items-center space-x-4">
             <div className="flex-shrink-0">
               <CheckCircle2 className="h-8 w-8 text-green-500" />
@@ -86,11 +87,11 @@ export default function DataAnalysisDashboard({ onAnalysis, isAnalyzing }: DataA
             <div className="flex-1 min-w-0">
               <div className="flex items-center space-x-2">
                 <FileText className="h-5 w-5 text-gray-400" />
-                <p className="text-sm font-medium text-gray-900 truncate">
+                <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
                   {fileName}
                 </p>
               </div>
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-gray-500 dark:text-gray-400">
                 File uploaded successfully
               </p>
             </div>
@@ -125,33 +126,33 @@ export default function DataAnalysisDashboard({ onAnalysis, isAnalyzing }: DataA
       {result && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Dataset Overview */}
-          <Card className="col-span-2">
-            <h2 className="text-2xl font-bold mb-4">Dataset Overview</h2>
+          <Card className="col-span-2 p-6 dark:bg-gray-800">
+            <h2 className="text-2xl font-bold mb-4 dark:text-white">Dataset Overview</h2>
             <div className="prose dark:prose-invert">
-              <p>{result.analysis}</p>
+              <p className="dark:text-gray-300">{result.analysis}</p>
             </div>
           </Card>
 
           {/* Data Quality */}
-          <Card>
-            <h2 className="text-2xl font-bold mb-4">Data Quality</h2>
+          <Card className="p-6 dark:bg-gray-800">
+            <h2 className="text-2xl font-bold mb-4 dark:text-white">Data Quality</h2>
             <div className="space-y-4">
               <div>
-                <h3 className="text-lg font-semibold">Completeness</h3>
-                <ul className="list-disc list-inside">
+                <h3 className="text-lg font-semibold dark:text-white">Completeness</h3>
+                <ul className="list-disc list-inside dark:text-gray-300">
                   {Object.entries(result.visualizations.dataQualityMetrics.completeness).map(([column, value]) => (
                     <li key={column}>{column}: {value}%</li>
                   ))}
                 </ul>
               </div>
               <div>
-                <h3 className="text-lg font-semibold">Outliers</h3>
-                <p>Total outliers found: {result.visualizations.dataQualityMetrics.outlierCount}</p>
+                <h3 className="text-lg font-semibold dark:text-white">Outliers</h3>
+                <p className="dark:text-gray-300">Total outliers found: {result.visualizations.dataQualityMetrics.outlierCount}</p>
               </div>
               {result.visualizations.dataQualityMetrics.anomalies.length > 0 && (
                 <div>
-                  <h3 className="text-lg font-semibold">Anomalies</h3>
-                  <ul className="list-disc list-inside">
+                  <h3 className="text-lg font-semibold dark:text-white">Anomalies</h3>
+                  <ul className="list-disc list-inside dark:text-gray-300">
                     {result.visualizations.dataQualityMetrics.anomalies.map((anomaly, index) => (
                       <li key={index}>{anomaly}</li>
                     ))}
@@ -162,13 +163,13 @@ export default function DataAnalysisDashboard({ onAnalysis, isAnalyzing }: DataA
           </Card>
 
           {/* Statistical Summary */}
-          <Card>
-            <h2 className="text-2xl font-bold mb-4">Statistical Summary</h2>
+          <Card className="p-6 dark:bg-gray-800">
+            <h2 className="text-2xl font-bold mb-4 dark:text-white">Statistical Summary</h2>
             <div className="space-y-4">
               {result.visualizations.statisticalSummary.correlations.length > 0 && (
                 <div>
-                  <h3 className="text-lg font-semibold">Correlations</h3>
-                  <ul className="list-disc list-inside">
+                  <h3 className="text-lg font-semibold dark:text-white">Correlations</h3>
+                  <ul className="list-disc list-inside dark:text-gray-300">
                     {result.visualizations.statisticalSummary.correlations.map((correlation, index) => (
                       <li key={index}>{correlation}</li>
                     ))}
@@ -177,8 +178,8 @@ export default function DataAnalysisDashboard({ onAnalysis, isAnalyzing }: DataA
               )}
               {result.visualizations.statisticalSummary.trends.length > 0 && (
                 <div>
-                  <h3 className="text-lg font-semibold">Trends</h3>
-                  <ul className="list-disc list-inside">
+                  <h3 className="text-lg font-semibold dark:text-white">Trends</h3>
+                  <ul className="list-disc list-inside dark:text-gray-300">
                     {result.visualizations.statisticalSummary.trends.map((trend, index) => (
                       <li key={index}>{trend}</li>
                     ))}
@@ -192,12 +193,13 @@ export default function DataAnalysisDashboard({ onAnalysis, isAnalyzing }: DataA
           {result.visualizations.recommendations.map((recommendation, index) => {
             const ChartComponent = ChartComponents[recommendation.chartType]
             return (
-              <Card key={index}>
-                <h2 className="text-2xl font-bold mb-4">{recommendation.title}</h2>
-                <p className="mb-4">{recommendation.insights}</p>
+              <Card key={index} className="p-6 dark:bg-gray-800">
+                <h2 className="text-2xl font-bold mb-4 dark:text-white">{recommendation.title}</h2>
+                <p className="mb-4 dark:text-gray-300">{recommendation.insights}</p>
                 {ChartComponent && (
                   <div className="h-64">
                     <ChartComponent
+                      data={[]}
                       dataPoints={recommendation.dataPoints}
                       xAxisLabel={recommendation.dataPoints.xAxisLabel}
                       yAxisLabel={recommendation.dataPoints.yAxisLabel}
@@ -209,9 +211,9 @@ export default function DataAnalysisDashboard({ onAnalysis, isAnalyzing }: DataA
           })}
 
           {/* Key Insights */}
-          <Card>
-            <h2 className="text-2xl font-bold mb-4">Key Insights</h2>
-            <ul className="list-disc list-inside space-y-2">
+          <Card className="p-6 dark:bg-gray-800">
+            <h2 className="text-2xl font-bold mb-4 dark:text-white">Key Insights</h2>
+            <ul className="list-disc list-inside space-y-2 dark:text-gray-300">
               {result.visualizations.businessInsights.keyFindings.map((finding, index) => (
                 <li key={index}>{finding}</li>
               ))}
@@ -219,12 +221,12 @@ export default function DataAnalysisDashboard({ onAnalysis, isAnalyzing }: DataA
           </Card>
 
           {/* Recommendations */}
-          <Card>
-            <h2 className="text-2xl font-bold mb-4">Recommendations</h2>
+          <Card className="p-6 dark:bg-gray-800">
+            <h2 className="text-2xl font-bold mb-4 dark:text-white">Recommendations</h2>
             <div className="space-y-4">
               <div>
-                <h3 className="text-lg font-semibold">Actions</h3>
-                <ul className="list-disc list-inside">
+                <h3 className="text-lg font-semibold dark:text-white">Actions</h3>
+                <ul className="list-disc list-inside dark:text-gray-300">
                   {result.visualizations.businessInsights.recommendations.map((recommendation, index) => (
                     <li key={index}>{recommendation}</li>
                   ))}
@@ -232,8 +234,8 @@ export default function DataAnalysisDashboard({ onAnalysis, isAnalyzing }: DataA
               </div>
               {result.visualizations.businessInsights.riskFactors.length > 0 && (
                 <div>
-                  <h3 className="text-lg font-semibold">Risk Factors</h3>
-                  <ul className="list-disc list-inside">
+                  <h3 className="text-lg font-semibold dark:text-white">Risk Factors</h3>
+                  <ul className="list-disc list-inside dark:text-gray-300">
                     {result.visualizations.businessInsights.riskFactors.map((risk, index) => (
                       <li key={index}>{risk}</li>
                     ))}
@@ -246,4 +248,4 @@ export default function DataAnalysisDashboard({ onAnalysis, isAnalyzing }: DataA
       )}
     </div>
   )
-} 
+}
