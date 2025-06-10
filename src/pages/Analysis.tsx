@@ -95,28 +95,28 @@ export default function AnalysisApp() {
   }
 
   return (
-    <div id="analytics-app" className="min-h-screen bg-gray-50 py-8">
+    <div id="analytics-app" className="min-h-screen bg-gray-50 py-8 dark:bg-gray-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Platform Header */}
         <div className="text-center mb-12">
           <div className="flex justify-center items-center gap-4 mb-6">
-            <Badge className="bg-green-100 text-green-800 hover:bg-green-200">
+            <Badge className="bg-green-100 text-green-800 hover:bg-green-200 dark:bg-green-900 dark:text-green-300">
               <Zap className="h-3 w-3 mr-1" />
               5x Token Efficiency
             </Badge>
-            <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-200">
+            <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-200 dark:bg-blue-900 dark:text-blue-300">
               <BarChart3 className="h-3 w-3 mr-1" />
               Enterprise Grade
             </Badge>
-            <Badge className="bg-purple-100 text-purple-800 hover:bg-purple-200">
+            <Badge className="bg-purple-100 text-purple-800 hover:bg-purple-200 dark:bg-purple-900 dark:text-purple-300">
               <Clock className="h-3 w-3 mr-1" />
               Real-time Processing
             </Badge>
           </div>
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            DataOptima Analytics Platform
+          <h1 className="text-4xl font-bold text-gray-900 mb-4 dark:text-white">
+            Cadence AI Analytics Platform
           </h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto dark:text-gray-300">
             Experience the power of our revolutionary analytics engine. Upload your datasets and witness 
             the same high-quality insights as Claude and OpenAI, delivered using only 20% of the tokens.
           </p>
@@ -124,39 +124,39 @@ export default function AnalysisApp() {
 
         {/* Efficiency Metrics */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-          <Card className="border-l-4 border-l-green-500">
+          <Card className="border-l-4 border-l-green-500 dark:bg-gray-800 dark:border-gray-700">
             <CardHeader className="pb-2">
-              <CardDescription className="text-xs uppercase tracking-wide font-semibold text-green-600">
+              <CardDescription className="text-xs uppercase tracking-wide font-semibold text-green-600 dark:text-green-400">
                 Token Efficiency
               </CardDescription>
-              <CardTitle className="text-2xl font-bold text-gray-900">80% Reduction</CardTitle>
+              <CardTitle className="text-2xl font-bold text-gray-900 dark:text-white">80% Reduction</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-gray-600">Uses 1/5th the tokens of traditional platforms</p>
+              <p className="text-sm text-gray-600 dark:text-gray-300">Uses 1/5th the tokens of traditional platforms</p>
             </CardContent>
           </Card>
           
-          <Card className="border-l-4 border-l-blue-500">
+          <Card className="border-l-4 border-l-blue-500 dark:bg-gray-800 dark:border-gray-700">
             <CardHeader className="pb-2">
-              <CardDescription className="text-xs uppercase tracking-wide font-semibold text-blue-600">
+              <CardDescription className="text-xs uppercase tracking-wide font-semibold text-blue-600 dark:text-blue-400">
                 Processing Speed
               </CardDescription>
-              <CardTitle className="text-2xl font-bold text-gray-900">&lt; 2 Seconds</CardTitle>
+              <CardTitle className="text-2xl font-bold text-gray-900 dark:text-white">&lt; 2 Seconds</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-gray-600">Lightning-fast analysis and visualization</p>
+              <p className="text-sm text-gray-600 dark:text-gray-300">Lightning-fast analysis and visualization</p>
             </CardContent>
           </Card>
           
-          <Card className="border-l-4 border-l-purple-500">
+          <Card className="border-l-4 border-l-purple-500 dark:bg-gray-800 dark:border-gray-700">
             <CardHeader className="pb-2">
-              <CardDescription className="text-xs uppercase tracking-wide font-semibold text-purple-600">
+              <CardDescription className="text-xs uppercase tracking-wide font-semibold text-purple-600 dark:text-purple-400">
                 Cost Savings
               </CardDescription>
-              <CardTitle className="text-2xl font-bold text-gray-900">5x Cheaper</CardTitle>
+              <CardTitle className="text-2xl font-bold text-gray-900 dark:text-white">5x Cheaper</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-gray-600">Dramatic reduction in operational costs</p>
+              <p className="text-sm text-gray-600 dark:text-gray-300">Dramatic reduction in operational costs</p>
             </CardContent>
           </Card>
         </div>
@@ -165,22 +165,22 @@ export default function AnalysisApp() {
 
         {analysisData && (
           <div className="mt-8 space-y-8">
-            <div className="bg-white shadow rounded-lg p-6">
-              <h2 className="text-2xl font-semibold mb-4">Analysis Results</h2>
-              <pre className="whitespace-pre-wrap font-mono text-sm">
+            <div className="bg-white shadow rounded-lg p-6 dark:bg-gray-800">
+              <h2 className="text-2xl font-semibold mb-4 dark:text-white">Analysis Results</h2>
+              <pre className="whitespace-pre-wrap font-mono text-sm dark:text-gray-300">
                 {analysisData}
               </pre>
             </div>
 
             {tableData && (
-              <div className="bg-white shadow rounded-lg p-6">
-                <h2 className="text-2xl font-semibold mb-4">Data Preview</h2>
+              <div className="bg-white shadow rounded-lg p-6 dark:bg-gray-800">
+                <h2 className="text-2xl font-semibold mb-4 dark:text-white">Data Preview</h2>
                 <input
                   type="text"
                   placeholder="Search table..."
                   value={tableSearch}
                   onChange={e => setTableSearch(e.target.value)}
-                  className="mb-4 px-3 py-2 border rounded w-full max-w-xs text-sm"
+                  className="mb-4 px-3 py-2 border rounded w-full max-w-xs text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                 />
                 <div className="overflow-x-auto">
                   <div className="max-h-[400px] overflow-y-auto border rounded">
@@ -190,7 +190,7 @@ export default function AnalysisApp() {
                           {tableData.headers.map((header, index) => (
                             <TableHead
                               key={index}
-                              className="font-semibold sticky top-0 bg-white z-10"
+                              className="font-semibold sticky top-0 bg-white z-10 dark:bg-gray-800"
                             >
                               {header}
                             </TableHead>
@@ -223,8 +223,8 @@ export default function AnalysisApp() {
 
             {/* Chart Recommendations Section */}
             {claudeLog?.visualizations?.recommendations && parsedData.length > 0 && (
-              <div className="bg-white shadow rounded-lg p-6 mt-8">
-                <h2 className="text-2xl font-semibold mb-4">Recommended Visualizations</h2>
+              <div className="bg-white shadow rounded-lg p-6 mt-8 dark:bg-gray-800">
+                <h2 className="text-2xl font-semibold mb-4 dark:text-white">Recommended Visualizations</h2>
                 <div className="grid grid-cols-1 gap-8">
                   {claudeLog.visualizations.recommendations.slice(0, 2).map((rec: any, idx: number) => {
                     const ChartComponent = chartComponentMap[rec.chartType]
@@ -248,8 +248,8 @@ export default function AnalysisApp() {
                     }
                     return (
                       <div key={idx} className="flex flex-col">
-                        <h3 className="text-lg font-bold mb-2">{rec.title}</h3>
-                        <p className="mb-2 text-gray-600">{rec.insights}</p>
+                        <h3 className="text-lg font-bold mb-2 dark:text-white">{rec.title}</h3>
+                        <p className="mb-2 text-gray-600 dark:text-gray-300">{rec.insights}</p>
                         {ChartComponent ? (
                           <div className="h-80 min-w-[600px]">
                             <ChartComponent
