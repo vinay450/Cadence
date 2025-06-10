@@ -10,11 +10,13 @@ import {
 } from "@/components/ui/table"
 import { LineChart } from '@/components/visualizations/LineChart'
 import { ComposedChart } from '@/components/visualizations/ComposedChart'
+import { ScatterChart } from '@/components/visualizations/ScatterChart'
 
 // Helper: get chart component by type
 const chartComponentMap: Record<string, any> = {
   LineChart,
   ComposedChart,
+  ScatterChart,
 }
 
 export default function Analysis() {
@@ -42,7 +44,20 @@ export default function Analysis() {
         })
         return obj
       })
-      setParsedData(objects)
+      // If we have a recommendation, sort by its x-axis key
+      let sortedObjects = objects
+      if (claudeLog?.visualizations?.recommendations?.[0]?.dataPoints?.xAxis) {
+        const xKey = claudeLog.visualizations.recommendations[0].dataPoints.xAxis
+        sortedObjects = [...objects].sort((a, b) => {
+          // Try to parse as number, fallback to string
+          const aVal = isNaN(Number(a[xKey])) ? a[xKey] : Number(a[xKey])
+          const bVal = isNaN(Number(b[xKey])) ? b[xKey] : Number(b[xKey])
+          if (aVal < bVal) return -1
+          if (aVal > bVal) return 1
+          return 0
+        })
+      }
+      setParsedData(sortedObjects)
 
       const response = await fetch('https://awuibcrmituuaailkrdl.supabase.co/functions/v1/bright-api', {
         method: 'POST',
@@ -155,6 +170,24 @@ export default function Analysis() {
                 <div className="grid grid-cols-1 gap-8">
                   {claudeLog.visualizations.recommendations.slice(0, 2).map((rec: any, idx: number) => {
                     const ChartComponent = chartComponentMap[rec.chartType]
+                    // Sort data by the x-axis key for this chart, handling numbers as numbers
+                    let sortedData = parsedData
+                    if (rec.dataPoints?.xAxis) {
+                      const xKey = rec.dataPoints.xAxis
+                      // Check if all x values are numeric
+                      const allNumeric = parsedData.every(row => !isNaN(Number(row[xKey])))
+                      sortedData = [...parsedData].sort((a, b) => {
+                        if (allNumeric) {
+                          return Number(a[xKey]) - Number(b[xKey])
+                        } else {
+                          return String(a[xKey]).localeCompare(String(b[xKey]))
+                        }
+                      })
+                      // If numeric, convert xKey values to numbers for the chart
+                      if (allNumeric) {
+                        sortedData = sortedData.map(row => ({ ...row, [xKey]: Number(row[xKey]) }))
+                      }
+                    }
                     return (
                       <div key={idx} className="flex flex-col">
                         <h3 className="text-lg font-bold mb-2">{rec.title}</h3>
@@ -162,7 +195,7 @@ export default function Analysis() {
                         {ChartComponent ? (
                           <div className="h-80 min-w-[600px]">
                             <ChartComponent
-                              data={parsedData}
+                              data={sortedData}
                               dataPoints={rec.dataPoints}
                               xAxisLabel={rec.dataPoints.xAxisLabel}
                               yAxisLabel={rec.dataPoints.yAxisLabel}
