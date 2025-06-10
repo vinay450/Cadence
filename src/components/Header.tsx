@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button"
 import { BarChart3, Menu, Sun, Moon } from "lucide-react"
 import { useState, useEffect } from "react"
@@ -46,9 +45,6 @@ export default function Header() {
           <div className="flex items-center gap-2">
             <BarChart3 className="h-8 w-8 text-indigo-600 dark:text-indigo-400" />
             <span className="text-xl font-bold text-gray-900 dark:text-white">Cadence AI</span>
-            <span className="text-xs bg-indigo-100 text-indigo-700 px-2 py-1 rounded-full font-medium dark:bg-indigo-900 dark:text-indigo-300">
-              5x Efficient
-            </span>
           </div>
           
           <div className="hidden md:flex items-center space-x-8">

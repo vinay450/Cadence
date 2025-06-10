@@ -13,6 +13,7 @@ import { LineChart } from '@/components/visualizations/LineChart'
 import { ComposedChart } from '@/components/visualizations/ComposedChart'
 import { ScatterChart } from '@/components/visualizations/ScatterChart'
 import { BarChart } from '@/components/visualizations/BarChart'
+import { ArrowUpDown } from 'lucide-react'
 
 // Helper: get chart component by type
 const chartComponentMap: Record<string, any> = {
@@ -22,6 +23,8 @@ const chartComponentMap: Record<string, any> = {
   BarChart,
 }
 
+type SortDirection = 'asc' | 'desc' | null
+
 export default function AnalysisApp() {
   const [analysisData, setAnalysisData] = useState('')
   const [isAnalyzing, setIsAnalyzing] = useState(false)
@@ -30,6 +33,45 @@ export default function AnalysisApp() {
   const [parsedData, setParsedData] = useState<any[]>([])
   const [isLogMinimized, setIsLogMinimized] = useState(false)
   const [tableSearch, setTableSearch] = useState('')
+  const [sortColumn, setSortColumn] = useState<number | null>(null)
+  const [sortDirection, setSortDirection] = useState<SortDirection>(null)
+
+  const handleSort = (columnIndex: number) => {
+    if (sortColumn === columnIndex) {
+      // Toggle direction if clicking the same column
+      setSortDirection(current => {
+        if (current === 'asc') return 'desc'
+        if (current === 'desc') return null
+        return 'asc'
+      })
+    } else {
+      // Set new column and default to ascending
+      setSortColumn(columnIndex)
+      setSortDirection('asc')
+    }
+  }
+
+  const getSortedRows = () => {
+    if (!tableData || sortColumn === null || sortDirection === null) return tableData?.rows || []
+
+    return [...tableData.rows].sort((a, b) => {
+      const aVal = a[sortColumn]
+      const bVal = b[sortColumn]
+      
+      // Check if values are numeric
+      const aNum = Number(aVal)
+      const bNum = Number(bVal)
+      const isNumeric = !isNaN(aNum) && !isNaN(bNum)
+
+      if (isNumeric) {
+        return sortDirection === 'asc' ? aNum - bNum : bNum - aNum
+      } else {
+        return sortDirection === 'asc' 
+          ? String(aVal).localeCompare(String(bVal))
+          : String(bVal).localeCompare(String(aVal))
+      }
+    })
+  }
 
   const handleAnalysis = async (data: string) => {
     setIsAnalyzing(true)
@@ -128,15 +170,21 @@ export default function AnalysisApp() {
                         {tableData.headers.map((header, index) => (
                           <TableHead
                             key={index}
-                            className="font-semibold sticky top-0 bg-white z-10 dark:bg-gray-800"
+                            className="font-semibold sticky top-0 bg-white z-10 dark:bg-gray-800 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700"
+                            onClick={() => handleSort(index)}
                           >
-                            {header}
+                            <div className="flex items-center gap-2">
+                              {header}
+                              {sortColumn === index && (
+                                <ArrowUpDown className="h-4 w-4" />
+                              )}
+                            </div>
                           </TableHead>
                         ))}
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {tableData.rows
+                      {getSortedRows()
                         .filter(row =>
                           tableSearch.trim() === '' ||
                           row.some(cell =>

@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button"
 import { ArrowRight, BarChart3, Zap, TrendingUp } from "lucide-react"
 import CyclingTypingAnimation from "./CyclingTypingAnimation"
@@ -15,16 +14,6 @@ export default function Hero() {
       
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-2xl text-center">
-          <div className="mb-8 flex justify-center">
-            <div className="relative rounded-full px-3 py-1 text-sm leading-6 text-gray-600 dark:text-gray-300 ring-1 ring-gray-900/10 dark:ring-gray-100/20 hover:ring-gray-900/20 dark:hover:ring-gray-100/30">
-              Advanced Analytics Platform{' '}
-              <span className="font-semibold text-indigo-600 dark:text-indigo-400">
-                <span className="absolute inset-0" aria-hidden="true" />
-                Learn more <ArrowRight className="inline h-4 w-4" />
-              </span>
-            </div>
-          </div>
-          
           <h1 className="text-4xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-6xl">
             Advanced Data Analytics
             <span className="block mt-2">
@@ -33,7 +22,7 @@ export default function Hero() {
           </h1>
           
           <p className="mt-6 text-lg leading-8 text-gray-600 dark:text-gray-300">
-            Revolutionary AI-powered analytics platform that delivers high-quality insights with efficient computational processing. Built for enterprises that demand performance without compromise.
+            Cadence AI builds your analytics with 80% fewer tokens than Claude or OpenAI through our rigorous preprocessing and server-side graph rendering.
           </p>
           
           <div className="mt-10 flex items-center justify-center gap-x-6">
