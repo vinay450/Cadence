@@ -2,7 +2,7 @@ import React from 'react'
 import { Bar, BarChart as RechartsBarChart, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 
 interface BarChartProps {
-  data: any[]
+  data?: any[]
   dataPoints: {
     xAxis: string
     yAxis: string[]
@@ -13,7 +13,7 @@ interface BarChartProps {
   yAxisLabel: string
 }
 
-export function BarChart({ data, dataPoints, xAxisLabel, yAxisLabel }: BarChartProps) {
+export function BarChart({ data = [], dataPoints, xAxisLabel, yAxisLabel }: BarChartProps) {
   console.log('BarChart Data:', data)
   console.log('BarChart DataPoints:', dataPoints)
   
@@ -49,4 +49,4 @@ export function BarChart({ data, dataPoints, xAxisLabel, yAxisLabel }: BarChartP
       </RechartsBarChart>
     </ResponsiveContainer>
   )
-} 
+}
