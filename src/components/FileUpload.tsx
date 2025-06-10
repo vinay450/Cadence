@@ -36,7 +36,7 @@ export default function FileUpload({ onUpload, loading }: FileUploadProps) {
               Drag files here or click to select files.
             </p>
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              Cadence AI understands .csv, .json, and .xlsx.
+              Cadence AI understands .csv, .json, and .xlsx filetypes.
             </p>
           </div>
         </>
