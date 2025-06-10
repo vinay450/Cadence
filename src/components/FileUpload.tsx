@@ -1,59 +1,51 @@
-import React, { useCallback } from 'react';
-import { useDropzone } from 'react-dropzone';
-import { Card } from '@/components/ui/card';
-import { Loader2 } from 'lucide-react';
+import { useCallback } from 'react'
+import { useDropzone } from 'react-dropzone'
+import { Button } from '@/components/ui/button'
+import { File, Loader2 } from 'lucide-react'
 
-export interface FileUploadProps {
-  onUpload: (file: File) => Promise<void>;
-  loading: boolean;
+interface FileUploadProps {
+  onUpload: (file: File) => void
+  loading: boolean
 }
 
 export default function FileUpload({ onUpload, loading }: FileUploadProps) {
-  const onDrop = useCallback(async (acceptedFiles: File[]) => {
-    if (acceptedFiles.length > 0) {
-      await onUpload(acceptedFiles[0]);
-    }
-  }, [onUpload]);
-
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop,
-    accept: {
-      'text/csv': ['.csv'],
-      'application/json': ['.json'],
-      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ['.xlsx'],
-      'application/vnd.ms-excel': ['.xls']
+  const onDrop = useCallback(
+    (acceptedFiles: File[]) => {
+      if (acceptedFiles.length > 0) {
+        onUpload(acceptedFiles[0])
+      }
     },
-    maxFiles: 1,
-    disabled: loading
-  });
+    [onUpload]
+  )
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop })
 
   return (
-    <Card
+    <div
       {...getRootProps()}
-      className={`p-6 border-2 border-dashed rounded-xl cursor-pointer transition-colors
-        ${isDragActive ? 'border-primary bg-primary/10' : 'border-gray-300 hover:border-primary'}
-        ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+      className="w-full p-8 flex flex-col items-center justify-center rounded-lg border-2 border-dashed cursor-pointer dark:bg-gray-800 dark:border-gray-600"
     >
       <input {...getInputProps()} />
-      <div className="flex flex-col items-center justify-center text-center space-y-2">
+      {isDragActive ? (
+        <p className="text-gray-600 dark:text-gray-400">Drop the files here ...</p>
+      ) : (
+        <>
+          <File className="h-10 w-10 text-gray-500 dark:text-gray-400 mb-4" />
+          <p className="text-gray-600 dark:text-gray-400">
+            Drag 'n' drop some files here, or click to select files
+          </p>
+        </>
+      )}
+      <Button disabled={loading} className="mt-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700">
         {loading ? (
           <>
-            <Loader2 className="h-8 w-8 animate-spin text-primary" />
-            <p className="text-sm text-gray-500">Analyzing your data...</p>
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            Uploading...
           </>
         ) : (
-          <>
-            <p className="text-sm text-gray-500">
-              {isDragActive
-                ? 'Drop the file here...'
-                : 'Drag and drop your data file here, or click to select'}
-            </p>
-            <p className="text-xs text-gray-400">
-              Supports CSV, JSON, and Excel files
-            </p>
-          </>
+          'Upload a file'
         )}
-      </div>
-    </Card>
-  );
-} 
+      </Button>
+    </div>
+  )
+}

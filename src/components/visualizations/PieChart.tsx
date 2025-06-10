@@ -1,6 +1,5 @@
-
 import React from 'react'
-import { Pie, PieChart as RechartsPieChart, Cell, Tooltip, ResponsiveContainer } from 'recharts'
+import { Cell, Pie, PieChart as RechartsPieChart, ResponsiveContainer, Tooltip } from 'recharts'
 
 interface PieChartProps {
   data?: any[]

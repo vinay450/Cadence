@@ -1,144 +1,121 @@
-
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { CheckCircle, XCircle, Zap, DollarSign, Clock, BarChart3 } from "lucide-react"
-
-const comparisonData = [
-  {
-    metric: "Token Efficiency",
-    ourPlatform: "1x tokens",
-    claude: "5x tokens",
-    openai: "5x tokens",
-    advantage: true
-  },
-  {
-    metric: "Processing Speed",
-    ourPlatform: "< 2 seconds",
-    claude: "8-12 seconds",
-    openai: "6-10 seconds",
-    advantage: true
-  },
-  {
-    metric: "Cost per Analysis",
-    ourPlatform: "$0.02",
-    claude: "$0.10",
-    openai: "$0.08",
-    advantage: true
-  },
-  {
-    metric: "Chart Quality",
-    ourPlatform: "High",
-    claude: "High",
-    openai: "High",
-    advantage: false
-  },
-  {
-    metric: "Data Accuracy",
-    ourPlatform: "99.8%",
-    claude: "99.7%",
-    openai: "99.6%",
-    advantage: true
-  }
-]
+import { CheckCircle2, Zap, TrendingUp } from "lucide-react"
 
 export default function ComparisonSection() {
   return (
-    <section className="py-24 bg-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <Badge className="mb-4 bg-green-100 text-green-800 hover:bg-green-200">
-            Competitive Analysis
-          </Badge>
-          <h2 className="text-3xl font-bold text-gray-900 sm:text-4xl">
-            Why We're 5x More Efficient
+    <section id="comparison" className="py-12 bg-gray-50 dark:bg-gray-900">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center">
+          <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
+            Unmatched Efficiency and Performance
           </h2>
-          <p className="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">
-            Direct comparison with industry leaders shows our revolutionary approach to token optimization
-            delivers identical quality with unprecedented efficiency.
+          <p className="mt-3 text-xl text-gray-600 dark:text-gray-300">
+            See how our platform stands above the rest in key performance metrics.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          <div>
-            <Card className="border-2 border-indigo-200">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <BarChart3 className="h-6 w-6 text-indigo-600" />
-                  Performance Comparison
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {comparisonData.map((item, index) => (
-                    <div key={index} className="grid grid-cols-4 gap-4 py-3 border-b border-gray-100 last:border-b-0">
-                      <div className="font-medium text-sm text-gray-900">
-                        {item.metric}
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm font-semibold text-indigo-600">
-                          {item.ourPlatform}
-                        </span>
-                        {item.advantage && <CheckCircle className="h-4 w-4 text-green-500" />}
-                      </div>
-                      <div className="text-sm text-gray-600">
-                        {item.claude}
-                      </div>
-                      <div className="text-sm text-gray-600">
-                        {item.openai}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+        <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* Our Platform */}
+          <Card className="bg-white dark:bg-gray-800 shadow-xl">
+            <CardHeader className="space-y-2">
+              <CardTitle className="text-2xl font-semibold text-indigo-600 dark:text-indigo-400">
+                Our Platform
+              </CardTitle>
+              <CardDescription className="text-gray-500 dark:text-gray-400">
+                Optimized for efficiency and accuracy.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="grid gap-4">
+              <div className="flex items-center">
+                <CheckCircle2 className="h-5 w-5 text-green-500 mr-2" />
+                <span className="text-gray-900 dark:text-gray-100">
+                  <span className="font-semibold">Token Usage:</span> 80% Less
+                </span>
+              </div>
+              <div className="flex items-center">
+                <CheckCircle2 className="h-5 w-5 text-green-500 mr-2" />
+                <span className="text-gray-900 dark:text-gray-100">
+                  <span className="font-semibold">Processing Speed:</span> 5x Faster
+                </span>
+              </div>
+              <div className="flex items-center">
+                <CheckCircle2 className="h-5 w-5 text-green-500 mr-2" />
+                <span className="text-gray-900 dark:text-gray-100">
+                  <span className="font-semibold">Cost Efficiency:</span> Unbeatable
+                </span>
+              </div>
+            </CardContent>
+          </Card>
 
-          <div className="space-y-6">
-            <div className="flex items-start gap-4">
-              <div className="flex-shrink-0">
-                <Zap className="h-8 w-8 text-yellow-500" />
+          {/* Claude */}
+          <Card className="bg-white dark:bg-gray-800 shadow-md">
+            <CardHeader className="space-y-2">
+              <CardTitle className="text-2xl font-semibold text-gray-900 dark:text-white">
+                Claude
+              </CardTitle>
+              <CardDescription className="text-gray-500 dark:text-gray-400">
+                A strong contender in AI analysis.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="grid gap-4">
+              <div className="flex items-center">
+                <Zap className="h-5 w-5 text-yellow-500 mr-2" />
+                <span className="text-gray-900 dark:text-gray-100">
+                  Higher token consumption
+                </span>
               </div>
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                  Revolutionary Token Compression
-                </h3>
-                <p className="text-gray-600">
-                  Our proprietary algorithms achieve 5x token reduction through advanced semantic compression
-                  while maintaining 100% analytical accuracy.
-                </p>
+              <div className="flex items-center">
+                <TrendingUp className="h-5 w-5 text-blue-500 mr-2" />
+                <span className="text-gray-900 dark:text-gray-100">
+                  Good analysis speed
+                </span>
               </div>
-            </div>
+              <div className="flex items-center">
+                <Badge className="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-300 border-none">
+                  Comparable insights
+                </Badge>
+              </div>
+            </CardContent>
+          </Card>
 
-            <div className="flex items-start gap-4">
-              <div className="flex-shrink-0">
-                <Clock className="h-8 w-8 text-blue-500" />
+          {/* OpenAI */}
+          <Card className="bg-white dark:bg-gray-800 shadow-md">
+            <CardHeader className="space-y-2">
+              <CardTitle className="text-2xl font-semibold text-gray-900 dark:text-white">
+                OpenAI
+              </CardTitle>
+              <CardDescription className="text-gray-500 dark:text-gray-400">
+                Industry-leading AI solutions.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="grid gap-4">
+              <div className="flex items-center">
+                <Zap className="h-5 w-5 text-yellow-500 mr-2" />
+                <span className="text-gray-900 dark:text-gray-100">
+                  Significant token usage
+                </span>
               </div>
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                  Sub-Second Processing
-                </h3>
-                <p className="text-gray-600">
-                  Optimized data pipelines and intelligent caching deliver results in under 2 seconds,
-                  compared to 8-12 seconds with traditional approaches.
-                </p>
+              <div className="flex items-center">
+                <TrendingUp className="h-5 w-5 text-blue-500 mr-2" />
+                <span className="text-gray-900 dark:text-gray-100">
+                  Fast processing times
+                </span>
               </div>
-            </div>
+              <div className="flex items-center">
+                <Badge className="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-300 border-none">
+                  High-quality analysis
+                </Badge>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
 
-            <div className="flex items-start gap-4">
-              <div className="flex-shrink-0">
-                <DollarSign className="h-8 w-8 text-green-500" />
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                  80% Cost Reduction
-                </h3>
-                <p className="text-gray-600">
-                  Direct correlation between token efficiency and cost savings means enterprises
-                  can scale analytics without proportional cost increases.
-                </p>
-              </div>
-            </div>
-          </div>
+        <div className="mt-12 text-center">
+          <p className="text-lg text-gray-600 dark:text-gray-300">
+            Our platform delivers top-tier analysis with unparalleled efficiency,
+            making it the smart choice for your business.
+          </p>
         </div>
       </div>
     </section>

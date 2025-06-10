@@ -1,6 +1,5 @@
-
 import React from 'react'
-import { Area, AreaChart as RechartsAreaChart, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
+import { Area, AreaChart as RechartsAreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 
 interface AreaChartProps {
   data?: any[]
