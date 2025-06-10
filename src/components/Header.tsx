@@ -35,12 +35,12 @@ export default function Header() {
   }
 
   const scrollToApp = () => {
-    const appSection = document.getElementById('analytics-app')
+    const appSection = document.getElementById('try-app')
     appSection?.scrollIntoView({ behavior: 'smooth' })
   }
 
   return (
-    <header className="fixed top-0 w-full bg-white/80 backdrop-blur-md border-b border-gray-200 z-50 dark:bg-gray-900/80 dark:border-gray-700">
+    <header className="fixed top-0 w-full bg-white/80 dark:bg-gray-800/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-700 z-50">
       <nav className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           <div className="flex items-center gap-2">
@@ -97,7 +97,7 @@ export default function Header() {
         </div>
         
         {isMenuOpen && (
-          <div className="md:hidden border-t border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-900">
+          <div className="md:hidden border-t border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800">
             <div className="space-y-1 px-2 pb-3 pt-2">
               <a href="#features" className="block px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300">
                 Features
