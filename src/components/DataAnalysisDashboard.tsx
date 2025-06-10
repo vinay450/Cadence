@@ -1,8 +1,7 @@
-
 import React, { useState } from 'react'
 import { Card } from '@/components/ui/card'
 import FileUpload from './FileUpload'
-import { analyzeDataset, AnalysisResult } from '@/lib/api'
+import { AnalysisResult } from '@/lib/api'
 import { useToast } from '@/components/ui/use-toast'
 import { LineChart } from './visualizations/LineChart'
 import { BarChart } from './visualizations/BarChart'

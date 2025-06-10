@@ -1,4 +1,5 @@
 import * as React from "react"
+import { cn } from "@/lib/utils"
 import * as ToastPrimitives from "@radix-ui/react-toast"
 import type {
   ToastActionElement,
@@ -189,4 +190,4 @@ function useToast() {
   }
 }
 
-export { useToast, toast } 
+export { useToast, toast }

@@ -1,5 +1,5 @@
 import React from 'react'
-import { Scatter, ScatterChart as RechartsScatterChart, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
+import { CartesianGrid, ResponsiveContainer, Scatter, ScatterChart as RechartsScatterChart, Tooltip, XAxis, YAxis } from 'recharts'
 
 interface ScatterChartProps {
   data: any[]
@@ -35,4 +35,4 @@ export function ScatterChart({ data, dataPoints, xAxisLabel, yAxisLabel }: Scatt
       </RechartsScatterChart>
     </ResponsiveContainer>
   )
-} 
+}

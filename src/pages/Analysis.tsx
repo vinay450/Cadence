@@ -1,5 +1,5 @@
-
 import DataAnalysisDashboard from '@/components/DataAnalysisDashboard'
+import AnimatedTextAnalysis from '@/components/AnimatedTextAnalysis'
 import { useState } from 'react'
 import {
   Table,
@@ -106,14 +106,9 @@ export default function AnalysisApp() {
     <div className="space-y-8">
       <DataAnalysisDashboard onAnalysis={handleAnalysis} isAnalyzing={isAnalyzing} />
 
-      {analysisData && (
+      {(analysisData || isAnalyzing) && (
         <div className="space-y-8">
-          <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
-            <h2 className="text-2xl font-semibold mb-4 dark:text-white">Analysis Results</h2>
-            <pre className="whitespace-pre-wrap font-mono text-sm dark:text-gray-300">
-              {analysisData}
-            </pre>
-          </div>
+          <AnimatedTextAnalysis text={analysisData} isAnalyzing={isAnalyzing} />
 
           {tableData && (
             <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">

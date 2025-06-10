@@ -1,5 +1,4 @@
 import { supabase } from './supabase'
-import { Json } from '@/types/supabase'
 
 export interface VisualizationRecommendation {
   title: string
@@ -112,4 +111,4 @@ async function readFileAsBase64(file: File): Promise<string> {
     reader.onerror = () => reject(reader.error)
     reader.readAsDataURL(file)
   })
-} 
+}
