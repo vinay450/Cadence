@@ -267,8 +267,8 @@ This analysis reveals a well-instrumented system with clear failure signatures t
           }
         ]
       }
-    }
-    
+      }
+
     default:
       return {
         analysisText: "Loading analysis...",
@@ -375,7 +375,7 @@ export default function DemoAnalysisDisplay({ dataset, onBack }: DemoAnalysisDis
 
       {/* Navigation Section */}
       <div id="data-navigation">
-        <DataNavigationSection />
+      <DataNavigationSection />
       </div>
 
       {/* Loading State */}
@@ -391,10 +391,10 @@ export default function DemoAnalysisDisplay({ dataset, onBack }: DemoAnalysisDis
       {/* Content Section */}
       {showContent && (
         <>
-          {/* AI Analysis Section */}
-          <div id="ai-analysis">
-            <AnimatedTextAnalysis text={demoData.analysisText} isAnalyzing={isAnalyzing} />
-          </div>
+      {/* AI Analysis Section */}
+      <div id="ai-analysis">
+        <AnimatedTextAnalysis text={demoData.analysisText} isAnalyzing={isAnalyzing} />
+      </div>
 
           {/* Disabled Chat Interface */}
           <div id="chat-section" className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
@@ -474,41 +474,41 @@ export default function DemoAnalysisDisplay({ dataset, onBack }: DemoAnalysisDis
                   data={demoData.chartData}
                   columns={demoData.tableColumns}
                 />
-              </div>
-            </div>
-          )}
+          </div>
+        </div>
+      )}
 
-          {/* Chart Recommendations Section */}
-          {demoData.recommendations.length > 0 && (
-            <div id="visualizations" className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
+      {/* Chart Recommendations Section */}
+      {demoData.recommendations.length > 0 && (
+        <div id="visualizations" className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
               <h2 className="text-2xl font-semibold mb-4 dark:text-white">Graphical Analysis</h2>
-              <div className="grid grid-cols-1 gap-8">
-                {demoData.recommendations.map((rec, idx) => (
-                  <div key={idx} className="flex flex-col">
-                    <h3 className="text-lg font-bold mb-2 dark:text-white">{rec.title}</h3>
-                    <p className="mb-2 text-gray-600 dark:text-gray-300">{rec.insights}</p>
-                    <div className="h-80 min-w-[600px]">
-                      {rec.chartType === 'LineChart' && (
-                        <LineChart
-                          data={demoData.chartData}
-                          dataPoints={rec.dataPoints as LineChartDataPoints}
-                          xAxisLabel={rec.dataPoints.xAxisLabel}
-                          yAxisLabel={rec.dataPoints.yAxisLabel}
-                        />
-                      )}
-                      {rec.chartType === 'BarChart' && (
-                        <BarChart
-                          data={demoData.chartData}
+          <div className="grid grid-cols-1 gap-8">
+            {demoData.recommendations.map((rec, idx) => (
+              <div key={idx} className="flex flex-col">
+                <h3 className="text-lg font-bold mb-2 dark:text-white">{rec.title}</h3>
+                <p className="mb-2 text-gray-600 dark:text-gray-300">{rec.insights}</p>
+                <div className="h-80 min-w-[600px]">
+                  {rec.chartType === 'LineChart' && (
+                    <LineChart
+                      data={rec.title === "Product Category Revenue Comparison" ? aggregatedCategoryData : demoData.chartData}
+                      dataPoints={rec.dataPoints as LineChartDataPoints}
+                      xAxisLabel={rec.dataPoints.xAxisLabel}
+                      yAxisLabel={rec.dataPoints.yAxisLabel}
+                    />
+                  )}
+                  {rec.chartType === 'BarChart' && (
+                    <BarChart
+                      data={demoData.chartData}
                           dataPoints={rec.dataPoints as BarChartDataPoints}
                           xAxisLabel={rec.dataPoints.xAxisLabel}
                           yAxisLabel={rec.dataPoints.yAxisLabel}
-                        />
-                      )}
-                    </div>
-                  </div>
-                ))}
+                    />
+                  )}
+                </div>
               </div>
-            </div>
+            ))}
+          </div>
+        </div>
           )}
         </>
       )}
