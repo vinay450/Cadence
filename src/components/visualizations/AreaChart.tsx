@@ -1,7 +1,9 @@
+
 import React from 'react'
 import { Area, AreaChart as RechartsAreaChart, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 
 interface AreaChartProps {
+  data?: any[]
   dataPoints: {
     xAxis: string
     yAxis: string[]
@@ -12,10 +14,10 @@ interface AreaChartProps {
   yAxisLabel: string
 }
 
-export function AreaChart({ dataPoints, xAxisLabel, yAxisLabel }: AreaChartProps) {
+export function AreaChart({ data = [], dataPoints, xAxisLabel, yAxisLabel }: AreaChartProps) {
   return (
     <ResponsiveContainer width="100%" height="100%">
-      <RechartsAreaChart data={[]}>
+      <RechartsAreaChart data={data}>
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis 
           dataKey={dataPoints.xAxis} 
@@ -36,4 +38,4 @@ export function AreaChart({ dataPoints, xAxisLabel, yAxisLabel }: AreaChartProps
       </RechartsAreaChart>
     </ResponsiveContainer>
   )
-} 
+}
