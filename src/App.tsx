@@ -13,20 +13,20 @@ export default function App() {
     <>
       <Toaster />
       <Router>
-        <div className="min-h-screen bg-white">
+        <div className="min-h-screen bg-white dark:bg-gray-900">
           <Routes>
             <Route path="/" element={
               <>
                 <Header />
                 <main className="pt-16">
                   <Hero />
+                  <AnalysisApp />
                   <section id="features">
                     <TechnicalFeatures />
                   </section>
                   <section id="comparison">
                     <ComparisonSection />
                   </section>
-                  <AnalysisApp />
                 </main>
                 <Footer />
               </>
