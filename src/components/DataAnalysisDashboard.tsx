@@ -76,43 +76,45 @@ export default function DataAnalysisDashboard({ onAnalysis, isAnalyzing }: DataA
         <div className="space-y-4">
           <FileUpload onUpload={handleFileUpload} loading={isAnalyzing} />
           
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Select AI Model</label>
-            <Select value={selectedModel} onValueChange={setSelectedModel}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select a model" />
-              </SelectTrigger>
-              <SelectContent>
-                {MODEL_OPTIONS.map((model) => (
-                  <SelectItem key={model.id} value={model.id}>
-                    <div className="flex items-center justify-between w-full">
-                      <span>{model.name}</span>
-                      <span className="text-xs text-gray-500">({model.cost} cost)</span>
-                    </div>
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            {getModelCostWarning(selectedModel)}
+          <div className="flex items-center gap-4">
+            <div className="w-64">
+              <Select value={selectedModel} onValueChange={setSelectedModel}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select a model" />
+                </SelectTrigger>
+                <SelectContent>
+                  {MODEL_OPTIONS.map((model) => (
+                    <SelectItem key={model.id} value={model.id}>
+                      <div className="flex items-center justify-between w-full">
+                        <span>{model.name}</span>
+                        <span className="text-xs text-gray-500 ml-2">({model.cost} cost)</span>
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <Button
+              onClick={handleAnalysis}
+              disabled={!data || isAnalyzing}
+              className="flex-1 bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600"
+            >
+              {isAnalyzing ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Analyzing...
+                </>
+              ) : (
+                <>
+                  <Sparkles className="mr-2 h-4 w-4" />
+                  Start Analysis
+                </>
+              )}
+            </Button>
           </div>
 
-          <Button
-            onClick={handleAnalysis}
-            disabled={!data || isAnalyzing}
-            className="w-full bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600"
-          >
-            {isAnalyzing ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Analyzing...
-              </>
-            ) : (
-              <>
-                <Sparkles className="mr-2 h-4 w-4" />
-                Start Analysis
-              </>
-            )}
-          </Button>
+          {getModelCostWarning(selectedModel)}
         </div>
       </div>
     </Card>
