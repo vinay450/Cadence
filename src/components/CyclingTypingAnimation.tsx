@@ -4,7 +4,8 @@ const phrases = [
   "80% Fewer Tokens",
   "Intelligent Data Pre-Processing", 
   "Multi-Chart Visualization",
-  "Advanced Data Insights"
+  "Smart Enterprise Scaling",
+  "Advanced Data Insights",
 ]
 
 export default function CyclingTypingAnimation() {
