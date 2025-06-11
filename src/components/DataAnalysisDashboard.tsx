@@ -1,75 +1,118 @@
 import { useState } from 'react'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { Loader2, Upload, Sparkles } from 'lucide-react'
 import FileUpload from './FileUpload'
-import { Upload, Brain, Zap } from 'lucide-react'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+
+const MODEL_OPTIONS = [
+  { id: 'claude-3-5-haiku-20241022', name: 'Claude 3.5 Haiku', cost: 'Low' },
+  { id: 'claude-3-5-sonnet-20241022', name: 'Claude 3.5 Sonnet', cost: 'Medium' },
+  { id: 'claude-3-7-sonnet-20250219', name: 'Claude 3.7 Sonnet', cost: 'Medium' },
+  { id: 'claude-opus-4-20250514', name: 'Claude Opus 4', cost: 'Very High' }
+]
 
 interface DataAnalysisDashboardProps {
-  onAnalysis: (data: string) => void
+  onAnalysis: (data: string, model: string) => void
   isAnalyzing: boolean
 }
 
 export default function DataAnalysisDashboard({ onAnalysis, isAnalyzing }: DataAnalysisDashboardProps) {
-  const [data, setData] = useState('')
+  const [data, setData] = useState<string | null>(null)
+  const [selectedModel, setSelectedModel] = useState(MODEL_OPTIONS[1].id) // Default to Sonnet
 
   const handleFileUpload = (file: File) => {
     const reader = new FileReader()
     reader.onload = (e) => {
-      const fileData = e.target?.result as string
-      setData(fileData)
+      const content = e.target?.result as string
+      setData(content)
     }
     reader.readAsText(file)
   }
 
-  const handleAnalyze = () => {
+  const handleAnalysis = () => {
     if (data) {
-      onAnalysis(data)
+      onAnalysis(data, selectedModel)
     }
   }
 
+  const getModelCostWarning = (modelId: string) => {
+    const model = MODEL_OPTIONS.find(m => m.id === modelId)
+    if (!model) return null
+
+    if (model.cost === 'Very High') {
+      return (
+        <Alert variant="destructive" className="mt-2">
+          <AlertDescription>
+            ⚠️ This model has very high token costs. Consider using a more cost-effective model for initial analysis.
+          </AlertDescription>
+        </Alert>
+      )
+    }
+    return null
+  }
+
   return (
-    <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-900 border-blue-200 dark:border-blue-800 shadow-lg">
-      <div className="p-8">
-        <div className="text-center mb-8">
-          <div className="flex items-center justify-center space-x-3 mb-4">
-            <Brain className="h-8 w-8 text-blue-600 dark:text-blue-400" />
-            <h2 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 bg-clip-text text-transparent">
-              AI Data Analytics Platform
-            </h2>
+    <Card className="p-6">
+      <div className="space-y-6">
+        <div className="flex items-center gap-3">
+          <div className="relative">
+            <Sparkles className="h-8 w-8 text-purple-500" />
+            <Upload className="h-4 w-4 absolute -top-1 -right-1 text-blue-500" />
           </div>
-          <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-            Upload your CSV data and get comprehensive analysis with automated insights and visualizations.
-          </p>
+          <div>
+            <h2 className="text-2xl font-bold">Data Analysis</h2>
+            <p className="text-gray-500 dark:text-gray-400">Upload your dataset to begin analysis</p>
+          </div>
         </div>
 
-        <div className="space-y-6">
-          <div className="bg-white/70 dark:bg-gray-800/70 rounded-lg p-6 border border-blue-200 dark:border-blue-800">
-            <h3 className="text-lg font-semibold mb-4 text-gray-800 dark:text-gray-200 flex items-center">
-              <Upload className="h-5 w-5 mr-2 text-blue-600 dark:text-blue-400" />
-              Upload Your Dataset
-            </h3>
-            <FileUpload onUpload={handleFileUpload} loading={isAnalyzing} />
+        <div className="space-y-4">
+          <FileUpload onUpload={handleFileUpload} loading={isAnalyzing} />
+          
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Select AI Model</label>
+            <Select value={selectedModel} onValueChange={setSelectedModel}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select a model" />
+              </SelectTrigger>
+              <SelectContent>
+                {MODEL_OPTIONS.map((model) => (
+                  <SelectItem key={model.id} value={model.id}>
+                    <div className="flex items-center justify-between w-full">
+                      <span>{model.name}</span>
+                      <span className="text-xs text-gray-500">({model.cost} cost)</span>
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {getModelCostWarning(selectedModel)}
           </div>
 
-          {data && (
-            <div className="bg-white/70 dark:bg-gray-800/70 rounded-lg p-6 border border-green-200 dark:border-green-800">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-2">
-                  <Zap className="h-5 w-5 text-green-600 dark:text-green-400" />
-                  <span className="text-sm font-medium text-green-700 dark:text-green-300">
-                    Dataset loaded successfully
-                  </span>
-                </div>
-                <Button 
-                  onClick={handleAnalyze}
-                  disabled={isAnalyzing}
-                  className="bg-green-600 hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600"
-                >
-                  {isAnalyzing ? 'Analyzing...' : 'Analyze Data'}
-                </Button>
-              </div>
-            </div>
-          )}
+          <Button
+            onClick={handleAnalysis}
+            disabled={!data || isAnalyzing}
+            className="w-full bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600"
+          >
+            {isAnalyzing ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Analyzing...
+              </>
+            ) : (
+              <>
+                <Sparkles className="mr-2 h-4 w-4" />
+                Start Analysis
+              </>
+            )}
+          </Button>
         </div>
       </div>
     </Card>

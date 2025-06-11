@@ -12,13 +12,29 @@ export default function FileUpload({ onUpload, loading }: FileUploadProps) {
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
       if (acceptedFiles.length > 0) {
-        onUpload(acceptedFiles[0])
+        const file = acceptedFiles[0]
+        const validExtensions = ['.csv', '.json', '.xlsx']
+        const fileExtension = '.' + file.name.split('.').pop()?.toLowerCase()
+        
+        if (!validExtensions.includes(fileExtension)) {
+          alert('Please upload a CSV, JSON, or XLSX file.')
+          return
+        }
+        
+        onUpload(file)
       }
     },
     [onUpload]
   )
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop })
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    accept: {
+      'text/csv': ['.csv'],
+      'application/json': ['.json'],
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ['.xlsx']
+    }
+  })
 
   return (
     <div
@@ -36,7 +52,7 @@ export default function FileUpload({ onUpload, loading }: FileUploadProps) {
               Drag files here or click to select files.
             </p>
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              Cadence AI understands .csv, .json, and .xlsx filetypes.
+              Supported formats: CSV, JSON, and XLSX
             </p>
           </div>
         </>
@@ -48,7 +64,7 @@ export default function FileUpload({ onUpload, loading }: FileUploadProps) {
             Uploading...
           </>
         ) : (
-          'Upload a file'
+          'Upload Dataset'
         )}
       </Button>
     </div>
