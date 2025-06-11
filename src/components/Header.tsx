@@ -1,11 +1,18 @@
 import { Button } from "@/components/ui/button"
-import { Menu, Sun, Moon } from "lucide-react"
+import { Menu, Sun, Moon, User } from "lucide-react"
 import { useState, useEffect } from "react"
+import { useNavigate } from "react-router-dom"
 import Logo from "./Logo"
+import { supabase } from "@/lib/supabase"
 
-export default function Header() {
+interface HeaderProps {
+  session: any
+}
+
+export default function Header({ session }: HeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isDarkMode, setIsDarkMode] = useState(false)
+  const navigate = useNavigate()
 
   useEffect(() => {
     // Check if dark mode is stored in localStorage
@@ -32,6 +39,11 @@ export default function Header() {
       document.documentElement.classList.remove('dark')
       localStorage.setItem('theme', 'light')
     }
+  }
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut()
+    navigate('/')
   }
 
   const scrollToApp = () => {
@@ -68,9 +80,25 @@ export default function Header() {
             <Button variant="outline" size="sm" className="dark:border-gray-600 dark:text-gray-300">
               Documentation
             </Button>
-            <Button onClick={scrollToApp} size="sm" className="bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600">
-              Try Platform
-            </Button>
+            {session ? (
+              <div className="flex items-center space-x-4">
+                <div className="flex items-center space-x-2">
+                  <div className="w-8 h-8 rounded-full bg-indigo-100 dark:bg-indigo-900 flex items-center justify-center">
+                    <User className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
+                  </div>
+                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    {session.user.email}
+                  </span>
+                </div>
+                <Button onClick={handleLogout} size="sm" className="bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600">
+                  Log Out
+                </Button>
+              </div>
+            ) : (
+              <Button onClick={() => navigate('/login')} size="sm" className="bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600">
+                Log In
+              </Button>
+            )}
           </div>
           
           <div className="md:hidden flex items-center space-x-2">
@@ -104,9 +132,25 @@ export default function Header() {
               <a href="#comparison" className="block px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300">
                 Comparison
               </a>
-              <Button onClick={scrollToApp} className="w-full mt-2">
-                Try Platform
-              </Button>
+              {session ? (
+                <div className="space-y-2">
+                  <div className="flex items-center space-x-2 px-3 py-2">
+                    <div className="w-8 h-8 rounded-full bg-indigo-100 dark:bg-indigo-900 flex items-center justify-center">
+                      <User className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
+                    </div>
+                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      {session.user.email}
+                    </span>
+                  </div>
+                  <Button onClick={handleLogout} className="w-full">
+                    Log Out
+                  </Button>
+                </div>
+              ) : (
+                <Button onClick={() => navigate('/login')} className="w-full mt-2">
+                  Log In
+                </Button>
+              )}
             </div>
           </div>
         )}
