@@ -61,8 +61,8 @@ export default function DemoSection({ onSelectDataset }: DemoSectionProps) {
           <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
             Experience AI Analytics in Action
           </h2>
-          <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-            Explore our pre-loaded datasets to see how Cadence AI transforms raw data into actionable insights instantly.
+          <p className="text-lg text-gray-600 dark:text-gray-300 whitespace-nowrap">
+            Explore our pre-loaded datasets to see how Cadence transforms raw data into actionable insights instantly.
           </p>
         </div>
 

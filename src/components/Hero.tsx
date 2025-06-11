@@ -10,7 +10,16 @@ export default function Hero() {
 
   const scrollToDemo = () => {
     const demoSection = document.querySelector('section:nth-of-type(2)')
-    demoSection?.scrollIntoView({ behavior: 'smooth' })
+    if (demoSection) {
+      const headerOffset = 115 // Buffer to account for header height
+      const elementPosition = demoSection.getBoundingClientRect().top
+      const offsetPosition = elementPosition + window.pageYOffset - headerOffset
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      })
+    }
   }
 
   return (
@@ -27,7 +36,7 @@ export default function Hero() {
           </h1>
           
           <p className="mt-6 text-lg leading-8 text-gray-600 dark:text-gray-300">
-            Cadence AI builds your analytics with up to 80% fewer tokens than Claude or OpenAI through our rigorous preprocessing and server-side graph rendering.
+            Cadence builds your analytics with up to 80% fewer tokens than Claude or OpenAI through our rigorous preprocessing and server-side graph rendering.
           </p>
           
           <div className="mt-10 flex items-center justify-center gap-x-6">
