@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils"
+import { useNavigate } from "react-router-dom"
 
 interface LogoProps {
   className?: string
@@ -6,12 +7,15 @@ interface LogoProps {
 }
 
 export default function Logo({ className, variant = 'primary' }: LogoProps) {
+  const navigate = useNavigate()
+
   return (
     <svg 
       width="360" 
       height="100" 
       viewBox="0 0 320 100" 
-      className={cn("", className)}
+      className={cn("cursor-pointer", className)}
+      onClick={() => navigate('/')}
     >
       <defs>
         <linearGradient id="primaryGradient" x1="0%" y1="0%" x2="100%" y2="0%">
