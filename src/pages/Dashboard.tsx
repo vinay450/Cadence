@@ -47,21 +47,45 @@ export default function Dashboard() {
   const navigate = useNavigate()
 
   useEffect(() => {
-    getSession()
-  }, [])
+    let mounted = true
 
-  const getSession = async () => {
-    const { data: { session } } = await supabase.auth.getSession()
-    if (!session) {
-      navigate('/login')
-      return
+    const initializeDashboard = async () => {
+      const { data: { session: currentSession } } = await supabase.auth.getSession()
+      if (!currentSession) {
+        navigate('/login')
+        return
+      }
+      
+      if (mounted) {
+        setSession(currentSession)
+        await fetchDashboardData(currentSession)
+      }
     }
-    setSession(session)
-    await fetchDashboardData(session)
-  }
+
+    initializeDashboard()
+
+    // Set up auth state listener
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, currentSession) => {
+      if (!currentSession) {
+        navigate('/login')
+        return
+      }
+      
+      if (mounted) {
+        setSession(currentSession)
+        await fetchDashboardData(currentSession)
+      }
+    })
+
+    return () => {
+      mounted = false
+      subscription.unsubscribe()
+    }
+  }, [navigate])
 
   const fetchDashboardData = async (session: Session) => {
     try {
+      setLoading(true)
       console.log('Fetching dashboard data for user:', session.user.id)
 
       // Fetch total projects
