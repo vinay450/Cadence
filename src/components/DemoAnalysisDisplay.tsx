@@ -10,6 +10,7 @@ import { BarChart } from '@/components/visualizations/BarChart'
 import { salesData, SalesData } from '@/data/sampleData'
 import { sensorData, SensorData } from '@/data/sensorData'
 import { supplyChainData, SupplyChainData } from '@/data/supplyChainData'
+import ChatBot from './ChatBot'
 
 interface DemoDataset {
   id: string
@@ -726,31 +727,17 @@ export default function DemoAnalysisDisplay({ dataset, onBack }: DemoAnalysisDis
           {/* Disabled Chat Interface */}
           <div id="chat-section" className={`transition-opacity duration-500 ${showContent ? 'opacity-100' : 'opacity-0'}`}>
             <h2 className="text-2xl font-semibold mb-4 dark:text-white">Chat about your data</h2>
-            <div className="border rounded-lg p-4 bg-gray-50 dark:bg-gray-900">
-              <div className="h-[200px] flex flex-col">
-                <div className="flex-1 overflow-y-auto mb-4">
-                  <div className="flex items-center justify-center h-full">
-                    <p className="text-gray-500 dark:text-gray-400 text-center">
-                      Chat is disabled for demos
-                    </p>
-                  </div>
-                </div>
-                <div className="border-t pt-4">
-                  <div className="flex gap-2">
-                    <input
-                      type="text"
-                      placeholder="Type your message..."
-                      className="flex-1 px-4 py-2 rounded-md border bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 cursor-not-allowed"
-                      disabled
-                    />
-                    <Button
-                      variant="outline"
-                      className="px-4 py-2 rounded-md cursor-not-allowed opacity-50"
-                      disabled
-                    >
-                      <Send className="h-4 w-4" />
-                    </Button>
-                  </div>
+            <div className="relative">
+              <ChatBot 
+                sessionId=""
+                onSessionIdUpdate={() => {}}
+                model="demo"
+                data={null}
+              />
+              <div className="absolute bottom-0 left-0 right-0 bg-gray-50/50 dark:bg-gray-900/50 backdrop-blur-sm z-10 flex items-center justify-center p-4">
+                <div className="text-center p-4 bg-white dark:bg-gray-800 rounded-lg shadow-lg">
+                  <p className="text-gray-600 dark:text-gray-300 font-medium">Chat is disabled for demos</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Sign up to unlock the full chat experience</p>
                 </div>
               </div>
             </div>
