@@ -13,11 +13,11 @@ export default function FileUpload({ onUpload, loading }: FileUploadProps) {
     (acceptedFiles: File[]) => {
       if (acceptedFiles.length > 0) {
         const file = acceptedFiles[0]
-        const validExtensions = ['.csv', '.json', '.xlsx']
+        const validExtensions = ['.csv']
         const fileExtension = '.' + file.name.split('.').pop()?.toLowerCase()
         
         if (!validExtensions.includes(fileExtension)) {
-          alert('Please upload a CSV, JSON, or XLSX file.')
+          alert('Please upload a CSV file.')
           return
         }
         
@@ -30,9 +30,7 @@ export default function FileUpload({ onUpload, loading }: FileUploadProps) {
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: {
-      'text/csv': ['.csv'],
-      'application/json': ['.json'],
-      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ['.xlsx']
+      'text/csv': ['.csv']
     }
   })
 
@@ -52,7 +50,10 @@ export default function FileUpload({ onUpload, loading }: FileUploadProps) {
               Drag files here or click to select files.
             </p>
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              Supported formats: CSV, JSON, and XLSX
+              Cadence supports .csv files up to ~2 mb or 480,000 data points in a single request
+            </p>
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              (ex. 30,000 Rows x 16 Columns, 15,000 rows x 32 columns)
             </p>
           </div>
         </>
