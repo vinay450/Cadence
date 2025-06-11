@@ -731,7 +731,7 @@ export default function DemoAnalysisDisplay({ dataset, onBack }: DemoAnalysisDis
               <ChatBot 
                 sessionId=""
                 onSessionIdUpdate={() => {}}
-                model="demo"
+                model="claude-sonnet-4-20250514"
                 data={null}
               />
               <div className="absolute bottom-0 left-0 right-0 bg-gray-50/50 dark:bg-gray-900/50 backdrop-blur-sm z-10 flex items-center justify-center p-4">
