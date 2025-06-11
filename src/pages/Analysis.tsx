@@ -37,7 +37,6 @@ export default function AnalysisApp() {
   const [isAnalyzing, setIsAnalyzing] = useState(false)
   const [tableData, setTableData] = useState<TableRow[]>([])
   const [claudeLog, setClaudeLog] = useState<any>(null)
-  const [parsedData, setParsedData] = useState<any[]>([])
   const [isLogMinimized, setIsLogMinimized] = useState(false)
   const [tableSearch, setTableSearch] = useState('')
   const [sortColumn, setSortColumn] = useState<number | null>(null)
@@ -174,7 +173,7 @@ export default function AnalysisApp() {
             <ChatBot 
               data={currentData || undefined}
               sessionId={sessionId || undefined}
-              isNewAnalysis={!sessionId}
+              onSessionIdUpdate={setSessionId}
             />
           </div>
 
@@ -222,7 +221,7 @@ export default function AnalysisApp() {
                           )
                           .map((row, rowIndex) => (
                             <TableRow key={rowIndex}>
-                              {Object.entries(row).map(([key, value], cellIndex) => (
+                              {Object.entries(row).map(([key, value]) => (
                                 <TableCell key={`${rowIndex}-${key}`} className="whitespace-nowrap">
                                   {value}
                                 </TableCell>
@@ -238,7 +237,7 @@ export default function AnalysisApp() {
           )}
 
           {/* Chart Recommendations Section */}
-          {claudeLog?.visualizations?.recommendations && parsedData.length > 0 && (
+          {claudeLog?.visualizations?.recommendations && (
             <div id="visualizations" className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
               <h2 className="text-2xl font-semibold mb-4 dark:text-white">Recommended Visualizations</h2>
               <div className="grid grid-cols-1 gap-8">
