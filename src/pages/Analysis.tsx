@@ -100,6 +100,13 @@ export default function AnalysisApp({ session }: AnalysisAppProps) {
     setSelectedModel(model)
 
     try {
+      console.log('=== ANALYSIS DEBUG ===')
+      console.log('1. Starting analysis with data:', {
+        dataLength: data.length,
+        dataPreview: data.substring(0, 100),
+        model
+      })
+
       // Parse the data for table preview
       let rows: TableRow[] = []
       
@@ -134,6 +141,13 @@ export default function AnalysisApp({ session }: AnalysisAppProps) {
       rows = rows.filter(row => Object.values(row).some(value => value !== ''))
       setTableData(rows)
 
+      console.log('2. Parsed data:', {
+        rowsCount: rows.length,
+        headers: Object.keys(rows[0] || {}),
+        firstRow: rows[0]
+      })
+
+      console.log('3. Calling chat function...')
       const { data: result, error } = await supabase.functions.invoke('chat', {
         body: {
           message: 'Analyze this dataset',
@@ -144,9 +158,18 @@ export default function AnalysisApp({ session }: AnalysisAppProps) {
       })
 
       if (error) {
-        console.error('Error during analysis:', error)
+        console.error('4. Chat function error:', error)
         throw error
       }
+
+      console.log('4. Chat function response:', {
+        hasResult: !!result,
+        hasAnalysis: !!result?.analysis,
+        hasVisualizations: !!result?.visualizations,
+        sessionId: result?.sessionId,
+        analysisPreview: result?.analysis?.substring(0, 100),
+        visualizationsKeys: result?.visualizations ? Object.keys(result.visualizations) : []
+      })
 
       if (!result || !result.analysis) {
         throw new Error('Invalid response format')
@@ -160,11 +183,11 @@ export default function AnalysisApp({ session }: AnalysisAppProps) {
       if (analysisSection) {
         analysisSection.scrollIntoView({ behavior: 'smooth' })
       }
-    } catch (error: any) {
-      console.error('Error during analysis:', error)
+    } catch (error) {
+      console.error('5. Analysis error:', error)
       toast({
         title: 'Error',
-        description: error.message || 'Failed to analyze data. Please try again.',
+        description: error instanceof Error ? error.message : 'Failed to analyze dataset',
         variant: 'destructive'
       })
     } finally {

@@ -73,7 +73,7 @@ export default function ChatBot({ sessionId, onSessionIdUpdate, model, data }: C
       console.log('=== CHAT REQUEST DEBUG ===')
       console.log('Request type determination:', {
         hasSessionId: !!currentSessionId,
-        hasDataset: hasDataset,
+        hasDataset: !!data,
         messagesLength: messages.length,
         dataLength: data?.length
       })
