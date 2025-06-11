@@ -10,6 +10,12 @@ Cadence is an innovative data analysis platform that dramatically reduces the co
 - Hybrid local/API processing pipeline
 - Progressive data loading
 
+### Interactive Demo Datasets
+- **Company Sales Data**: Comprehensive sales performance analysis across regions and product categories
+- **Hardware Sensor Data**: Real-time monitoring of industrial equipment with anomaly detection
+- **Medical Research Data**: Clinical trial outcomes and treatment efficacy analysis
+- **Supply Chain Optimization**: Warehouse operations and supplier performance metrics
+
 ### Visualization Suite
 - Interactive, responsive charts and graphs
 - Real-time data updates
@@ -76,27 +82,31 @@ Cost:                  $0.006-0.009
 - Custom token optimization
 - Intelligent caching layer
 
-## 📊 Use Cases
+## 📊 Demo Datasets
 
-1. **Business Intelligence**
-   - Sales analytics
+1. **Company Sales Data**
+   - Regional performance analysis
+   - Product category insights
+   - Revenue and growth metrics
+   - Customer behavior patterns
+
+2. **Hardware Sensor Data**
+   - Real-time equipment monitoring
+   - Anomaly detection
    - Performance metrics
-   - Market trends
+   - Predictive maintenance insights
 
-2. **Financial Analysis**
-   - Investment patterns
-   - Risk assessment
-   - Portfolio analysis
+3. **Medical Research Data**
+   - Clinical trial outcomes
+   - Treatment efficacy analysis
+   - Patient demographics
+   - Safety and tolerability metrics
 
-3. **Research & Academia**
-   - Data visualization
-   - Pattern recognition
-   - Statistical analysis
-
-4. **Operations**
-   - Process optimization
-   - Resource allocation
-   - Efficiency tracking
+4. **Supply Chain Optimization**
+   - Warehouse utilization
+   - Supplier performance
+   - Quality control metrics
+   - Cost efficiency analysis
 
 ## 🚀 Getting Started
 
