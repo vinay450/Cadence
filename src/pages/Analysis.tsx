@@ -87,6 +87,16 @@ export default function AnalysisApp() {
     setCurrentData(data)
     setSessionId(null) // Reset session for new analysis
 
+    // Wait for the next render cycle to ensure the loading section is rendered
+    setTimeout(() => {
+      const analysisSection = document.getElementById('ai-analysis')
+      if (analysisSection) {
+        const yOffset = -20 // Smaller offset to show the loading section
+        const y = analysisSection.getBoundingClientRect().top + window.pageYOffset + yOffset
+        window.scrollTo({ top: y, behavior: 'smooth' })
+      }
+    }, 100)
+
     try {
       const { data: result, error } = await supabase.functions.invoke('chat', {
         body: {
@@ -112,15 +122,21 @@ export default function AnalysisApp() {
       // Parse CSV data for the data preview table
       if (data) {
         const lines = data.split('\n')
-        const headers = lines[0].split(',')
-        const rows = lines.slice(1).map(line => {
-          const values = line.split(',')
-          return headers.reduce((obj: any, header: string, index: number) => {
-            obj[header.trim()] = values[index]?.trim() || ''
-            return obj
-          }, {})
-        })
-        setTableData(rows)
+          .filter(line => line.trim() && !line.trim().startsWith('//') && !line.includes('const '))
+          .map(line => line.trim())
+        
+        if (lines.length > 0) {
+          const headers = lines[0].split(',').map(header => header.trim())
+          const rows = lines.slice(1).map(line => {
+            const values = line.split(',')
+            return headers.reduce((obj: any, header: string, index: number) => {
+              obj[header] = values[index]?.trim() || ''
+              return obj
+            }, {})
+          }).filter(row => Object.values(row).some(value => value !== ''))
+          
+          setTableData(rows)
+        }
       }
 
       // Store visualization recommendations
@@ -163,7 +179,7 @@ export default function AnalysisApp() {
           </div>
 
           {/* Data Preview Section */}
-          {tableData && (
+          {tableData && tableData.length > 0 && (
             <div id="data-preview" className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-2xl font-semibold dark:text-white">Data Preview</h2>
@@ -181,9 +197,9 @@ export default function AnalysisApp() {
                     <Table>
                       <TableHeader className="sticky top-0 bg-white dark:bg-gray-800 z-10">
                         <TableRow>
-                          {Object.keys(tableData[0] || {}).map((header, index) => (
+                          {Object.keys(tableData[0]).map((header, index) => (
                             <TableHead
-                              key={index}
+                              key={header}
                               className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 whitespace-nowrap"
                               onClick={() => handleSort(index)}
                             >
@@ -206,9 +222,9 @@ export default function AnalysisApp() {
                           )
                           .map((row, rowIndex) => (
                             <TableRow key={rowIndex}>
-                              {Object.values(row).map((cell: string | number, cellIndex: number) => (
-                                <TableCell key={cellIndex} className="whitespace-nowrap">
-                                  {cell}
+                              {Object.entries(row).map(([key, value], cellIndex) => (
+                                <TableCell key={`${rowIndex}-${key}`} className="whitespace-nowrap">
+                                  {value}
                                 </TableCell>
                               ))}
                             </TableRow>

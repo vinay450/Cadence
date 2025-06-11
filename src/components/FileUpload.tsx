@@ -12,13 +12,28 @@ export default function FileUpload({ onUpload, loading }: FileUploadProps) {
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
       if (acceptedFiles.length > 0) {
-        onUpload(acceptedFiles[0])
+        const file = acceptedFiles[0]
+        const validExtensions = ['.csv', '.json', '.xlsx']
+        const fileExtension = '.' + file.name.split('.').pop()?.toLowerCase()
+        
+        if (!validExtensions.includes(fileExtension)) {
+          alert('Please upload a CSV, JSON, or XLSX file')
+          return
+        }
+        onUpload(file)
       }
     },
     [onUpload]
   )
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop })
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({ 
+    onDrop,
+    accept: {
+      'text/csv': ['.csv'],
+      'application/json': ['.json'],
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ['.xlsx']
+    }
+  })
 
   return (
     <div
@@ -27,16 +42,16 @@ export default function FileUpload({ onUpload, loading }: FileUploadProps) {
     >
       <input {...getInputProps()} />
       {isDragActive ? (
-        <p className="text-gray-600 dark:text-gray-400">Drop the files here ...</p>
+        <p className="text-gray-600 dark:text-gray-400">Drop your file here ...</p>
       ) : (
         <>
           <File className="h-10 w-10 text-gray-500 dark:text-gray-400 mb-4" />
           <div className="text-center">
             <p className="text-gray-600 dark:text-gray-400 mb-2">
-              Drag files here or click to select files.
+              Drag a file here or click to select a file.
             </p>
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              Cadence AI understands .csv, .json, and .xlsx filetypes.
+              Supported formats: CSV, JSON, and XLSX
             </p>
           </div>
         </>
@@ -48,7 +63,7 @@ export default function FileUpload({ onUpload, loading }: FileUploadProps) {
             Uploading...
           </>
         ) : (
-          'Upload a file'
+          'Upload File'
         )}
       </Button>
     </div>
