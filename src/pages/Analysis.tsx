@@ -1,3 +1,4 @@
+
 import DataAnalysisDashboard from '@/components/DataAnalysisDashboard'
 import AnimatedTextAnalysis from '@/components/AnimatedTextAnalysis'
 import ChatBot from '@/components/ChatBot'
@@ -237,22 +238,22 @@ export default function AnalysisApp() {
           )}
 
           {/* Chart Recommendations Section */}
-          {claudeLog?.visualizations?.recommendations && (
+          {claudeLog?.visualizations?.recommendations && tableData && tableData.length > 0 && (
             <div id="visualizations" className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
               <h2 className="text-2xl font-semibold mb-4 dark:text-white">Recommended Visualizations</h2>
               <div className="grid grid-cols-1 gap-8">
                 {claudeLog.visualizations.recommendations.slice(0, 2).map((rec: any, idx: number) => {
                   const ChartComponent = chartComponentMap[rec.chartType]
                   console.log('Chart Recommendation:', rec)
-                  console.log('Chart Data:', parsedData)
+                  console.log('Chart Data:', tableData)
                   
                   // Sort data by the x-axis key for this chart, handling numbers as numbers
-                  let sortedData = parsedData
+                  let sortedData = tableData
                   if (rec.dataPoints?.xAxis) {
                     const xKey = rec.dataPoints.xAxis
                     // Check if all x values are numeric
-                    const allNumeric = parsedData.every(row => !isNaN(Number(row[xKey])))
-                    sortedData = [...parsedData].sort((a, b) => {
+                    const allNumeric = tableData.every((row: TableRow) => !isNaN(Number(row[xKey])))
+                    sortedData = [...tableData].sort((a: TableRow, b: TableRow) => {
                       if (allNumeric) {
                         return Number(a[xKey]) - Number(b[xKey])
                       } else {
@@ -261,7 +262,7 @@ export default function AnalysisApp() {
                     })
                     // If numeric, convert xKey values to numbers for the chart
                     if (allNumeric) {
-                      sortedData = sortedData.map(row => ({ ...row, [xKey]: Number(row[xKey]) }))
+                      sortedData = sortedData.map((row: TableRow) => ({ ...row, [xKey]: Number(row[xKey]) }))
                     }
                   }
                   
