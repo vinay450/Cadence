@@ -9,6 +9,7 @@ import { LineChart } from '@/components/visualizations/LineChart'
 import { BarChart } from '@/components/visualizations/BarChart'
 import { salesData, SalesData } from '@/data/sampleData'
 import { sensorData, SensorData } from '@/data/sensorData'
+import { supplyChainData, SupplyChainData } from '@/data/supplyChainData'
 
 interface DemoDataset {
   id: string
@@ -157,7 +158,7 @@ const aggregateDataByProductCategory = (data: SalesData[]): AggregatedRegionData
   })
 }
 
-type DemoDataType = SalesData | AggregatedRegionData | CustomerData | SensorData | MedicalData;
+type DemoDataType = SalesData | AggregatedRegionData | CustomerData | SensorData | MedicalData | SupplyChainData;
 
 const getDemoData = (datasetId: string): DemoData<DemoDataType> => {
   switch (datasetId) {
@@ -444,6 +445,84 @@ The research portfolio's strength lies in its systematic comparison of multiple 
               yAxisLabel: "Score"
             } as LineChartDataPoints,
             insights: "Progression of patient scores from baseline to final assessment across treatment visits"
+          }
+        ]
+      }
+    }
+
+    case 'supply-chain': {
+      return {
+        analysisText: `Dataset Overview and Quality Profile
+The dataset represents a diverse supply chain operation spanning eight product categories from March through June 2025, with operations distributed across eight suppliers and multiple warehouse locations. The data exhibits strong completeness with minimal missing values, though the damage rate of 7.2% and return rate of 2% indicate quality control challenges that warrant immediate attention. The temporal distribution shows operational scaling, with order volumes increasing from 114 in March to 177 in April before tapering, suggesting seasonal demand patterns or capacity constraints.
+
+Supplier Performance Disparities and Risk Concentration
+The supplier landscape reveals significant performance heterogeneity that creates both operational risks and optimization opportunities. Fast Delivery Systems, despite being the largest supplier with 76 orders (15.2% of volume), exhibits the highest damage rate at 10.53% and concerning return rate of 2.63%, suggesting quality control issues that undermine their speed advantage. Conversely, Premium Products Corp and Bulk Wholesale Group demonstrate superior reliability with zero return rates, while Reliable Suppliers LLC achieves the highest average quality score of 54.43 despite moderate delivery times. This performance variance indicates insufficient supplier vetting processes and suggests that cost optimization through supplier consolidation could simultaneously improve quality metrics.
+
+Cost Efficiency Paradoxes and Category-Specific Insights
+The cost analysis reveals counterintuitive patterns that challenge conventional procurement strategies. Electronics and Sports Equipment categories, despite commanding the highest unit costs ($542.83 and $554.25 respectively), deliver the poorest cost-per-quality ratios at $11.41 and $11.37 per quality point. This suggests either premium pricing without commensurate quality improvements or fundamental sourcing inefficiencies in high-value categories. Office Supplies emerges as the most cost-efficient category at $8.91 per quality point, indicating mature supplier relationships and standardized procurement processes that could be replicated across other categories.
+
+Warehouse Utilization and Storage Duration Inefficiencies
+The warehouse operations data exposes systematic inefficiencies in inventory management and space utilization. With average warehouse utilization at 78.5% but significant variation (60-95% range), there's clear evidence of suboptimal inventory distribution across storage locations. The storage duration analysis reveals that 31.6% of items remain in storage beyond 60 days, yet surprisingly, these long-storage items don't correlate with extended fulfillment times (3.82 vs 3.90 days), suggesting that storage duration reflects demand unpredictability rather than operational bottlenecks. This pattern indicates opportunities for demand forecasting improvements and dynamic inventory rebalancing.
+
+Quality-Damage Correlation and Predictive Implications
+The quality score analysis reveals a statistically significant relationship between product quality ratings and damage outcomes, with damaged items averaging 45.42 quality points compared to 51.27 for undamaged items. This 5.85-point differential suggests that quality scores serve as reliable predictive indicators for damage risk, enabling proactive quality management interventions. The concentration of damage issues among specific suppliers (particularly Fast Delivery Systems) indicates that supplier-specific quality protocols could reduce overall damage rates more effectively than blanket quality improvements.
+
+Strategic Recommendations for Supply Chain Optimization
+The data strongly supports a multi-pronged optimization strategy focusing on supplier rationalization, category-specific procurement refinement, and predictive quality management. The immediate priority should be addressing the quality-cost imbalance in Electronics and Sports Equipment through either supplier diversification or renegotiated terms that align pricing with delivered quality. Simultaneously, the superior performance profiles of Premium Products Corp and Reliable Suppliers LLC suggest opportunities for expanded partnerships that could reduce both costs and operational risks. The warehouse utilization patterns indicate potential for 15-20% capacity optimization through improved demand forecasting and dynamic space allocation, while the quality-damage correlation enables implementation of predictive interventions that could reduce damage rates from the current 7.2% to below 5% industry benchmarks.`,
+        tableColumns: [
+          { key: 'id', header: 'ID', sortable: true },
+          { key: 'timestamp', header: 'Timestamp', sortable: true },
+          { key: 'productId', header: 'Product ID', sortable: true },
+          { key: 'productName', header: 'Product Name', sortable: true },
+          { key: 'category', header: 'Category', sortable: true },
+          { key: 'supplierName', header: 'Supplier', sortable: true },
+          { key: 'quantity', header: 'Quantity', sortable: true },
+          { key: 'unitCost', header: 'Unit Cost', sortable: true },
+          { key: 'storageLocation', header: 'Location', sortable: true },
+          { key: 'warehouseUtilization', header: 'Utilization %', sortable: true },
+          { key: 'daysInStorage', header: 'Days in Storage', sortable: true },
+          { key: 'orderFulfillmentTime', header: 'Fulfillment Time', sortable: true },
+          { key: 'supplierDeliveryTime', header: 'Delivery Time', sortable: true },
+          { key: 'qualityScore', header: 'Quality Score', sortable: true },
+          { key: 'transportationCost', header: 'Transport Cost', sortable: true },
+          { key: 'isDamaged', header: 'Damaged', sortable: true },
+          { key: 'isReturned', header: 'Returned', sortable: true },
+          { key: 'returnReason', header: 'Return Reason', sortable: true }
+        ] as TableColumn<DemoDataType>[],
+        chartData: supplyChainData as DemoDataType[],
+        recommendations: [
+          {
+            title: "Category Performance Analysis",
+            chartType: "BarChart",
+            dataPoints: {
+              xAxis: "category",
+              yAxis: ["qualityScore", "warehouseUtilization"],
+              xAxisLabel: "Product Category",
+              yAxisLabel: "Score/Utilization (%)"
+            } as BarChartDataPoints,
+            insights: "Comparison of quality scores and warehouse utilization across product categories"
+          },
+          {
+            title: "Supplier Performance Metrics",
+            chartType: "LineChart",
+            dataPoints: {
+              xAxis: "supplierName",
+              yAxis: ["supplierDeliveryTime", "qualityScore"],
+              xAxisLabel: "Supplier",
+              yAxisLabel: "Days/Score"
+            } as LineChartDataPoints,
+            insights: "Analysis of supplier performance in terms of delivery time and quality"
+          },
+          {
+            title: "Storage Duration Impact",
+            chartType: "LineChart",
+            dataPoints: {
+              xAxis: "daysInStorage",
+              yAxis: ["unitCost", "transportationCost"],
+              xAxisLabel: "Days in Storage",
+              yAxisLabel: "Cost ($)"
+            } as LineChartDataPoints,
+            insights: "Relationship between storage duration and associated costs"
           }
         ]
       }
