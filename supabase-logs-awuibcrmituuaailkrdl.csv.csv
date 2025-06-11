@@ -1,0 +1,506 @@
+event_message,event_type,function_id,id,level,timestamp
+"Processing follow-up question { sessionId: ""dea3e92d-4433-495c-84b4-9db0eb2a644d"" }
+",Log,3122e38f-8b5a-44b3-a721-4038855f378f,d3c43a6b-cd04-4f21-ae48-eea8e992bf00,log,1749609814285460
+"Request parsed: {
+  hasMessages: true,
+  messageCount: 5,
+  hasData: true,
+  sessionId: ""dea3e92d-4433-495c-84b4-9db0eb2a644d"",
+  isNewAnalysis: false
+}
+",Log,3122e38f-8b5a-44b3-a721-4038855f378f,18f0f39d-ad19-40e5-a389-a42fae7139f9,log,1749609814285177
+"Request received: {
+  method: ""POST"",
+  url: ""http://awuibcrmituuaailkrdl.supabase.co/chat"",
+  headers: {
+    accept: ""*/*"",
+    ""accept-encoding"": ""gzip"",
+    ""accept-language"": ""en-US,en;q=0.9"",
+    apikey: ""eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF3dWliY3JtaXR1dWFhaWxrcmRsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkzNDczODUsImV4cCI6MjA2NDkyMzM4NX0.g3shL0as1Mr-NlGiHxAKldo9Lr8MZN5SXGeKYYauP8I"",
+    authorization: ""Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF3dWliY3JtaXR1dWFhaWxrcmRsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkzNDczODUsImV4cCI6MjA2NDkyMzM4NX0.g3shL0as1Mr-NlGiHxAKldo9Lr8MZN5SXGeKYYauP8I"",
+    ""cdn-loop"": ""cloudflare; loops=1; subreqs=1"",
+    ""cf-connecting-ip"": ""68.23.70.141"",
+    ""cf-ew-via"": ""15"",
+    ""cf-ray"": ""94ddc2dd56ce1359-ATL"",
+    ""cf-visitor"": '{""scheme"":""https""}',
+    ""cf-worker"": ""supabase.co"",
+    ""content-length"": ""8693"",
+    ""content-type"": ""application/json"",
+    host: ""edge-runtime.supabase.com"",
+    origin: ""http://localhost:8080"",
+    priority: ""u=1, i"",
+    referer: ""http://localhost:8080/"",
+    ""sec-ch-ua"": '""Google Chrome"";v=""137"", ""Chromium"";v=""137"", ""Not/A)Brand"";v=""24""',
+    ""sec-ch-ua-mobile"": ""?0"",
+    ""sec-ch-ua-platform"": '""macOS""',
+    ""sec-fetch-dest"": ""empty"",
+    ""sec-fetch-mode"": ""cors"",
+    ""sec-fetch-site"": ""cross-site"",
+    ""user-agent"": ""Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"",
+    ""x-amzn-trace-id"": ""Root=1-6848ed51-76498c553eb616bf4a9048aa"",
+    ""x-client-info"": ""supabase-js-web/2.50.0"",
+    ""x-forwarded-for"": ""68.23.70.141,68.23.70.141, 3.2.52.17"",
+    ""x-forwarded-port"": ""443"",
+    ""x-forwarded-proto"": ""https""
+  }
+}
+",Log,3122e38f-8b5a-44b3-a721-4038855f378f,bda623a7-b629-45c0-afb4-7d1304480890,log,1749609814284888
+"Listening on http://localhost:9999/
+",Log,3122e38f-8b5a-44b3-a721-4038855f378f,2103cf2b-2590-4945-a5db-8340e6b0ffaf,log,1749609814284185
+booted (time: 21ms),Boot,3122e38f-8b5a-44b3-a721-4038855f378f,555eae45-da77-4c2a-99e8-b6ee117c14c5,log,1749609814284009
+shutdown,Shutdown,3122e38f-8b5a-44b3-a721-4038855f378f,8ae36a92-7c1c-4cbf-9e8e-55766b7e36f8,log,1749609796154827
+shutdown,Shutdown,3122e38f-8b5a-44b3-a721-4038855f378f,eba2dd93-8f25-49b1-9a22-f46d3fa37749,log,1749609794456202
+shutdown,Shutdown,3122e38f-8b5a-44b3-a721-4038855f378f,e563b728-98d3-465c-8870-958fc20c0b11,log,1749609793113400
+shutdown,Shutdown,3122e38f-8b5a-44b3-a721-4038855f378f,03b56f2d-89a7-402d-a176-3058e9666686,log,1749609788548784
+shutdown,Shutdown,3122e38f-8b5a-44b3-a721-4038855f378f,23c1617b-2912-43bc-87d0-21cb05e88d85,log,1749609734454994
+"Error in chat function: SyntaxError: Unexpected end of JSON input
+    at parse (<anonymous>)
+    at packageData (ext:deno_fetch/22_body.js:381:14)
+    at consumeBody (ext:deno_fetch/22_body.js:247:12)
+    at Request.json (ext:deno_fetch/22_body.js:320:16)
+    at Server.<anonymous> (file:///tmp/user_fn_awuibcrmituuaailkrdl_3122e38f-8b5a-44b3-a721-4038855f378f_5/source/index.ts:80:68)
+    at #respond (https://deno.land/std@0.177.0/http/server.ts:220:37)
+    at #serveHttp (https://deno.land/std@0.177.0/http/server.ts:258:20)
+    at eventLoopTick (ext:core/01_core.js:168:7)
+",Log,3122e38f-8b5a-44b3-a721-4038855f378f,ba4da577-ef7a-4503-ac10-9e8908b32a2c,error,1749609643174116
+"Request received: {
+  method: ""GET"",
+  url: ""http://awuibcrmituuaailkrdl.supabase.co/chat"",
+  headers: {
+    accept: ""text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7"",
+    ""accept-encoding"": ""gzip"",
+    ""accept-language"": ""en-US,en;q=0.9"",
+    ""cdn-loop"": ""cloudflare; loops=1; subreqs=1"",
+    ""cf-connecting-ip"": ""68.23.70.141"",
+    ""cf-ew-via"": ""15"",
+    ""cf-ray"": ""94ddbeb0464eafa8-ATL"",
+    ""cf-visitor"": '{""scheme"":""https""}',
+    ""cf-worker"": ""supabase.co"",
+    host: ""edge-runtime.supabase.com"",
+    priority: ""u=0, i"",
+    ""sec-ch-ua"": '""Google Chrome"";v=""137"", ""Chromium"";v=""137"", ""Not/A)Brand"";v=""24""',
+    ""sec-ch-ua-mobile"": ""?0"",
+    ""sec-ch-ua-platform"": '""macOS""',
+    ""sec-fetch-dest"": ""document"",
+    ""sec-fetch-mode"": ""navigate"",
+    ""sec-fetch-site"": ""none"",
+    ""sec-fetch-user"": ""?1"",
+    ""upgrade-insecure-requests"": ""1"",
+    ""user-agent"": ""Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"",
+    ""x-amzn-trace-id"": ""Root=1-6848eca6-34de2cb46f146901313df23b"",
+    ""x-forwarded-for"": ""68.23.70.141,68.23.70.141, 99.83.101.76"",
+    ""x-forwarded-port"": ""443"",
+    ""x-forwarded-proto"": ""https""
+  }
+}
+",Log,3122e38f-8b5a-44b3-a721-4038855f378f,c5189ee0-d405-4e1d-9975-4f90cabd7c90,log,1749609643173903
+"Listening on http://localhost:9999/
+",Log,3122e38f-8b5a-44b3-a721-4038855f378f,a212d376-e0ec-4755-be9c-2d218399895a,log,1749609643173622
+booted (time: 20ms),Boot,3122e38f-8b5a-44b3-a721-4038855f378f,febb678c-a99a-48ef-a399-94629823e1c1,log,1749609643173399
+shutdown,Shutdown,3122e38f-8b5a-44b3-a721-4038855f378f,a9d7eabf-8b68-45f9-a134-560f00312cb6,log,1749609613642764
+"Error in chat function: SyntaxError: Unexpected end of JSON input
+    at parse (<anonymous>)
+    at packageData (ext:deno_fetch/22_body.js:381:14)
+    at consumeBody (ext:deno_fetch/22_body.js:247:12)
+    at Request.json (ext:deno_fetch/22_body.js:320:16)
+    at Server.<anonymous> (file:///tmp/user_fn_awuibcrmituuaailkrdl_3122e38f-8b5a-44b3-a721-4038855f378f_5/source/index.ts:80:68)
+    at #respond (https://deno.land/std@0.177.0/http/server.ts:220:37)
+    at #serveHttp (https://deno.land/std@0.177.0/http/server.ts:258:20)
+    at eventLoopTick (ext:core/01_core.js:168:7)
+",Log,3122e38f-8b5a-44b3-a721-4038855f378f,20f94680-613f-4f91-8bb8-e407ae40925a,error,1749609596108537
+"Request received: {
+  method: ""GET"",
+  url: ""http://awuibcrmituuaailkrdl.supabase.co/chat"",
+  headers: {
+    ""accept-encoding"": ""gzip"",
+    ""cdn-loop"": ""cloudflare; loops=1; subreqs=1"",
+    ""cf-connecting-ip"": ""3.235.68.199"",
+    ""cf-ew-via"": ""15"",
+    ""cf-ray"": ""94ddbd96e5336fa7-IAD"",
+    ""cf-visitor"": '{""scheme"":""https""}',
+    ""cf-worker"": ""supabase.co"",
+    host: ""edge-runtime.supabase.com"",
+    ""user-agent"": ""got (https://github.com/sindresorhus/got)"",
+    ""x-amzn-trace-id"": ""Root=1-6848ec79-01e795486287ef4b5c3fbcce"",
+    ""x-forwarded-for"": ""3.235.68.199,3.235.68.199, 3.2.51.16"",
+    ""x-forwarded-port"": ""443"",
+    ""x-forwarded-proto"": ""https""
+  }
+}
+",Log,3122e38f-8b5a-44b3-a721-4038855f378f,6de655b7-e7db-487f-82d6-4dc390a729e4,log,1749609596108386
+"Listening on http://localhost:9999/
+",Log,3122e38f-8b5a-44b3-a721-4038855f378f,f8293ad4-8625-408b-b38e-25fc2b59ec5b,log,1749609596107998
+booted (time: 40ms),Boot,3122e38f-8b5a-44b3-a721-4038855f378f,19bc2698-8068-4e85-9380-5e20171ddf85,log,1749609596107821
+"Error in chat function: SyntaxError: Unexpected end of JSON input
+    at parse (<anonymous>)
+    at packageData (ext:deno_fetch/22_body.js:381:14)
+    at consumeBody (ext:deno_fetch/22_body.js:247:12)
+    at Request.json (ext:deno_fetch/22_body.js:320:16)
+    at Server.<anonymous> (file:///tmp/user_fn_awuibcrmituuaailkrdl_3122e38f-8b5a-44b3-a721-4038855f378f_5/source/index.ts:80:68)
+    at #respond (https://deno.land/std@0.177.0/http/server.ts:220:37)
+    at #serveHttp (https://deno.land/std@0.177.0/http/server.ts:258:20)
+    at eventLoopTick (ext:core/01_core.js:168:7)
+",Log,3122e38f-8b5a-44b3-a721-4038855f378f,c2465ca2-34cf-4c57-bf95-54469d0784b2,error,1749609594420906
+"Request received: {
+  method: ""GET"",
+  url: ""http://awuibcrmituuaailkrdl.supabase.co/chat"",
+  headers: {
+    ""accept-encoding"": ""gzip"",
+    ""cdn-loop"": ""cloudflare; loops=1; subreqs=1"",
+    ""cf-connecting-ip"": ""3.235.68.199"",
+    ""cf-ew-via"": ""15"",
+    ""cf-ray"": ""94ddbd8216456fa7-IAD"",
+    ""cf-visitor"": '{""scheme"":""https""}',
+    ""cf-worker"": ""supabase.co"",
+    host: ""edge-runtime.supabase.com"",
+    ""user-agent"": ""got (https://github.com/sindresorhus/got)"",
+    ""x-amzn-trace-id"": ""Root=1-6848ec76-0528f6d86686f88c6061953e"",
+    ""x-forwarded-for"": ""3.235.68.199,3.235.68.199, 3.2.51.20"",
+    ""x-forwarded-port"": ""443"",
+    ""x-forwarded-proto"": ""https""
+  }
+}
+",Log,3122e38f-8b5a-44b3-a721-4038855f378f,07752304-6d6d-41dc-a276-16c6c2f98ab9,log,1749609594420669
+"Listening on http://localhost:9999/
+",Log,3122e38f-8b5a-44b3-a721-4038855f378f,48138bec-7230-4193-967e-0bcf27e003ba,log,1749609594419972
+booted (time: 20ms),Boot,3122e38f-8b5a-44b3-a721-4038855f378f,6ab16e6e-89d3-4d0d-9656-0b66ccfbe420,log,1749609594419446
+"Error in chat function: SyntaxError: Unexpected end of JSON input
+    at parse (<anonymous>)
+    at packageData (ext:deno_fetch/22_body.js:381:14)
+    at consumeBody (ext:deno_fetch/22_body.js:247:12)
+    at Request.json (ext:deno_fetch/22_body.js:320:16)
+    at Server.<anonymous> (file:///tmp/user_fn_awuibcrmituuaailkrdl_3122e38f-8b5a-44b3-a721-4038855f378f_5/source/index.ts:80:68)
+    at #respond (https://deno.land/std@0.177.0/http/server.ts:220:37)
+    at #serveHttp (https://deno.land/std@0.177.0/http/server.ts:258:20)
+    at eventLoopTick (ext:core/01_core.js:168:7)
+",Log,3122e38f-8b5a-44b3-a721-4038855f378f,a9072507-ab64-448a-965b-a91f7b105494,error,1749609593431016
+"Request received: {
+  method: ""GET"",
+  url: ""http://awuibcrmituuaailkrdl.supabase.co/chat"",
+  headers: {
+    ""accept-encoding"": ""gzip"",
+    ""cdn-loop"": ""cloudflare; loops=1; subreqs=1"",
+    ""cf-connecting-ip"": ""3.235.68.199"",
+    ""cf-ew-via"": ""15"",
+    ""cf-ray"": ""94ddbd7ee0cce63d-IAD"",
+    ""cf-visitor"": '{""scheme"":""https""}',
+    ""cf-worker"": ""supabase.co"",
+    host: ""edge-runtime.supabase.com"",
+    ""user-agent"": ""got (https://github.com/sindresorhus/got)"",
+    ""x-amzn-trace-id"": ""Root=1-6848ec75-6380a9eb0a4fc23319a331e4"",
+    ""x-forwarded-for"": ""3.235.68.199,3.235.68.199, 3.2.51.19"",
+    ""x-forwarded-port"": ""443"",
+    ""x-forwarded-proto"": ""https""
+  }
+}
+",Log,3122e38f-8b5a-44b3-a721-4038855f378f,704939f5-ee83-40e6-8e16-1b997b12566c,log,1749609593430806
+"Error in chat function: SyntaxError: Unexpected end of JSON input
+    at parse (<anonymous>)
+    at packageData (ext:deno_fetch/22_body.js:381:14)
+    at consumeBody (ext:deno_fetch/22_body.js:247:12)
+    at Request.json (ext:deno_fetch/22_body.js:320:16)
+    at Server.<anonymous> (file:///tmp/user_fn_awuibcrmituuaailkrdl_3122e38f-8b5a-44b3-a721-4038855f378f_5/source/index.ts:80:68)
+    at #respond (https://deno.land/std@0.177.0/http/server.ts:220:37)
+    at #serveHttp (https://deno.land/std@0.177.0/http/server.ts:258:20)
+    at eventLoopTick (ext:core/01_core.js:168:7)
+",Log,3122e38f-8b5a-44b3-a721-4038855f378f,7d219b8d-c2f2-4669-bfcc-2a82a4c4f85b,error,1749609593069214
+"Request received: {
+  method: ""GET"",
+  url: ""http://awuibcrmituuaailkrdl.supabase.co/chat"",
+  headers: {
+    ""accept-encoding"": ""gzip"",
+    ""cdn-loop"": ""cloudflare; loops=1; subreqs=1"",
+    ""cf-connecting-ip"": ""3.235.68.199"",
+    ""cf-ew-via"": ""15"",
+    ""cf-ray"": ""94ddbd8931176fa7-IAD"",
+    ""cf-visitor"": '{""scheme"":""https""}',
+    ""cf-worker"": ""supabase.co"",
+    host: ""edge-runtime.supabase.com"",
+    ""user-agent"": ""got (https://github.com/sindresorhus/got)"",
+    ""x-amzn-trace-id"": ""Root=1-6848ec77-4564c31f660f693150b4643d"",
+    ""x-forwarded-for"": ""3.235.68.199,3.235.68.199, 99.83.101.171"",
+    ""x-forwarded-port"": ""443"",
+    ""x-forwarded-proto"": ""https""
+  }
+}
+",Log,3122e38f-8b5a-44b3-a721-4038855f378f,c78ba568-634f-4e3d-afba-0d0f58b5c694,log,1749609593068951
+"Listening on http://localhost:9999/
+",Log,3122e38f-8b5a-44b3-a721-4038855f378f,87d85b78-0bdc-4ea1-8fc9-5ddd00b3348c,log,1749609593068176
+booted (time: 21ms),Boot,3122e38f-8b5a-44b3-a721-4038855f378f,fbb3f3c5-7fbf-42dc-b965-423c246c1655,log,1749609593067990
+"Error in chat function: SyntaxError: Unexpected end of JSON input
+    at parse (<anonymous>)
+    at packageData (ext:deno_fetch/22_body.js:381:14)
+    at consumeBody (ext:deno_fetch/22_body.js:247:12)
+    at Request.json (ext:deno_fetch/22_body.js:320:16)
+    at Server.<anonymous> (file:///tmp/user_fn_awuibcrmituuaailkrdl_3122e38f-8b5a-44b3-a721-4038855f378f_5/source/index.ts:80:68)
+    at #respond (https://deno.land/std@0.177.0/http/server.ts:220:37)
+    at #serveHttp (https://deno.land/std@0.177.0/http/server.ts:258:20)
+    at eventLoopTick (ext:core/01_core.js:168:7)
+",Log,3122e38f-8b5a-44b3-a721-4038855f378f,15d7ecd0-6373-46eb-a6cf-f152e396d4cf,error,1749609588670666
+"Request received: {
+  method: ""GET"",
+  url: ""http://awuibcrmituuaailkrdl.supabase.co/chat"",
+  headers: {
+    ""accept-encoding"": ""gzip"",
+    ""cdn-loop"": ""cloudflare; loops=1; subreqs=1"",
+    ""cf-connecting-ip"": ""3.235.68.199"",
+    ""cf-ew-via"": ""15"",
+    ""cf-ray"": ""94ddbd6a7555e63d-IAD"",
+    ""cf-visitor"": '{""scheme"":""https""}',
+    ""cf-worker"": ""supabase.co"",
+    host: ""edge-runtime.supabase.com"",
+    ""user-agent"": ""got (https://github.com/sindresorhus/got)"",
+    ""x-amzn-trace-id"": ""Root=1-6848ec72-56b11f2c629e4b603217ba01"",
+    ""x-forwarded-for"": ""3.235.68.199,3.235.68.199, 3.2.51.22"",
+    ""x-forwarded-port"": ""443"",
+    ""x-forwarded-proto"": ""https""
+  }
+}
+",Log,3122e38f-8b5a-44b3-a721-4038855f378f,256e7931-64ff-4328-b484-d8affa5507e1,log,1749609588670407
+"Error in chat function: SyntaxError: Unexpected end of JSON input
+    at parse (<anonymous>)
+    at packageData (ext:deno_fetch/22_body.js:381:14)
+    at consumeBody (ext:deno_fetch/22_body.js:247:12)
+    at Request.json (ext:deno_fetch/22_body.js:320:16)
+    at Server.<anonymous> (file:///tmp/user_fn_awuibcrmituuaailkrdl_3122e38f-8b5a-44b3-a721-4038855f378f_5/source/index.ts:80:68)
+    at #respond (https://deno.land/std@0.177.0/http/server.ts:220:37)
+    at #serveHttp (https://deno.land/std@0.177.0/http/server.ts:258:20)
+    at eventLoopTick (ext:core/01_core.js:168:7)
+",Log,3122e38f-8b5a-44b3-a721-4038855f378f,9e2406d3-26cc-4798-9a63-3118818a6586,error,1749609588446781
+"Request received: {
+  method: ""GET"",
+  url: ""http://awuibcrmituuaailkrdl.supabase.co/chat"",
+  headers: {
+    ""accept-encoding"": ""gzip"",
+    ""cdn-loop"": ""cloudflare; loops=1; subreqs=1"",
+    ""cf-connecting-ip"": ""3.235.68.199"",
+    ""cf-ew-via"": ""15"",
+    ""cf-ray"": ""94ddbd7176b7e63d-IAD"",
+    ""cf-visitor"": '{""scheme"":""https""}',
+    ""cf-worker"": ""supabase.co"",
+    host: ""edge-runtime.supabase.com"",
+    ""user-agent"": ""got (https://github.com/sindresorhus/got)"",
+    ""x-amzn-trace-id"": ""Root=1-6848ec73-00b49f48579d15186dedf96f"",
+    ""x-forwarded-for"": ""3.235.68.199,3.235.68.199, 3.2.51.21"",
+    ""x-forwarded-port"": ""443"",
+    ""x-forwarded-proto"": ""https""
+  }
+}
+",Log,3122e38f-8b5a-44b3-a721-4038855f378f,21e477c4-1c67-4bd5-8263-ba29bff0dc50,log,1749609588446577
+"Listening on http://localhost:9999/
+",Log,3122e38f-8b5a-44b3-a721-4038855f378f,58e5d74b-5ea7-46c2-8462-5d1433b90036,log,1749609588446091
+booted (time: 20ms),Boot,3122e38f-8b5a-44b3-a721-4038855f378f,97c72bdf-8e4d-493c-b3e8-dcd6b7c15f6e,log,1749609588445858
+"Processing follow-up question { sessionId: ""dea3e92d-4433-495c-84b4-9db0eb2a644d"" }
+",Log,3122e38f-8b5a-44b3-a721-4038855f378f,10b82ebe-f5c6-4e53-a07a-c0f9eeeb03df,log,1749609529470614
+"Request parsed: {
+  hasMessages: true,
+  messageCount: 4,
+  hasData: true,
+  sessionId: ""dea3e92d-4433-495c-84b4-9db0eb2a644d"",
+  isNewAnalysis: false
+}
+",Log,3122e38f-8b5a-44b3-a721-4038855f378f,a36f1664-8957-4672-ad6b-2c7c8a9c7f10,log,1749609529470383
+"Request received: {
+  method: ""POST"",
+  url: ""http://awuibcrmituuaailkrdl.supabase.co/chat"",
+  headers: {
+    accept: ""*/*"",
+    ""accept-encoding"": ""gzip"",
+    ""accept-language"": ""en-US,en;q=0.9"",
+    apikey: ""eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF3dWliY3JtaXR1dWFhaWxrcmRsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkzNDczODUsImV4cCI6MjA2NDkyMzM4NX0.g3shL0as1Mr-NlGiHxAKldo9Lr8MZN5SXGeKYYauP8I"",
+    authorization: ""Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF3dWliY3JtaXR1dWFhaWxrcmRsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkzNDczODUsImV4cCI6MjA2NDkyMzM4NX0.g3shL0as1Mr-NlGiHxAKldo9Lr8MZN5SXGeKYYauP8I"",
+    ""cdn-loop"": ""cloudflare; loops=1; subreqs=1"",
+    ""cf-connecting-ip"": ""68.23.70.141"",
+    ""cf-ew-via"": ""15"",
+    ""cf-ray"": ""94ddbc02462cb09d-ATL"",
+    ""cf-visitor"": '{""scheme"":""https""}',
+    ""cf-worker"": ""supabase.co"",
+    ""content-length"": ""8636"",
+    ""content-type"": ""application/json"",
+    host: ""edge-runtime.supabase.com"",
+    origin: ""http://localhost:8080"",
+    priority: ""u=1, i"",
+    referer: ""http://localhost:8080/"",
+    ""sec-ch-ua"": '""Google Chrome"";v=""137"", ""Chromium"";v=""137"", ""Not/A)Brand"";v=""24""',
+    ""sec-ch-ua-mobile"": ""?0"",
+    ""sec-ch-ua-platform"": '""macOS""',
+    ""sec-fetch-dest"": ""empty"",
+    ""sec-fetch-mode"": ""cors"",
+    ""sec-fetch-site"": ""cross-site"",
+    ""user-agent"": ""Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"",
+    ""x-amzn-trace-id"": ""Root=1-6848ec38-23aef6ab29d198914c7efbc2"",
+    ""x-client-info"": ""supabase-js-web/2.50.0"",
+    ""x-forwarded-for"": ""68.23.70.141,68.23.70.141, 99.83.101.73"",
+    ""x-forwarded-port"": ""443"",
+    ""x-forwarded-proto"": ""https""
+  }
+}
+",Log,3122e38f-8b5a-44b3-a721-4038855f378f,419501c2-f8a2-473e-a320-6ab0d4fd46f9,log,1749609529470223
+"Listening on http://localhost:9999/
+",Log,3122e38f-8b5a-44b3-a721-4038855f378f,22dbcd28-902e-480a-8211-2fbb6f40f488,log,1749609529470028
+booted (time: 20ms),Boot,3122e38f-8b5a-44b3-a721-4038855f378f,517a6426-af2e-4a66-9e6b-4a14b6c1db05,log,1749609529469807
+shutdown,Shutdown,3122e38f-8b5a-44b3-a721-4038855f378f,b708f682-3895-44ef-8d2b-3f3661af6ac4,log,1749609444671449
+"Processing follow-up question { sessionId: ""dea3e92d-4433-495c-84b4-9db0eb2a644d"" }
+",Log,3122e38f-8b5a-44b3-a721-4038855f378f,59868862-b9ec-458e-8f15-03db975366ab,log,1749609413600257
+"Request parsed: {
+  hasMessages: true,
+  messageCount: 3,
+  hasData: true,
+  sessionId: ""dea3e92d-4433-495c-84b4-9db0eb2a644d"",
+  isNewAnalysis: false
+}
+",Log,3122e38f-8b5a-44b3-a721-4038855f378f,eb5ef6cf-b2bc-43ed-aca1-070f3cda9efa,log,1749609413600009
+"Request received: {
+  method: ""POST"",
+  url: ""http://awuibcrmituuaailkrdl.supabase.co/chat"",
+  headers: {
+    accept: ""*/*"",
+    ""accept-encoding"": ""gzip"",
+    ""accept-language"": ""en-US,en;q=0.9"",
+    apikey: ""eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF3dWliY3JtaXR1dWFhaWxrcmRsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkzNDczODUsImV4cCI6MjA2NDkyMzM4NX0.g3shL0as1Mr-NlGiHxAKldo9Lr8MZN5SXGeKYYauP8I"",
+    authorization: ""Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF3dWliY3JtaXR1dWFhaWxrcmRsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkzNDczODUsImV4cCI6MjA2NDkyMzM4NX0.g3shL0as1Mr-NlGiHxAKldo9Lr8MZN5SXGeKYYauP8I"",
+    ""cdn-loop"": ""cloudflare; loops=1; subreqs=1"",
+    ""cf-connecting-ip"": ""68.23.70.141"",
+    ""cf-ew-via"": ""15"",
+    ""cf-ray"": ""94ddb9160411185f-ATL"",
+    ""cf-visitor"": '{""scheme"":""https""}',
+    ""cf-worker"": ""supabase.co"",
+    ""content-length"": ""8579"",
+    ""content-type"": ""application/json"",
+    host: ""edge-runtime.supabase.com"",
+    origin: ""http://localhost:8080"",
+    priority: ""u=1, i"",
+    referer: ""http://localhost:8080/"",
+    ""sec-ch-ua"": '""Google Chrome"";v=""137"", ""Chromium"";v=""137"", ""Not/A)Brand"";v=""24""',
+    ""sec-ch-ua-mobile"": ""?0"",
+    ""sec-ch-ua-platform"": '""macOS""',
+    ""sec-fetch-dest"": ""empty"",
+    ""sec-fetch-mode"": ""cors"",
+    ""sec-fetch-site"": ""cross-site"",
+    ""user-agent"": ""Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"",
+    ""x-amzn-trace-id"": ""Root=1-6848ebc0-05c2ee277874647c7e9fb1e1"",
+    ""x-client-info"": ""supabase-js-web/2.50.0"",
+    ""x-forwarded-for"": ""68.23.70.141,68.23.70.141, 3.2.52.16"",
+    ""x-forwarded-port"": ""443"",
+    ""x-forwarded-proto"": ""https""
+  }
+}
+",Log,3122e38f-8b5a-44b3-a721-4038855f378f,5e3fa512-9b60-4cb9-a732-34052ada019b,log,1749609413599862
+"Listening on http://localhost:9999/
+",Log,3122e38f-8b5a-44b3-a721-4038855f378f,fd2120e9-fa39-44d9-9f5e-9dce526c7212,log,1749609413599713
+booted (time: 21ms),Boot,3122e38f-8b5a-44b3-a721-4038855f378f,33e3532f-7852-4125-ba3f-197f4d57567f,log,1749609413599539
+shutdown,Shutdown,3122e38f-8b5a-44b3-a721-4038855f378f,e05de82d-3dac-481e-81d2-0fb4ac3b0480,log,1749609278640929
+"Processing follow-up question { sessionId: ""dea3e92d-4433-495c-84b4-9db0eb2a644d"" }
+",Log,3122e38f-8b5a-44b3-a721-4038855f378f,238d381c-1763-4b5b-b49c-6cea9c79ef16,log,1749609244712887
+"Request parsed: {
+  hasMessages: true,
+  messageCount: 2,
+  hasData: true,
+  sessionId: ""dea3e92d-4433-495c-84b4-9db0eb2a644d"",
+  isNewAnalysis: false
+}
+",Log,3122e38f-8b5a-44b3-a721-4038855f378f,87f663ab-301a-4ffd-9684-6a0669541850,log,1749609244712581
+"Request received: {
+  method: ""POST"",
+  url: ""http://awuibcrmituuaailkrdl.supabase.co/chat"",
+  headers: {
+    accept: ""*/*"",
+    ""accept-encoding"": ""gzip"",
+    ""accept-language"": ""en-US,en;q=0.9"",
+    apikey: ""eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF3dWliY3JtaXR1dWFhaWxrcmRsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkzNDczODUsImV4cCI6MjA2NDkyMzM4NX0.g3shL0as1Mr-NlGiHxAKldo9Lr8MZN5SXGeKYYauP8I"",
+    authorization: ""Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF3dWliY3JtaXR1dWFhaWxrcmRsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkzNDczODUsImV4cCI6MjA2NDkyMzM4NX0.g3shL0as1Mr-NlGiHxAKldo9Lr8MZN5SXGeKYYauP8I"",
+    ""cdn-loop"": ""cloudflare; loops=1; subreqs=1"",
+    ""cf-connecting-ip"": ""68.23.70.141"",
+    ""cf-ew-via"": ""15"",
+    ""cf-ray"": ""94ddb50ed6e6bf98-ATL"",
+    ""cf-visitor"": '{""scheme"":""https""}',
+    ""cf-worker"": ""supabase.co"",
+    ""content-length"": ""8522"",
+    ""content-type"": ""application/json"",
+    host: ""edge-runtime.supabase.com"",
+    origin: ""http://localhost:8080"",
+    priority: ""u=1, i"",
+    referer: ""http://localhost:8080/"",
+    ""sec-ch-ua"": '""Google Chrome"";v=""137"", ""Chromium"";v=""137"", ""Not/A)Brand"";v=""24""',
+    ""sec-ch-ua-mobile"": ""?0"",
+    ""sec-ch-ua-platform"": '""macOS""',
+    ""sec-fetch-dest"": ""empty"",
+    ""sec-fetch-mode"": ""cors"",
+    ""sec-fetch-site"": ""cross-site"",
+    ""user-agent"": ""Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"",
+    ""x-amzn-trace-id"": ""Root=1-6848eb1c-3428d70b23d02f860acbddcb"",
+    ""x-client-info"": ""supabase-js-web/2.50.0"",
+    ""x-forwarded-for"": ""68.23.70.141,68.23.70.141, 99.83.101.75"",
+    ""x-forwarded-port"": ""443"",
+    ""x-forwarded-proto"": ""https""
+  }
+}
+",Log,3122e38f-8b5a-44b3-a721-4038855f378f,b6c19966-2b6d-4257-8846-3e2f70f478c8,log,1749609244712369
+"Listening on http://localhost:9999/
+",Log,3122e38f-8b5a-44b3-a721-4038855f378f,c9c06bad-1290-4828-a869-8baf4d1f6ffe,log,1749609244712158
+booted (time: 20ms),Boot,3122e38f-8b5a-44b3-a721-4038855f378f,5af0f513-c66b-4249-b646-9bd9bfd643a9,log,1749609244711923
+shutdown,Shutdown,3122e38f-8b5a-44b3-a721-4038855f378f,2474d20b-ba2c-4757-a92e-0514ec2d50d8,log,1749609202843813
+"Listening on http://localhost:9999/
+",Log,3122e38f-8b5a-44b3-a721-4038855f378f,e90ca67a-5603-4eba-9be3-9a592518f3d3,log,1749609078584883
+booted (time: 22ms),Boot,3122e38f-8b5a-44b3-a721-4038855f378f,7705f5c6-177b-4142-8259-8fa818b9c2bb,log,1749609078584685
+shutdown,Shutdown,3122e38f-8b5a-44b3-a721-4038855f378f,41bf7fc5-52c1-4f17-8c6c-613872e2f8f1,log,1749609060453380
+"Listening on http://localhost:9999/
+",Log,3122e38f-8b5a-44b3-a721-4038855f378f,7f7ea69e-1a22-42a6-8dda-7794cb32798e,log,1749609003051499
+booted (time: 20ms),Boot,3122e38f-8b5a-44b3-a721-4038855f378f,b6a61e1d-0557-41f7-9114-a549db206783,log,1749609003051248
+"Listening on http://localhost:9999/
+",Log,3122e38f-8b5a-44b3-a721-4038855f378f,fb6849c8-922f-4889-bc35-588d6a7c1009,log,1749608860318572
+booted (time: 21ms),Boot,3122e38f-8b5a-44b3-a721-4038855f378f,55683a9e-8be9-4023-8e5b-cc20a7722ce0,log,1749608860318353
+shutdown,Shutdown,3122e38f-8b5a-44b3-a721-4038855f378f,0cb4d2ca-85bf-440f-b63d-e0e864393209,log,1749608761862155
+"Listening on http://localhost:9999/
+",Log,3122e38f-8b5a-44b3-a721-4038855f378f,ecc8a4fc-1a9c-476a-9e81-8f1fab18d610,log,1749608561820709
+booted (time: 20ms),Boot,3122e38f-8b5a-44b3-a721-4038855f378f,82926ca4-f476-4b3d-8687-a64f7ba91606,log,1749608561820499
+shutdown,Shutdown,3122e38f-8b5a-44b3-a721-4038855f378f,d0e44f8e-73cc-4bab-a9d4-85b3b025dd7f,log,1749608346840295
+shutdown,Shutdown,3122e38f-8b5a-44b3-a721-4038855f378f,60ffaaa2-4a63-44dc-9435-feea12f081f8,log,1749608263132221
+shutdown,Shutdown,3122e38f-8b5a-44b3-a721-4038855f378f,b88d4870-b341-4cd5-a369-f44f9b1f4dc5,log,1749608182652843
+"Listening on http://localhost:9999/
+",Log,3122e38f-8b5a-44b3-a721-4038855f378f,9c939d3f-d1ee-4eda-b0d1-0db0349161f3,log,1749608146831359
+booted (time: 20ms),Boot,3122e38f-8b5a-44b3-a721-4038855f378f,b3aa7666-b284-4d34-b154-e52ce49ea954,log,1749608146831155
+shutdown,Shutdown,3122e38f-8b5a-44b3-a721-4038855f378f,c9e91af1-38e9-4dc8-902a-bb847acdfa59,log,1749608084979001
+shutdown,Shutdown,3122e38f-8b5a-44b3-a721-4038855f378f,0224463b-9b94-4e13-815a-5910aef88dd2,log,1749608081743593
+"Listening on http://localhost:9999/
+",Log,3122e38f-8b5a-44b3-a721-4038855f378f,b0da7bc5-e847-47dc-a35a-816369af8b27,log,1749608063082416
+booted (time: 20ms),Boot,3122e38f-8b5a-44b3-a721-4038855f378f,d5fef6bc-0636-4871-a794-46dfdfc1c9be,log,1749608063082216
+"Listening on http://localhost:9999/
+",Log,3122e38f-8b5a-44b3-a721-4038855f378f,d809345f-153a-4205-85f2-f1ccb6ee65a0,log,1749607982620080
+booted (time: 20ms),Boot,3122e38f-8b5a-44b3-a721-4038855f378f,af008d17-472e-4957-8328-17594733dfbc,log,1749607982619858
+"Error in chat function: Error: 404 {""type"":""error"",""error"":{""type"":""not_found_error"",""message"":""model: claude-3-sonnet-20240229""}}
+    at s.generate (https://esm.sh/@anthropic-ai/sdk@0.18.0/es2022/error.mjs:2:549)
+    at o.makeStatusError (https://esm.sh/@anthropic-ai/sdk@0.18.0/es2022/core.mjs:4:4473)
+    at o.makeRequest (https://esm.sh/@anthropic-ai/sdk@0.18.0/es2022/core.mjs:4:5371)
+    at eventLoopTick (ext:core/01_core.js:168:7)
+    at async Server.<anonymous> (file:///tmp/user_fn_awuibcrmituuaailkrdl_3122e38f-8b5a-44b3-a721-4038855f378f_1/source/index.ts:161:22)
+    at async #respond (https://deno.land/std@0.177.0/http/server.ts:220:18) {
+  status: 404,
+  headers: {
+    ""anthropic-organization-id"": ""c925f450-6c6a-4414-a993-beb7b5d907cb"",
+    ""cf-cache-status"": ""DYNAMIC"",
+    ""cf-ray"": ""94dd93c5f8bfe645-IAD"",
+    ""content-type"": ""application/json"",
+    date: ""Wed, 11 Jun 2025 02:11:20 GMT"",
+    ""request-id"": ""req_011CQ1d4GNKWanS274vYetpi"",
+    server: ""cloudflare"",
+    ""strict-transport-security"": ""max-age=31536000; includeSubDomains; preload"",
+    via: ""1.1 google"",
+    ""x-robots-tag"": ""none"",
+    ""x-should-retry"": ""false""
+  },
+  error: {
+    type: ""error"",
+    error: {
+      type: ""not_found_error"",
+      message: ""model: claude-3-sonnet-20240229""
+    }
+  }
+}
+",Log,3122e38f-8b5a-44b3-a721-4038855f378f,49780b56-6f63-4dcc-8fcf-9b53b5e21509,error,1749607884925880
+"Listening on http://localhost:9999/
+",Log,3122e38f-8b5a-44b3-a721-4038855f378f,21bcbf5b-1b04-4cf3-abd8-67cf95456251,log,1749607884921550
+booted (time: 22ms),Boot,3122e38f-8b5a-44b3-a721-4038855f378f,4a9ba75e-8e36-4a28-8ed1-180e79d9d88c,log,1749607884921389
+"Listening on http://localhost:9999/
+",Log,3122e38f-8b5a-44b3-a721-4038855f378f,57d6ea5e-0603-4700-a852-a73a6ebc5476,log,1749607881692580
+booted (time: 21ms),Boot,3122e38f-8b5a-44b3-a721-4038855f378f,789b4980-5b51-487a-a328-1c8198ddd38a,log,1749607881692367

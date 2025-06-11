@@ -1,4 +1,3 @@
-
 import DataAnalysisDashboard from '@/components/DataAnalysisDashboard'
 import AnimatedTextAnalysis from '@/components/AnimatedTextAnalysis'
 import ChatBot from '@/components/ChatBot'
@@ -17,6 +16,7 @@ import { ComposedChart } from '@/components/visualizations/ComposedChart'
 import { ScatterChart } from '@/components/visualizations/ScatterChart'
 import { BarChart } from '@/components/visualizations/BarChart'
 import { ArrowUpDown } from 'lucide-react'
+import { supabase } from '@/lib/supabase'
 
 // Helper: get chart component by type
 const chartComponentMap: Record<string, any> = {
@@ -28,16 +28,22 @@ const chartComponentMap: Record<string, any> = {
 
 type SortDirection = 'asc' | 'desc' | null
 
+interface TableRow {
+  [key: string]: string | number;
+}
+
 export default function AnalysisApp() {
   const [analysisData, setAnalysisData] = useState('')
   const [isAnalyzing, setIsAnalyzing] = useState(false)
-  const [tableData, setTableData] = useState<{ headers: string[], rows: string[][] } | null>(null)
+  const [tableData, setTableData] = useState<TableRow[]>([])
   const [claudeLog, setClaudeLog] = useState<any>(null)
   const [parsedData, setParsedData] = useState<any[]>([])
   const [isLogMinimized, setIsLogMinimized] = useState(false)
   const [tableSearch, setTableSearch] = useState('')
   const [sortColumn, setSortColumn] = useState<number | null>(null)
   const [sortDirection, setSortDirection] = useState<SortDirection>(null)
+  const [sessionId, setSessionId] = useState<string | null>(null)
+  const [currentData, setCurrentData] = useState<string | null>(null)
 
   const handleSort = (columnIndex: number) => {
     if (sortColumn === columnIndex) {
@@ -55,9 +61,9 @@ export default function AnalysisApp() {
   }
 
   const getSortedRows = () => {
-    if (!tableData || sortColumn === null || sortDirection === null) return tableData?.rows || []
+    if (!tableData || sortColumn === null || sortDirection === null) return tableData || []
 
-    return [...tableData.rows].sort((a, b) => {
+    return [...tableData].sort((a, b) => {
       const aVal = a[sortColumn]
       const bVal = b[sortColumn]
       
@@ -78,70 +84,56 @@ export default function AnalysisApp() {
 
   const handleAnalysis = async (data: string) => {
     setIsAnalyzing(true)
-    try {
-      // Parse CSV data for table display
-      const rows = data.split('\n').map(row => row.split(','))
-      const headers = rows[0]
-      const dataRows = rows.slice(1)
-      setTableData({ headers, rows: dataRows })
-      
-      // Parse CSV into array of objects for charting
-      const objects = dataRows.map(row => {
-        const obj: any = {}
-        headers.forEach((header, i) => {
-          // Convert numeric strings to numbers
-          const value = row[i]
-          obj[header] = !isNaN(Number(value)) ? Number(value) : value
-        })
-        return obj
-      })
-      
-      console.log('Parsed Objects:', objects)
-      
-      // If we have a recommendation, sort by its x-axis key
-      let sortedObjects = objects
-      if (claudeLog?.visualizations?.recommendations?.[0]?.dataPoints?.xAxis) {
-        const xKey = claudeLog.visualizations.recommendations[0].dataPoints.xAxis
-        sortedObjects = [...objects].sort((a, b) => {
-          // Try to parse as number, fallback to string
-          const aVal = isNaN(Number(a[xKey])) ? a[xKey] : Number(a[xKey])
-          const bVal = isNaN(Number(b[xKey])) ? b[xKey] : Number(b[xKey])
-          if (aVal < bVal) return -1
-          if (aVal > bVal) return 1
-          return 0
-        })
-      }
-      
-      console.log('Sorted Objects:', sortedObjects)
-      setParsedData(sortedObjects)
+    setCurrentData(data)
+    setSessionId(null) // Reset session for new analysis
 
-      const response = await fetch('https://awuibcrmituuaailkrdl.supabase.co/functions/v1/bright-api', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF3dWliY3JtaXR1dWFhaWxrcmRsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDk5MjA0NzcsImV4cCI6MjAyNTQ5NjQ3N30.RqOyoXZ_1UoFnYwsOAJeqNwFNe_z_5YlDO-_h0JQZL4',
-          'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF3dWliY3JtaXR1dWFhaWxrcmRsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDk5MjA0NzcsImV4cCI6MjAyNTQ5NjQ3N30.RqOyoXZ_1UoFnYwsOAJeqNwFNe_z_5YlDO-_h0JQZL4'
-        },
-        body: JSON.stringify({
+    try {
+      const { data: result, error } = await supabase.functions.invoke('chat', {
+        body: {
           messages: [{
             role: 'user',
-            content: 'You are a data analysis expert. Please analyze this dataset.'
+            content: 'Analyze this data'
           }],
-          data: data
-        })
+          data,
+          isNewAnalysis: true
+        }
       })
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
+      if (error) {
+        throw error
       }
 
-      const result = await response.json()
-      setClaudeLog(result)
-      console.log('Claude analysis text:', result.analysis)
-      setAnalysisData(result.analysis || 'No analysis available')
+      if (!result || !result.analysis) {
+        throw new Error('No analysis received from API')
+      }
+
+      setAnalysisData(result.analysis)
+      
+      // Parse CSV data for the data preview table
+      if (data) {
+        const lines = data.split('\n')
+        const headers = lines[0].split(',')
+        const rows = lines.slice(1).map(line => {
+          const values = line.split(',')
+          return headers.reduce((obj: any, header: string, index: number) => {
+            obj[header.trim()] = values[index]?.trim() || ''
+            return obj
+          }, {})
+        })
+        setTableData(rows)
+      }
+
+      // Store visualization recommendations
+      if (result.visualizations?.recommendations) {
+        setClaudeLog(result)
+      }
+
+      // Store session ID for future chat messages
+      if (result.sessionId) {
+        setSessionId(result.sessionId)
+      }
     } catch (error) {
-      console.error('Error during analysis:', error)
-      setAnalysisData('Error performing analysis')
+      console.error('Error getting analysis:', error)
     } finally {
       setIsAnalyzing(false)
     }
@@ -163,60 +155,67 @@ export default function AnalysisApp() {
 
           {/* ChatBot Section */}
           <div id="chat-section">
-            <ChatBot />
+            <ChatBot 
+              data={currentData || undefined}
+              sessionId={sessionId || undefined}
+              isNewAnalysis={!sessionId}
+            />
           </div>
 
           {/* Data Preview Section */}
           {tableData && (
             <div id="data-preview" className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
-              <h2 className="text-2xl font-semibold mb-4 dark:text-white">Data Preview</h2>
-              <input
-                type="text"
-                placeholder="Search table..."
-                value={tableSearch}
-                onChange={e => setTableSearch(e.target.value)}
-                className="mb-4 px-3 py-2 border rounded w-full max-w-xs text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-              />
-              <div className="overflow-x-auto">
-                <div className="max-h-[400px] overflow-y-auto border rounded">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        {tableData.headers.map((header, index) => (
-                          <TableHead
-                            key={index}
-                            className="font-semibold sticky top-0 bg-white z-10 dark:bg-gray-800 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700"
-                            onClick={() => handleSort(index)}
-                          >
-                            <div className="flex items-center gap-2">
-                              {header}
-                              {sortColumn === index && (
-                                <ArrowUpDown className="h-4 w-4" />
-                              )}
-                            </div>
-                          </TableHead>
-                        ))}
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {getSortedRows()
-                        .filter(row =>
-                          tableSearch.trim() === '' ||
-                          row.some(cell =>
-                            cell && cell.toString().toLowerCase().includes(tableSearch.toLowerCase())
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-2xl font-semibold dark:text-white">Data Preview</h2>
+                <input
+                  type="text"
+                  placeholder="Search table..."
+                  value={tableSearch}
+                  onChange={e => setTableSearch(e.target.value)}
+                  className="px-3 py-2 border rounded w-64 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                />
+              </div>
+              <div className="relative">
+                <div className="overflow-x-auto">
+                  <div className="max-h-[400px] overflow-y-auto">
+                    <Table>
+                      <TableHeader className="sticky top-0 bg-white dark:bg-gray-800 z-10">
+                        <TableRow>
+                          {Object.keys(tableData[0] || {}).map((header, index) => (
+                            <TableHead
+                              key={index}
+                              className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 whitespace-nowrap"
+                              onClick={() => handleSort(index)}
+                            >
+                              <div className="flex items-center gap-2">
+                                {header}
+                                {sortColumn === index && (
+                                  <ArrowUpDown className="h-4 w-4" />
+                                )}
+                              </div>
+                            </TableHead>
+                          ))}
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {getSortedRows()
+                          .filter(row => 
+                            Object.values(row).some(cell => 
+                              String(cell).toLowerCase().includes(tableSearch.toLowerCase())
+                            )
                           )
-                        )
-                        .map((row, rowIndex) => (
-                          <TableRow key={rowIndex}>
-                            {row.map((cell, cellIndex) => (
-                              <TableCell key={cellIndex}>
-                                {cell}
-                              </TableCell>
-                            ))}
-                          </TableRow>
-                        ))}
-                    </TableBody>
-                  </Table>
+                          .map((row, rowIndex) => (
+                            <TableRow key={rowIndex}>
+                              {Object.values(row).map((cell: string | number, cellIndex: number) => (
+                                <TableCell key={cellIndex} className="whitespace-nowrap">
+                                  {cell}
+                                </TableCell>
+                              ))}
+                            </TableRow>
+                          ))}
+                      </TableBody>
+                    </Table>
+                  </div>
                 </div>
               </div>
             </div>
