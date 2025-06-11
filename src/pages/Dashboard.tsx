@@ -6,15 +6,39 @@ import Header from "@/components/Header"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { BarChart2, FileText, MessageSquare, Upload, ChevronDown, ChevronUp, ArrowLeft } from "lucide-react"
+import { toast } from "@/components/ui/use-toast"
 
 interface AnalysisResult {
   id: string
-  dataset_overview: any
-  statistical_summary: any
-  pattern_recognition: any
-  data_quality: any
-  key_insights: any
-  recommendations: any
+  dataset_overview: {
+    total_rows: number
+    total_columns: number
+    column_names: string[]
+    data_types: Record<string, string>
+  }
+  statistical_summary: {
+    summary_stats: Record<string, any>
+    correlations: Record<string, number>
+  }
+  pattern_recognition: {
+    trends: string[]
+    anomalies: string[]
+    seasonality: string[]
+  }
+  data_quality: {
+    missing_values: Record<string, number>
+    outliers: Record<string, number>
+    data_quality_score: number
+  }
+  key_insights: string[]
+  recommendations: string[]
+  created_at: string
+}
+
+interface ChatMessage {
+  id: string
+  role: 'user' | 'assistant'
+  content: string
   created_at: string
 }
 
@@ -25,6 +49,7 @@ interface Project {
   file_name: string
   created_at: string
   analysis_results: AnalysisResult[]
+  chat_messages: ChatMessage[]
 }
 
 interface DashboardStats {
@@ -50,15 +75,26 @@ export default function Dashboard() {
     let mounted = true
 
     const initializeDashboard = async () => {
-      const { data: { session: currentSession } } = await supabase.auth.getSession()
-      if (!currentSession) {
-        navigate('/login')
-        return
-      }
-      
-      if (mounted) {
-        setSession(currentSession)
-        await fetchDashboardData(currentSession)
+      try {
+        const { data: { session: currentSession } } = await supabase.auth.getSession()
+        console.log('Initial session check:', currentSession?.user?.id)
+        
+        if (!currentSession) {
+          console.log('No session found, redirecting to login')
+          navigate('/login')
+          return
+        }
+        
+        if (mounted) {
+          setSession(currentSession)
+          await fetchDashboardData(currentSession)
+          setLoading(false)
+        }
+      } catch (error) {
+        console.error('Error initializing dashboard:', error)
+        if (mounted) {
+          setLoading(false)
+        }
       }
     }
 
@@ -66,7 +102,10 @@ export default function Dashboard() {
 
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, currentSession) => {
+      console.log('Auth state changed:', _event, 'User ID:', currentSession?.user?.id)
+      
       if (!currentSession) {
+        console.log('Session lost, redirecting to login')
         navigate('/login')
         return
       }
@@ -74,112 +113,77 @@ export default function Dashboard() {
       if (mounted) {
         setSession(currentSession)
         await fetchDashboardData(currentSession)
+        setLoading(false)
       }
     })
 
     return () => {
+      console.log('Cleaning up dashboard subscription')
       mounted = false
       subscription.unsubscribe()
     }
   }, [navigate])
 
-  const fetchDashboardData = async (session: Session) => {
+  const fetchDashboardData = async (currentSession: Session) => {
     try {
-      setLoading(true)
-      console.log('Fetching dashboard data for user:', session.user.id)
-
-      // Fetch total projects
-      const { count: projectsCount, error: projectsError } = await supabase
+      console.log('Fetching dashboard data for user:', currentSession.user.id)
+      
+      // Fetch projects
+      const { data: projects, error: projectsError } = await supabase
         .from('projects')
-        .select('*', { count: 'exact', head: true })
-        .eq('user_id', session.user.id)
+        .select('*')
+        .eq('user_id', currentSession.user.id)
+        .order('created_at', { ascending: false })
 
       if (projectsError) {
-        console.error('Error fetching projects count:', projectsError)
+        console.error('Error fetching projects:', projectsError)
         throw projectsError
       }
 
-      console.log('Total projects:', projectsCount)
+      console.log('Total projects:', projects?.length || 0)
 
-      // First get all project IDs for the user
-      const { data: userProjects, error: userProjectsError } = await supabase
-        .from('projects')
-        .select('id')
-        .eq('user_id', session.user.id)
-
-      if (userProjectsError) {
-        console.error('Error fetching user projects:', userProjectsError)
-        throw userProjectsError
-      }
-
-      const projectIds = userProjects?.map(p => p.id) || []
-
-      // Fetch total analyses through projects
-      const { count: analysesCount, error: analysesError } = await supabase
+      // Fetch analysis results
+      const { data: analyses, error: analysesError } = await supabase
         .from('analysis_results')
-        .select('*', { count: 'exact', head: true })
-        .in('project_id', projectIds)
+        .select('*')
+        .in('project_id', projects?.map(p => p.id) || [])
 
       if (analysesError) {
-        console.error('Error fetching analyses count:', analysesError)
+        console.error('Error fetching analyses:', analysesError)
         throw analysesError
       }
 
-      console.log('Total analyses:', analysesCount)
+      console.log('Total analyses:', analyses?.length || 0)
 
-      // Fetch total messages through projects
-      const { count: messagesCount, error: messagesError } = await supabase
+      // Fetch chat messages
+      const { data: messages, error: messagesError } = await supabase
         .from('chat_messages')
-        .select('*', { count: 'exact', head: true })
-        .in('project_id', projectIds)
+        .select('*')
+        .in('project_id', projects?.map(p => p.id) || [])
 
       if (messagesError) {
-        console.error('Error fetching messages count:', messagesError)
+        console.error('Error fetching messages:', messagesError)
         throw messagesError
       }
 
-      console.log('Total messages:', messagesCount)
+      console.log('Total messages:', messages?.length || 0)
 
-      // Fetch projects with their analysis results
-      const { data: projects, error: projectsDataError } = await supabase
-        .from('projects')
-        .select(`
-          id,
-          title,
-          description,
-          file_name,
-          created_at,
-          analysis_results (
-            id,
-            dataset_overview,
-            statistical_summary,
-            pattern_recognition,
-            data_quality,
-            key_insights,
-            recommendations,
-            created_at
-          )
-        `)
-        .eq('user_id', session.user.id)
-        .order('created_at', { ascending: false })
-
-      if (projectsDataError) {
-        console.error('Error fetching projects data:', projectsDataError)
-        throw projectsDataError
-      }
-
-      console.log('Fetched projects:', projects)
-
+      // Update stats
       setStats({
-        totalProjects: projectsCount || 0,
-        totalAnalyses: analysesCount || 0,
-        totalMessages: messagesCount || 0,
+        totalProjects: projects?.length || 0,
+        totalAnalyses: analyses?.length || 0,
+        totalMessages: messages?.length || 0,
         projects: projects || []
       })
+
+      console.log('Fetched projects:', projects)
     } catch (error) {
-      console.error('Error fetching dashboard data:', error)
-    } finally {
-      setLoading(false)
+      console.error('Error in fetchDashboardData:', error)
+      toast({
+        title: 'Error',
+        description: 'Failed to load dashboard data. Please try refreshing the page.',
+        variant: 'destructive'
+      })
     }
   }
 
@@ -307,49 +311,166 @@ export default function Dashboard() {
                     {expandedProject === project.id && (
                       <div className="p-4 border-t bg-muted/30">
                         {project.analysis_results.map((analysis) => (
-                          <div key={analysis.id} className="space-y-4">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div key={analysis.id} className="space-y-6">
+                            {/* Dataset Overview */}
+                            <Card className="p-4">
+                              <h4 className="font-medium mb-4">Dataset Overview</h4>
+                              <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                  <p className="text-sm text-muted-foreground">Total Rows: {analysis.dataset_overview.total_rows}</p>
+                                  <p className="text-sm text-muted-foreground">Total Columns: {analysis.dataset_overview.total_columns}</p>
+                                </div>
+                                <div>
+                                  <p className="text-sm text-muted-foreground">Data Types:</p>
+                                  <ul className="text-sm text-muted-foreground list-disc list-inside">
+                                    {Object.entries(analysis.dataset_overview.data_types).map(([column, type]) => (
+                                      <li key={column}>{column}: {type}</li>
+                                    ))}
+                                  </ul>
+                                </div>
+                              </div>
+                            </Card>
+
+                            {/* Statistical Summary */}
+                            <Card className="p-4">
+                              <h4 className="font-medium mb-4">Statistical Summary</h4>
+                              <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                  <p className="text-sm font-medium mb-2">Summary Statistics</p>
+                                  <div className="space-y-2">
+                                    {Object.entries(analysis.statistical_summary.summary_stats).map(([stat, value]) => (
+                                      <p key={stat} className="text-sm text-muted-foreground">
+                                        {stat}: {typeof value === 'number' ? value.toFixed(2) : value}
+                                      </p>
+                                    ))}
+                                  </div>
+                                </div>
+                                <div>
+                                  <p className="text-sm font-medium mb-2">Correlations</p>
+                                  <div className="space-y-2">
+                                    {Object.entries(analysis.statistical_summary.correlations).map(([pair, value]) => (
+                                      <p key={pair} className="text-sm text-muted-foreground">
+                                        {pair}: {value.toFixed(2)}
+                                      </p>
+                                    ))}
+                                  </div>
+                                </div>
+                              </div>
+                            </Card>
+
+                            {/* Pattern Recognition */}
+                            <Card className="p-4">
+                              <h4 className="font-medium mb-4">Pattern Recognition</h4>
+                              <div className="grid grid-cols-3 gap-4">
+                                <div>
+                                  <p className="text-sm font-medium mb-2">Trends</p>
+                                  <ul className="text-sm text-muted-foreground list-disc list-inside">
+                                    {analysis.pattern_recognition.trends.map((trend, index) => (
+                                      <li key={index}>{trend}</li>
+                                    ))}
+                                  </ul>
+                                </div>
+                                <div>
+                                  <p className="text-sm font-medium mb-2">Anomalies</p>
+                                  <ul className="text-sm text-muted-foreground list-disc list-inside">
+                                    {analysis.pattern_recognition.anomalies.map((anomaly, index) => (
+                                      <li key={index}>{anomaly}</li>
+                                    ))}
+                                  </ul>
+                                </div>
+                                <div>
+                                  <p className="text-sm font-medium mb-2">Seasonality</p>
+                                  <ul className="text-sm text-muted-foreground list-disc list-inside">
+                                    {analysis.pattern_recognition.seasonality.map((season, index) => (
+                                      <li key={index}>{season}</li>
+                                    ))}
+                                  </ul>
+                                </div>
+                              </div>
+                            </Card>
+
+                            {/* Data Quality */}
+                            <Card className="p-4">
+                              <h4 className="font-medium mb-4">Data Quality</h4>
+                              <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                  <p className="text-sm font-medium mb-2">Missing Values</p>
+                                  <div className="space-y-2">
+                                    {Object.entries(analysis.data_quality.missing_values).map(([column, count]) => (
+                                      <p key={column} className="text-sm text-muted-foreground">
+                                        {column}: {count} missing
+                                      </p>
+                                    ))}
+                                  </div>
+                                </div>
+                                <div>
+                                  <p className="text-sm font-medium mb-2">Outliers</p>
+                                  <div className="space-y-2">
+                                    {Object.entries(analysis.data_quality.outliers).map(([column, count]) => (
+                                      <p key={column} className="text-sm text-muted-foreground">
+                                        {column}: {count} outliers
+                                      </p>
+                                    ))}
+                                  </div>
+                                </div>
+                              </div>
+                              <div className="mt-4">
+                                <p className="text-sm font-medium">Data Quality Score: {analysis.data_quality.data_quality_score}%</p>
+                              </div>
+                            </Card>
+
+                            {/* Key Insights */}
+                            <Card className="p-4">
+                              <h4 className="font-medium mb-4">Key Insights</h4>
+                              <ul className="text-sm text-muted-foreground list-disc list-inside space-y-2">
+                                {analysis.key_insights.map((insight, index) => (
+                                  <li key={index}>{insight}</li>
+                                ))}
+                              </ul>
+                            </Card>
+
+                            {/* Recommendations */}
+                            <Card className="p-4">
+                              <h4 className="font-medium mb-4">Recommendations</h4>
+                              <ul className="text-sm text-muted-foreground list-disc list-inside space-y-2">
+                                {analysis.recommendations.map((recommendation, index) => (
+                                  <li key={index}>{recommendation}</li>
+                                ))}
+                              </ul>
+                            </Card>
+
+                            {/* Chat History */}
+                            {project.chat_messages && project.chat_messages.length > 0 && (
                               <Card className="p-4">
-                                <h4 className="font-medium mb-2">Dataset Overview</h4>
-                                <pre className="text-sm text-muted-foreground whitespace-pre-wrap">
-                                  {JSON.stringify(analysis.dataset_overview, null, 2)}
-                                </pre>
+                                <h4 className="font-medium mb-4">Chat History</h4>
+                                <div className="space-y-4">
+                                  {project.chat_messages.map((message) => (
+                                    <div
+                                      key={message.id}
+                                      className={`p-3 rounded-lg ${
+                                        message.role === 'user'
+                                          ? 'bg-primary/10 ml-8'
+                                          : 'bg-muted mr-8'
+                                      }`}
+                                    >
+                                      <div className="flex items-start gap-2">
+                                        <div className="flex-1">
+                                          <p className="text-sm font-medium mb-1">
+                                            {message.role === 'user' ? 'You' : 'Assistant'}
+                                          </p>
+                                          <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+                                            {message.content}
+                                          </p>
+                                        </div>
+                                        <span className="text-xs text-muted-foreground">
+                                          {formatDate(message.created_at)}
+                                        </span>
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
                               </Card>
-                              <Card className="p-4">
-                                <h4 className="font-medium mb-2">Statistical Summary</h4>
-                                <pre className="text-sm text-muted-foreground whitespace-pre-wrap">
-                                  {JSON.stringify(analysis.statistical_summary, null, 2)}
-                                </pre>
-                              </Card>
-                            </div>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                              <Card className="p-4">
-                                <h4 className="font-medium mb-2">Pattern Recognition</h4>
-                                <pre className="text-sm text-muted-foreground whitespace-pre-wrap">
-                                  {JSON.stringify(analysis.pattern_recognition, null, 2)}
-                                </pre>
-                              </Card>
-                              <Card className="p-4">
-                                <h4 className="font-medium mb-2">Data Quality</h4>
-                                <pre className="text-sm text-muted-foreground whitespace-pre-wrap">
-                                  {JSON.stringify(analysis.data_quality, null, 2)}
-                                </pre>
-                              </Card>
-                            </div>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                              <Card className="p-4">
-                                <h4 className="font-medium mb-2">Key Insights</h4>
-                                <pre className="text-sm text-muted-foreground whitespace-pre-wrap">
-                                  {JSON.stringify(analysis.key_insights, null, 2)}
-                                </pre>
-                              </Card>
-                              <Card className="p-4">
-                                <h4 className="font-medium mb-2">Recommendations</h4>
-                                <pre className="text-sm text-muted-foreground whitespace-pre-wrap">
-                                  {JSON.stringify(analysis.recommendations, null, 2)}
-                                </pre>
-                              </Card>
-                            </div>
+                            )}
                           </div>
                         ))}
                       </div>
