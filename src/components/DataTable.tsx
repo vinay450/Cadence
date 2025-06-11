@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/table"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { ArrowUpDown, Search } from "lucide-react"
+import { ArrowUpDown, ArrowUp, ArrowDown, Search } from "lucide-react"
 
 interface DataTableProps<T> {
   data: T[]
@@ -44,12 +44,29 @@ export function DataTable<T extends Record<string, any>>({ data, columns }: Data
       const aValue = a[sortConfig.key]
       const bValue = b[sortConfig.key]
 
-      if (aValue === bValue) return 0
+      // Handle null/undefined values
       if (aValue === null || aValue === undefined) return 1
       if (bValue === null || bValue === undefined) return -1
+      if (aValue === bValue) return 0
 
-      const comparison = aValue < bValue ? -1 : 1
-      return sortConfig.direction === 'asc' ? comparison : -comparison
+      // Try to convert values to numbers for numeric comparison
+      const aNum = Number(aValue)
+      const bNum = Number(bValue)
+      
+      // If both values are valid numbers, compare them numerically
+      if (!isNaN(aNum) && !isNaN(bNum)) {
+        return sortConfig.direction === 'asc' ? aNum - bNum : bNum - aNum
+      }
+
+      // For non-numeric values, compare as strings
+      const aStr = String(aValue).toLowerCase()
+      const bStr = String(bValue).toLowerCase()
+      
+      if (sortConfig.direction === 'asc') {
+        return aStr.localeCompare(bStr)
+      } else {
+        return bStr.localeCompare(aStr)
+      }
     })
   }, [filteredData, sortConfig])
 
@@ -93,10 +110,18 @@ export function DataTable<T extends Record<string, any>>({ data, columns }: Data
                       <Button
                         variant="ghost"
                         onClick={() => handleSort(column.key)}
-                        className="flex items-center space-x-1"
+                        className="flex items-center space-x-1 hover:bg-gray-100 dark:hover:bg-gray-700"
                       >
                         <span>{column.header}</span>
-                        <ArrowUpDown className="h-4 w-4" />
+                        {sortConfig?.key === column.key ? (
+                          sortConfig.direction === 'asc' ? (
+                            <ArrowUp className="h-4 w-4" />
+                          ) : (
+                            <ArrowDown className="h-4 w-4" />
+                          )
+                        ) : (
+                          <ArrowUpDown className="h-4 w-4 text-gray-400" />
+                        )}
                       </Button>
                     ) : (
                       column.header
