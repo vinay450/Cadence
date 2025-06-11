@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import { BarChart3, TrendingUp, PieChart, Users, Activity, Stethoscope } from "lucide-react"
+import { BarChart3, TrendingUp, PieChart, Users, ActivitySquare, Stethoscope, Waypoints } from "lucide-react"
 
 interface DemoDataset {
   id: string
@@ -28,7 +28,7 @@ const sampleDatasets: DemoDataset[] = [
     id: "hardware-sensors",
     title: "Hardware Sensor Data",
     description: "Real-time sensor readings from industrial equipment with temperature, vibration, pressure, and power metrics",
-    icon: Activity,
+    icon: ActivitySquare,
     recordCount: "12k-15k tokens used with Claude. 2k-3k tokens used with Cadence.",
     category: "Engineering Analytics"
   },
@@ -41,12 +41,12 @@ const sampleDatasets: DemoDataset[] = [
     category: "Healthcare Analytics"
   },
   {
-    id: "product-analysis",
-    title: "Product Analysis",
-    description: "Product performance data with ratings, sales volume, and market share",
-    icon: PieChart,
-    recordCount: "3,800 records",
-    category: "Product Analytics"
+    id: "supply-chain",
+    title: "Supply Chain Optimization",
+    description: "End-to-end supply chain metrics with inventory levels, delivery times, and supplier performance",
+    icon: Waypoints,
+    recordCount: "14k-18k tokens used with Claude. 5k-7k tokens used with Cadence.",
+    category: "Operations Analytics"
   }
 ]
 
