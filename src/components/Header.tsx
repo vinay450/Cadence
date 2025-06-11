@@ -133,7 +133,10 @@ export default function Header({ session }: HeaderProps) {
             </Button>
             {session ? (
               <div className="flex items-center gap-4">
-                <div className="flex items-center gap-2">
+                <div 
+                  className="flex items-center gap-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 p-2 rounded-lg transition-colors"
+                  onClick={() => navigate('/profile')}
+                >
                   <div className="w-8 h-8 rounded-full bg-indigo-100 dark:bg-indigo-900 flex items-center justify-center flex-shrink-0">
                     <User className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
                   </div>
