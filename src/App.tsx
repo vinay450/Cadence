@@ -16,6 +16,7 @@ import { supabase } from "@/lib/supabase";
 import Dashboard from "@/pages/Dashboard";
 import { ThemeProvider } from "@/components/ui/theme-provider";
 import { Session } from "@supabase/supabase-js";
+import Profile from "@/pages/Profile";
 
 interface DemoDataset {
   id: string
@@ -136,6 +137,7 @@ export default function App() {
             />
             <Route path="/docs" element={<Documentation />} />
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/profile" element={<Profile />} />
           </Routes>
         </div>
       </Router>
