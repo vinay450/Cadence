@@ -50,16 +50,8 @@ export default function ChatBot({ sessionId, onSessionIdUpdate, model, data }: C
     setShowSuggestions(!!data) // Reset suggestions when new data is loaded
   }, [data])
 
-  // Hide suggestions when messages exist
-  useEffect(() => {
-    if (messages.length > 0) {
-      setShowSuggestions(false)
-    }
-  }, [messages])
-
   const handleSuggestionClick = (suggestion: string) => {
     setInputMessage(suggestion)
-    setShowSuggestions(false)
   }
 
   const handleSendMessage = async () => {
@@ -215,7 +207,7 @@ export default function ChatBot({ sessionId, onSessionIdUpdate, model, data }: C
           )}
 
           {/* Suggestion Prompts */}
-          {showSuggestions && hasDataset && messages.length === 0 && (
+          {showSuggestions && hasDataset && (
             <div className="mb-6">
               <div className="flex items-center gap-2 mb-4">
                 <Sparkles className="h-5 w-5 text-purple-500" />

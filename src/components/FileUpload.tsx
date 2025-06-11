@@ -1,7 +1,7 @@
-import { useCallback } from 'react'
+import { useCallback, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { Button } from '@/components/ui/button'
-import { File, Loader2 } from 'lucide-react'
+import { File, Loader2, CheckCircle2 } from 'lucide-react'
 
 interface FileUploadProps {
   onUpload: (file: File) => void
@@ -9,6 +9,8 @@ interface FileUploadProps {
 }
 
 export default function FileUpload({ onUpload, loading }: FileUploadProps) {
+  const [uploadedFileName, setUploadedFileName] = useState<string | null>(null)
+
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
       if (acceptedFiles.length > 0) {
@@ -21,6 +23,7 @@ export default function FileUpload({ onUpload, loading }: FileUploadProps) {
           return
         }
         
+        setUploadedFileName(file.name)
         onUpload(file)
       }
     },
@@ -42,6 +45,18 @@ export default function FileUpload({ onUpload, loading }: FileUploadProps) {
       <input {...getInputProps()} />
       {isDragActive ? (
         <p className="text-gray-600 dark:text-gray-400">Drop the files here ...</p>
+      ) : uploadedFileName ? (
+        <div className="text-center flex flex-col items-center justify-center">
+          <div className="flex items-center justify-center w-16 h-16 rounded-full bg-green-50 dark:bg-green-900/20 mb-4">
+            <CheckCircle2 className="h-8 w-8 text-green-500" />
+          </div>
+          <p className="text-gray-600 dark:text-gray-400 mb-2">
+            Upload successful!
+          </p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">
+            {uploadedFileName}
+          </p>
+        </div>
       ) : (
         <>
           <File className="h-10 w-10 text-gray-500 dark:text-gray-400 mb-4" />
@@ -64,6 +79,8 @@ export default function FileUpload({ onUpload, loading }: FileUploadProps) {
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
             Uploading...
           </>
+        ) : uploadedFileName ? (
+          'Upload a Different File'
         ) : (
           'Upload Dataset'
         )}
