@@ -8,6 +8,7 @@ import TechnicalFeatures from "@/components/TechnicalFeatures";
 import ComparisonSection from "@/components/ComparisonSection";
 import AnalysisApp from "@/pages/Analysis";
 import Login from "@/pages/Login";
+import Documentation from "@/pages/Documentation";
 import Footer from "@/components/Footer";
 import DemoSection from "@/components/DemoSection";
 import DemoAnalysisDisplay from "@/components/DemoAnalysisDisplay";
@@ -127,6 +128,7 @@ export default function App() {
               )
             } 
           />
+          <Route path="/docs" element={<Documentation />} />
         </Routes>
       </div>
     </Router>
