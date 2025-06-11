@@ -73,13 +73,26 @@ export async function analyzeDataset(file: File): Promise<AnalysisResult> {
       throw new Error('No analysis received from API')
     }
 
-    // Save the analysis results
+    // First, create a project
+    const { data: project, error: projectError } = await supabase
+      .from('projects')
+      .insert({
+        user_id: session?.user?.id,
+        title: file.name,
+        description: 'Dataset analysis',
+        file_name: file.name,
+        file_type: file.type
+      })
+      .select()
+      .single()
+
+    if (projectError) throw projectError
+
+    // Then save the analysis results with the project_id
     const { error: saveError } = await supabase
       .from('analysis_results')
       .insert({
-        user_id: session?.user?.id || 'anonymous',
-        file_name: file.name,
-        file_type: file.type,
+        project_id: project.id,
         dataset_overview: data.visualizations?.dataQualityMetrics || {},
         statistical_summary: data.visualizations?.statisticalSummary || {},
         pattern_recognition: data.visualizations?.recommendations || [],

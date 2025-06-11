@@ -1,14 +1,48 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { FileText, Upload, MessageCircle, BarChart3, Table, Brain, Zap, Shield } from "lucide-react"
+import { FileText, Upload, MessageCircle, BarChart3, Table, Brain, Zap, Shield, ArrowLeft } from "lucide-react"
 import Header from "@/components/Header"
+import { useState, useEffect } from "react"
+import { supabase } from "@/lib/supabase"
+import { Session } from "@supabase/supabase-js"
+import { Button } from "@/components/ui/button"
+import { useNavigate } from "react-router-dom"
 
 export default function Documentation() {
+  const [session, setSession] = useState<Session | null>(null)
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    // Get initial session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session)
+    })
+
+    // Listen for auth changes
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session)
+    })
+
+    return () => subscription.unsubscribe()
+  }, [])
+
   return (
     <>
-      <Header session={null} />
+      <Header session={session} />
       <main className="pt-28">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          <div className="flex justify-center mb-8">
+            <Button 
+              variant="outline" 
+              onClick={() => navigate('/')}
+              className="flex items-center gap-2"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Back to Home
+            </Button>
+          </div>
           <div className="text-center mb-16">
             <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
               Documentation
