@@ -55,11 +55,12 @@ export async function analyzeDataset(file: File): Promise<AnalysisResult> {
       content: 'You are a data analysis expert. Please analyze this dataset.'
     }]
 
-    // Call the bright-api function with authorization header
-    const { data, error } = await supabase.functions.invoke('bright-api', {
+    // Call the chat function with authorization header
+    const { data, error } = await supabase.functions.invoke('chat', {
       body: {
         messages,
-        data: fileContent
+        data: fileContent,
+        isNewAnalysis: true
       },
       headers: {
         Authorization: `Bearer ${session?.access_token}`
@@ -79,12 +80,12 @@ export async function analyzeDataset(file: File): Promise<AnalysisResult> {
         user_id: session?.user?.id || 'anonymous',
         file_name: file.name,
         file_type: file.type,
-        dataset_overview: data.visualizations.dataQualityMetrics,
-        statistical_summary: data.visualizations.statisticalSummary,
-        pattern_recognition: data.visualizations.recommendations,
-        data_quality: data.visualizations.dataQualityMetrics,
-        key_insights: data.visualizations.businessInsights.keyFindings,
-        recommendations: data.visualizations.businessInsights.recommendations
+        dataset_overview: data.visualizations?.dataQualityMetrics || {},
+        statistical_summary: data.visualizations?.statisticalSummary || {},
+        pattern_recognition: data.visualizations?.recommendations || [],
+        data_quality: data.visualizations?.dataQualityMetrics || {},
+        key_insights: data.visualizations?.businessInsights?.keyFindings || [],
+        recommendations: data.visualizations?.businessInsights?.recommendations || []
       })
 
     if (saveError) throw saveError
