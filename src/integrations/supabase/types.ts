@@ -9,6 +9,36 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      chat_sessions: {
+        Row: {
+          created_at: string | null
+          data_summary: Json | null
+          full_data: string | null
+          id: number
+          initial_analysis: string | null
+          session_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          data_summary?: Json | null
+          full_data?: string | null
+          id?: number
+          initial_analysis?: string | null
+          session_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          data_summary?: Json | null
+          full_data?: string | null
+          id?: number
+          initial_analysis?: string | null
+          session_id?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       datasets: {
         Row: {
           column_count: number | null
@@ -157,7 +187,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      cleanup_old_sessions: {
+        Args: Record<PropertyKey, never>
+        Returns: number
+      }
     }
     Enums: {
       [_ in never]: never

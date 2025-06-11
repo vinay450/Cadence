@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -18,12 +19,24 @@ interface ChatBotProps {
   onSessionIdUpdate?: (sessionId: string) => void // Callback to update parent with session ID
 }
 
+const suggestionPrompts = [
+  "What are the main trends in this dataset?",
+  "Can you identify any outliers or anomalies?",
+  "What correlations exist between the variables?",
+  "Summarize the key statistics",
+  "What insights can you draw from this data?",
+  "Are there any seasonal patterns?",
+  "Which variables have the strongest relationships?",
+  "What would you recommend based on this analysis?"
+]
+
 export default function ChatBot({ data, sessionId: initialSessionId, onSessionIdUpdate }: ChatBotProps) {
   const [messages, setMessages] = useState<Message[]>([])
   const [inputMessage, setInputMessage] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [currentSessionId, setCurrentSessionId] = useState<string | undefined>(initialSessionId)
   const [hasDataset, setHasDataset] = useState(!!data)
+  const [showSuggestions, setShowSuggestions] = useState(true)
   const { toast } = useToast()
 
   // Update session ID when it changes from parent
@@ -34,7 +47,20 @@ export default function ChatBot({ data, sessionId: initialSessionId, onSessionId
   // Update dataset availability when data changes
   useEffect(() => {
     setHasDataset(!!data)
+    setShowSuggestions(true) // Reset suggestions when new data is loaded
   }, [data])
+
+  // Hide suggestions when messages exist
+  useEffect(() => {
+    if (messages.length > 0) {
+      setShowSuggestions(false)
+    }
+  }, [messages])
+
+  const handleSuggestionClick = (suggestion: string) => {
+    setInputMessage(suggestion)
+    setShowSuggestions(false)
+  }
 
   const handleSendMessage = async () => {
     if (inputMessage.trim() === '' || isLoading) return
@@ -49,6 +75,7 @@ export default function ChatBot({ data, sessionId: initialSessionId, onSessionId
     setMessages(prev => [...prev, newMessage])
     setInputMessage('')
     setIsLoading(true)
+    setShowSuggestions(false) // Hide suggestions after first message
 
     try {
       // Determine if this is the first message with a dataset
@@ -165,6 +192,26 @@ export default function ChatBot({ data, sessionId: initialSessionId, onSessionId
       </div>
 
       <div className="space-y-4">
+        {/* Suggestion Prompts */}
+        {showSuggestions && hasDataset && messages.length === 0 && (
+          <div className="mb-4">
+            <p className="text-sm text-gray-600 dark:text-gray-300 mb-3">
+              Try asking one of these common questions:
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {suggestionPrompts.map((prompt, index) => (
+                <button
+                  key={index}
+                  onClick={() => handleSuggestionClick(prompt)}
+                  className="text-xs px-3 py-2 bg-blue-50 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded-full hover:bg-blue-100 dark:hover:bg-blue-800 transition-colors cursor-pointer border border-blue-200 dark:border-blue-700"
+                >
+                  {prompt}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Messages Container */}
         <div className="h-80 overflow-y-auto border rounded-lg p-4 bg-gray-50 dark:bg-gray-700">
           {messages.length === 0 ? (
@@ -179,7 +226,7 @@ export default function ChatBot({ data, sessionId: initialSessionId, onSessionId
                 ) : (
                   <div>
                     <p className="font-medium">Ready to analyze your data</p>
-                    <p className="text-sm">Ask any question about your dataset</p>
+                    <p className="text-sm">Ask any question about your dataset or use the suggestions above</p>
                   </div>
                 )}
               </div>
