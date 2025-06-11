@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button"
 import { Menu, Sun, Moon, User } from "lucide-react"
 import { useState, useEffect } from "react"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useLocation } from "react-router-dom"
 import Logo from "./Logo"
 import { supabase } from "@/lib/supabase"
 
@@ -13,6 +13,8 @@ export default function Header({ session }: HeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isDarkMode, setIsDarkMode] = useState(false)
   const navigate = useNavigate()
+  const location = useLocation()
+  const isLandingPage = location.pathname === '/'
 
   useEffect(() => {
     // Check if dark mode is stored in localStorage
@@ -78,20 +80,22 @@ export default function Header({ session }: HeaderProps) {
           </div>
           
           <div className="hidden md:flex items-center gap-6 ml-8 flex-nowrap min-w-0">
-            <div className="flex items-center gap-6 flex-shrink-0">
-              <button 
-                onClick={() => scrollToSection('features')}
-                className="text-sm font-medium text-gray-700 hover:text-indigo-600 transition-colors dark:text-gray-300 dark:hover:text-indigo-400 whitespace-nowrap"
-              >
-                Features
-              </button>
-              <button 
-                onClick={() => scrollToSection('comparison')}
-                className="text-sm font-medium text-gray-700 hover:text-indigo-600 transition-colors dark:text-gray-300 dark:hover:text-indigo-400 whitespace-nowrap"
-              >
-                Comparison
-              </button>
-            </div>
+            {isLandingPage && (
+              <div className="flex items-center gap-6 flex-shrink-0">
+                <button 
+                  onClick={() => scrollToSection('features')}
+                  className="text-sm font-medium text-gray-700 hover:text-indigo-600 transition-colors dark:text-gray-300 dark:hover:text-indigo-400 whitespace-nowrap"
+                >
+                  Features
+                </button>
+                <button 
+                  onClick={() => scrollToSection('comparison')}
+                  className="text-sm font-medium text-gray-700 hover:text-indigo-600 transition-colors dark:text-gray-300 dark:hover:text-indigo-400 whitespace-nowrap"
+                >
+                  Comparison
+                </button>
+              </div>
+            )}
             
             {session && (
               <div className="flex items-center gap-4 flex-shrink-0">
@@ -170,24 +174,28 @@ export default function Header({ session }: HeaderProps) {
         {isMenuOpen && (
           <div className="md:hidden border-t border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800">
             <div className="space-y-1 px-2 pb-3 pt-2">
-              <button 
-                onClick={() => {
-                  scrollToSection('features')
-                  setIsMenuOpen(false)
-                }}
-                className="block w-full text-left px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300"
-              >
-                Features
-              </button>
-              <button 
-                onClick={() => {
-                  scrollToSection('comparison')
-                  setIsMenuOpen(false)
-                }}
-                className="block w-full text-left px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300"
-              >
-                Comparison
-              </button>
+              {isLandingPage && (
+                <>
+                  <button 
+                    onClick={() => {
+                      scrollToSection('features')
+                      setIsMenuOpen(false)
+                    }}
+                    className="block w-full text-left px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300"
+                  >
+                    Features
+                  </button>
+                  <button 
+                    onClick={() => {
+                      scrollToSection('comparison')
+                      setIsMenuOpen(false)
+                    }}
+                    className="block w-full text-left px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300"
+                  >
+                    Comparison
+                  </button>
+                </>
+              )}
               {session && (
                 <>
                   <Button 
