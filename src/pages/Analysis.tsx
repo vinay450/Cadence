@@ -17,6 +17,9 @@ import { ScatterChart } from '@/components/visualizations/ScatterChart'
 import { BarChart } from '@/components/visualizations/BarChart'
 import { ArrowUpDown } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
+import { Card } from '@/components/ui/card'
+import { Loader2 } from 'lucide-react'
+import { toast } from '@/components/ui/use-toast'
 
 // Helper: get chart component by type
 const chartComponentMap: Record<string, any> = {
@@ -44,6 +47,7 @@ export default function AnalysisApp() {
   const [sortDirection, setSortDirection] = useState<SortDirection>(null)
   const [sessionId, setSessionId] = useState<string | null>(null)
   const [currentData, setCurrentData] = useState<string | null>(null)
+  const [selectedModel, setSelectedModel] = useState('claude-3-5-sonnet-20241022')
 
   const handleSort = (columnIndex: number) => {
     if (sortColumn === columnIndex) {
@@ -82,66 +86,101 @@ export default function AnalysisApp() {
     })
   }
 
-  const handleAnalysis = async (data: string) => {
+  const handleAnalysis = async (data: string, model: string) => {
     setIsAnalyzing(true)
     setCurrentData(data)
-    setSessionId(null) // Reset session for new analysis
+    setSelectedModel(model)
 
     try {
+      // Parse the data for table preview
+      let rows: TableRow[] = []
+      
+      try {
+        // Try parsing as JSON first
+        const jsonData = JSON.parse(data)
+        if (Array.isArray(jsonData)) {
+          rows = jsonData
+        } else if (typeof jsonData === 'object') {
+          // If it's an object, convert to array of objects
+          rows = Object.entries(jsonData).map(([key, value]) => ({
+            key,
+            value: JSON.stringify(value)
+          }))
+        }
+      } catch {
+        // If not JSON, try parsing as CSV
+        const lines = data.split('\n')
+        if (lines.length > 0) {
+          const headers = lines[0].split(',')
+          rows = lines.slice(1).map(line => {
+            const values = line.split(',')
+            return headers.reduce((obj, header, index) => {
+              obj[header.trim()] = values[index]?.trim() || ''
+              return obj
+            }, {} as TableRow)
+          })
+        }
+      }
+
+      // Filter out empty rows and set table data
+      rows = rows.filter(row => Object.values(row).some(value => value !== ''))
+      setTableData(rows)
+
       const { data: result, error } = await supabase.functions.invoke('chat', {
         body: {
-          messages: [{
-            role: 'user',
-            content: 'Analyze this data'
-          }],
+          message: 'Analyze this dataset',
           data,
-          isNewAnalysis: true
+          isNewAnalysis: true,
+          model
         }
       })
 
       if (error) {
+        console.error('Error during analysis:', error)
         throw error
       }
 
       if (!result || !result.analysis) {
-        throw new Error('No analysis received from API')
+        throw new Error('Invalid response format')
       }
 
       setAnalysisData(result.analysis)
-      
-      // Parse CSV data for the data preview table
-      if (data) {
-        const lines = data.split('\n')
-        const headers = lines[0].split(',')
-        const rows = lines.slice(1).map(line => {
-          const values = line.split(',')
-          return headers.reduce((obj: any, header: string, index: number) => {
-            obj[header.trim()] = values[index]?.trim() || ''
-            return obj
-          }, {})
-        })
-        setTableData(rows)
-      }
+      setSessionId(result.sessionId)
 
-      // Store visualization recommendations
-      if (result.visualizations?.recommendations) {
-        setClaudeLog(result)
+      // Scroll to analysis section
+      const analysisSection = document.getElementById('ai-analysis')
+      if (analysisSection) {
+        analysisSection.scrollIntoView({ behavior: 'smooth' })
       }
-
-      // Store session ID for future chat messages
-      if (result.sessionId) {
-        setSessionId(result.sessionId)
-      }
-    } catch (error) {
-      console.error('Error getting analysis:', error)
+    } catch (error: any) {
+      console.error('Error during analysis:', error)
+      toast({
+        title: 'Error',
+        description: error.message || 'Failed to analyze data. Please try again.',
+        variant: 'destructive'
+      })
     } finally {
       setIsAnalyzing(false)
     }
   }
 
   return (
-    <div className="space-y-8">
+    <div className="container mx-auto px-4 py-8 space-y-8">
       <DataAnalysisDashboard onAnalysis={handleAnalysis} isAnalyzing={isAnalyzing} />
+
+      {isAnalyzing && (
+        <div id="ai-analysis" className="space-y-4">
+          <Card className="p-6">
+            <div className="flex items-center space-x-4">
+              <Loader2 className="h-6 w-6 animate-spin text-blue-500" />
+              <div>
+                <h3 className="text-lg font-semibold">Analyzing Data</h3>
+                <p className="text-sm text-gray-500">Using {selectedModel}</p>
+              </div>
+            </div>
+          </Card>
+        </div>
+      )}
 
       {(analysisData || isAnalyzing) && (
         <div className="space-y-8">
@@ -154,13 +193,16 @@ export default function AnalysisApp() {
           </div>
 
           {/* ChatBot Section */}
-          <div id="chat-section">
-            <ChatBot 
-              data={currentData || undefined}
-              sessionId={sessionId || undefined}
-              isNewAnalysis={!sessionId}
-            />
-          </div>
+          {sessionId && (
+            <div id="chat-section" className="space-y-4">
+              <ChatBot 
+                sessionId={sessionId}
+                onSessionIdUpdate={setSessionId}
+                model={selectedModel}
+                data={currentData ?? undefined}
+              />
+            </div>
+          )}
 
           {/* Data Preview Section */}
           {tableData && (

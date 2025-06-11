@@ -42,15 +42,26 @@ const generateDataSummary = (data)=>{
     };
   }
 };
-// Function to store session data in database
-const storeSessionData = async (sessionId, data, analysis)=>{
+// Function to create comprehensive dataset context for chat
+const createChatDatasetContext = (data, chatAnalysis)=>{
+  const dataSummary = generateDataSummary(data);
+  return {
+    structure: dataSummary,
+    chatAnalysis: chatAnalysis,
+    summary: `This dataset contains ${dataSummary.totalRows} rows with columns: ${dataSummary.headers}.
+    
+Chat Analysis Context: ${chatAnalysis.substring(0, 1500)}${chatAnalysis.length > 1500 ? '...' : ''}`
+  };
+};
+// Function to store session data in database (for chat context)
+const storeSessionData = async (sessionId, data, chatAnalysis)=>{
   try {
-    const dataSummary = generateDataSummary(data);
+    const chatContext = createChatDatasetContext(data, chatAnalysis);
     const { error } = await supabase.from('chat_sessions').upsert({
       session_id: sessionId,
-      data_summary: dataSummary,
+      data_summary: chatContext,
       full_data: data,
-      initial_analysis: analysis,
+      initial_analysis: chatAnalysis,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString()
     });
@@ -58,7 +69,7 @@ const storeSessionData = async (sessionId, data, analysis)=>{
       console.error('Error storing session in database:', error);
       throw error;
     }
-    console.log(`Session stored in database: ${sessionId}`);
+    console.log(`Chat session stored in database: ${sessionId}`);
   } catch (error) {
     console.error('Error storing session:', error);
     throw error;
@@ -88,7 +99,7 @@ const getSessionContext = async (sessionId)=>{
     }
     console.log(`Session found in database: ${sessionId}`);
     return {
-      dataSummary: data.data_summary,
+      chatContext: data.data_summary,
       fullData: data.full_data,
       initialAnalysis: data.initial_analysis,
       timestamp: new Date(data.created_at).getTime()
@@ -98,75 +109,105 @@ const getSessionContext = async (sessionId)=>{
     return null;
   }
 };
-// Function to clean up old sessions (optional - can be called periodically)
-const cleanupOldSessions = async ()=>{
-  try {
-    const { error } = await supabase.rpc('cleanup_old_sessions');
-    if (error) {
-      console.error('Error cleaning up old sessions:', error);
-    } else {
-      console.log('Old sessions cleaned up successfully');
-    }
-  } catch (error) {
-    console.error('Error in cleanup function:', error);
-  }
-};
-serve(async (req)=>{
+
+const VALID_MODELS = [
+  'claude-3-5-haiku-20241022',
+  'claude-3-5-sonnet-20241022',
+  'claude-3-7-sonnet-20250219',
+  'claude-opus-4-20250514'
+]
+
+interface RequestBody {
+  message: string
+  data?: string
+  sessionId?: string
+  isNewAnalysis?: boolean
+  model?: string
+}
+
+serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response('ok', {
       headers: corsHeaders
-    });
+    })
   }
+
   try {
     console.log('Request received:', {
       method: req.method,
       url: req.url,
       origin: req.headers.get('origin')
-    });
+    })
+
     // Validate environment variables
-    const anthropicApiKey = Deno.env.get('ANTHROPIC_API_KEY');
+    const anthropicApiKey = Deno.env.get('ANTHROPIC_API_KEY')
     if (!anthropicApiKey) {
-      console.error('ANTHROPIC_API_KEY not found');
-      throw new Error('ANTHROPIC_API_KEY environment variable is not set');
+      console.error('ANTHROPIC_API_KEY not found')
+      throw new Error('ANTHROPIC_API_KEY environment variable is not set')
     }
     if (!supabaseUrl || !supabaseKey) {
       console.error('Supabase environment variables missing:', {
         supabaseUrl: !!supabaseUrl,
         supabaseKey: !!supabaseKey
-      });
-      throw new Error('Supabase environment variables are not set');
+      })
+      throw new Error('Supabase environment variables are not set')
     }
+
     // Parse request body
-    let requestBody;
+    let requestBody
     try {
-      requestBody = await req.json();
+      requestBody = await req.json() as RequestBody
     } catch (e) {
-      console.error('Error parsing request body:', e);
-      throw new Error('Invalid JSON in request body');
+      console.error('Error parsing request body:', e)
+      throw new Error('Invalid JSON in request body')
     }
-    const { messages, data, sessionId, isNewAnalysis } = requestBody;
+
+    const { message, data, sessionId, isNewAnalysis, model = 'claude-3-5-sonnet-20241022' } = requestBody
+
+    // Validate model selection
+    if (!VALID_MODELS.includes(model)) {
+      return createCorsResponse({
+        error: 'Invalid model selected'
+      }, 400)
+    }
+
     console.log('Request parsed:', {
-      hasMessages: !!messages,
-      messageCount: messages?.length,
+      hasMessage: !!message,
       hasData: !!data,
+      dataSize: data ? data.length : 0,
       sessionId,
-      isNewAnalysis
-    });
+      isNewAnalysis,
+      model
+    })
+
     // Initialize Anthropic client
     const anthropic = new Anthropic({
       apiKey: anthropicApiKey
-    });
+    })
+
     // Determine request type
-    const isInitialAnalysis = isNewAnalysis || !!data && !sessionId;
-    let systemPrompt = '';
+    let systemPrompt = ''
     let contextualMessages = [
-      ...messages
-    ];
-    if (isInitialAnalysis && data) {
-      console.log('Processing initial analysis');
-      // NEW ANALYSIS: Process data and store session
+      {
+        role: 'user',
+        content: message
+      }
+    ]
+    let shouldStoreSession = false
+
+    console.log('Request type determination:', {
+      isNewAnalysis,
+      hasData: !!data,
+      hasSessionId: !!sessionId
+    })
+
+    if (isNewAnalysis && data) {
+      console.log('Processing INITIAL ANALYSIS - will store in database')
+      // INITIAL ANALYSIS: Analyze and store in database
       systemPrompt = `You are Cadence AI, a data analyst analyzing this dataset as a researcher. 
+
+The user has uploaded a dataset for analysis. Analyze the provided dataset thoroughly.
 
 MANDATORY: Your response MUST follow this EXACT format:
 
@@ -209,98 +250,93 @@ CRITICAL:
 - Start with exactly "---ANALYSIS---"
 - End with exactly "---VISUALIZATION---" followed by valid JSON
 - Use exact column names from the data
-- No text after the JSON`;
-      // Add data to the first message
-      contextualMessages = messages.map((msg, index)=>({
-          role: msg.role,
-          content: index === 0 ? `${msg.content}\n\nData to analyze:\n${data}` : msg.content
-        }));
-    } else if (sessionId || data) {
-      console.log('Processing follow-up question', {
-        sessionId,
-        hasData: !!data
-      });
-      if (data) {
-        // If data is provided in follow-up, use it directly
-        const dataSummary = generateDataSummary(data);
-        systemPrompt = `You are Cadence AI, a data analyst. You are analyzing a dataset with the following characteristics:
+- No text after the JSON
 
-DATASET CONTEXT:
-- ${dataSummary.summary}
-- Headers: ${dataSummary.headers}
-- Sample data rows: ${dataSummary.sampleRows.join('\n')}
-
-The user is asking questions about this dataset. You can reference the data structure. If you need to see specific data values, ask the user to clarify which aspects they want to explore further.
-
-Respond naturally and conversationally. You don't need to use the structured format unless specifically analyzing new aspects of the data.`;
+DATASET TO ANALYZE:
+${data}`
+      shouldStoreSession = true
+    } else if (sessionId) {
+      console.log('Processing FOLLOW-UP CHAT with existing session')
+      // FOLLOW-UP CHAT: Use stored session context
+      const session = await getSessionContext(sessionId)
+      if (!session) {
+        console.log('Session not found, treating as new chat')
+        systemPrompt = `You are Cadence AI, a helpful data analysis assistant. The user previously had a data analysis session, but the session context is no longer available. You can still help answer general questions about data analysis, but you won't have access to their specific dataset unless they provide it again.`
       } else {
-        // Try to get session context from database
-        const session = await getSessionContext(sessionId);
-        if (!session) {
-          console.log('Session not found, treating as new chat');
-          systemPrompt = `You are Cadence AI, a helpful data analysis assistant. The user previously had a data analysis session, but the session context is no longer available. You can still help answer general questions about data analysis, but you won't have access to their specific dataset unless they provide it again.`;
-        } else {
-          systemPrompt = `You are Cadence AI, a data analyst. You previously analyzed a dataset with the following characteristics:
+        console.log('Session found, using stored chat context')
+        systemPrompt = `You are Cadence AI, a data analyst. You have access to a dataset context from your previous analysis:
 
-DATASET CONTEXT:
-- ${session.dataSummary.summary}
-- Headers: ${session.dataSummary.headers}
-- Sample data rows: ${session.dataSummary.sampleRows.join('\n')}
+${session.chatContext.summary}
 
-PREVIOUS ANALYSIS SUMMARY:
-${session.initialAnalysis.substring(0, 500)}${session.initialAnalysis.length > 500 ? '...' : ''}
+PREVIOUS CHAT ANALYSIS:
+${session.initialAnalysis}
 
-The user is now asking follow-up questions about this dataset. You can reference the data structure and your previous analysis. If you need to see specific data values, ask the user to clarify which aspects they want to explore further.
+The user is asking follow-up questions about this dataset. You have comprehensive context about the data structure, patterns, and insights. Reference specific findings from your analysis to provide detailed, accurate responses.
 
-Respond naturally and conversationally. You don't need to use the structured format unless specifically analyzing new aspects of the data.`;
-        }
+Respond naturally and conversationally based on your knowledge of this dataset.`
       }
     } else {
-      console.log('Processing regular chat');
-      // REGULAR CHAT: No data analysis
-      systemPrompt = 'You are Cadence AI, a helpful AI assistant specializing in data analysis.';
+      console.log('Processing regular chat - no dataset context')
+      systemPrompt = 'You are Cadence AI, a helpful AI assistant specializing in data analysis.'
     }
+
     // Make API call to Anthropic
-    console.log('Calling Anthropic API');
+    console.log('Calling Anthropic API with:', {
+      systemPromptLength: systemPrompt.length,
+      messagesCount: contextualMessages.length,
+      totalMessageLength: contextualMessages.reduce((sum, msg) => sum + msg.content.length, 0),
+      estimatedTotalTokens: Math.ceil((systemPrompt.length + contextualMessages.reduce((sum, msg) => sum + msg.content.length, 0)) / 4),
+      model
+    })
+
     const response = await anthropic.messages.create({
-      model: 'claude-3-5-sonnet-20241022',
+      model,
       max_tokens: 4096,
       system: systemPrompt,
       messages: contextualMessages,
-      temperature: isInitialAnalysis ? 0.0 : 0.7
-    });
-    console.log('Anthropic API response received');
-    const fullResponse = response.content[0].text;
-    let responseObj = {};
-    if (isInitialAnalysis) {
-      console.log('Processing initial analysis response');
+      temperature: isNewAnalysis ? 0.0 : 0.7
+    })
+
+    console.log('Anthropic API response received')
+    console.log('Token usage:', {
+      inputTokens: response.usage?.input_tokens || 'unknown',
+      outputTokens: response.usage?.output_tokens || 'unknown',
+      totalTokens: (response.usage?.input_tokens || 0) + (response.usage?.output_tokens || 0)
+    })
+
+    const fullResponse = response.content[0].text
+    let responseObj = {}
+
+    if (isNewAnalysis) {
+      console.log('Processing initial analysis response - STORING in database')
       // Parse structured analysis response
-      const analysisMatch = fullResponse.match(/---ANALYSIS---([\s\S]*?)(?=---VISUALIZATION---|$)/);
-      const visualizationMatch = fullResponse.match(/---VISUALIZATION---([\s\S]*)/);
-      let textAnalysis = '';
-      let visualizations = null;
+      const analysisMatch = fullResponse.match(/---ANALYSIS---([\s\S]*?)(?=---VISUALIZATION---|$)/)
+      const visualizationMatch = fullResponse.match(/---VISUALIZATION---([\s\S]*)/)
+      let textAnalysis = ''
+      let visualizations = null
+
       // Extract analysis section
       if (analysisMatch) {
-        textAnalysis = analysisMatch[1].trim();
+        textAnalysis = analysisMatch[1].trim()
       } else {
-        textAnalysis = fullResponse.trim();
+        textAnalysis = fullResponse.trim()
       }
+
       // Extract visualization section
       if (visualizationMatch) {
         try {
-          let jsonString = visualizationMatch[1].trim();
-          // Clean any markdown formatting
-          jsonString = jsonString.replace(/^```json\s*/, '').replace(/\s*```$/, '');
-          jsonString = jsonString.replace(/^```\s*/, '').replace(/\s*```$/, '');
-          // Find JSON object
-          const jsonMatch = jsonString.match(/({[\s\S]*})/);
+          let jsonString = visualizationMatch[1].trim()
+          jsonString = jsonString.replace(/^```json\s*/, '').replace(/\s*```$/, '')
+          jsonString = jsonString.replace(/^```\s*/, '').replace(/\s*```$/, '')
+          const jsonMatch = jsonString.match(/({[\s\S]*})/)
           if (jsonMatch) {
-            visualizations = JSON.parse(jsonMatch[1]);
+            visualizations = JSON.parse(jsonMatch[1])
           }
         } catch (e) {
-          console.error('Error parsing visualization JSON:', e);
+          console.error('Error parsing visualization JSON:', e)
         }
       }
+
       // Create default visualization structure if parsing failed
       if (!visualizations) {
         visualizations = {
@@ -319,37 +355,41 @@ Respond naturally and conversationally. You don't need to use the structured for
             recommendations: [],
             riskFactors: []
           }
-        };
+        }
       }
-      // Store session for future reference
-      const newSessionId = sessionId || crypto.randomUUID();
-      await storeSessionData(newSessionId, data, textAnalysis);
+
+      // Store session in database
+      const newSessionId = crypto.randomUUID()
+      await storeSessionData(newSessionId, data, textAnalysis)
       responseObj = {
         analysis: textAnalysis || 'No analysis available',
         visualizations,
         sessionId: newSessionId,
         isNewSession: true
-      };
+      }
     } else {
-      console.log('Processing chat response');
+      console.log('Processing regular chat response')
       responseObj = {
         analysis: fullResponse,
         visualizations: null,
         sessionId: sessionId,
         isNewSession: false
-      };
+      }
     }
+
     console.log('Sending response:', {
       hasAnalysis: !!responseObj.analysis,
-      sessionId: responseObj.sessionId
-    });
-    return createCorsResponse(responseObj);
+      sessionId: responseObj.sessionId,
+      isNewSession: responseObj.isNewSession
+    })
+
+    return createCorsResponse(responseObj)
   } catch (error) {
-    console.error('Error in chat function:', error);
+    console.error('Error in chat function:', error)
     return createCorsResponse({
       error: error.message,
       details: error.stack,
       timestamp: new Date().toISOString()
-    }, 500);
+    }, 500)
   }
-});
+})
