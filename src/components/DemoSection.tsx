@@ -7,7 +7,7 @@ interface DemoDataset {
   title: string
   description: string
   icon: React.ComponentType<any>
-  recordCount: string
+  recordCount: React.ReactNode
   category: string
 }
 
@@ -21,7 +21,13 @@ const sampleDatasets: DemoDataset[] = [
     title: "Company Sales Data",
     description: "Quarterly sales data with revenue, regions, and product categories",
     icon: TrendingUp,
-    recordCount: "7k-10k tokens used with Claude. 1k-2k tokens used with Cadence.",
+    recordCount: (
+      <>
+        7k-10k tokens used with Claude.
+        <br />
+        1k-2k tokens used with Cadence.
+      </>
+    ),
     category: "Business Analytics"
   },
   {
@@ -29,7 +35,13 @@ const sampleDatasets: DemoDataset[] = [
     title: "Hardware Sensor Data",
     description: "Real-time sensor readings from industrial equipment with temperature, vibration, pressure, and power metrics",
     icon: ActivitySquare,
-    recordCount: "12k-15k tokens used with Claude. 2k-3k tokens used with Cadence.",
+    recordCount: (
+      <>
+        12k-15k tokens used with Claude.
+        <br />
+        2k-3k tokens used with Cadence.
+      </>
+    ),
     category: "Engineering Analytics"
   },
   {
@@ -37,7 +49,13 @@ const sampleDatasets: DemoDataset[] = [
     title: "Medical Research Data",
     description: "Clinical trial outcomes, patient responses, and treatment efficacy across multiple studies",
     icon: Stethoscope,
-    recordCount: "16k-21k tokens used with Claude. 6k-8k tokens used with Cadence.",
+    recordCount: (
+      <>
+        16k-21k tokens used with Claude.
+        <br />
+        6k-8k tokens used with Cadence.
+      </>
+    ),
     category: "Healthcare Analytics"
   },
   {
@@ -45,7 +63,13 @@ const sampleDatasets: DemoDataset[] = [
     title: "Supply Chain Optimization",
     description: "End-to-end supply chain metrics with inventory levels, delivery times, and supplier performance",
     icon: Waypoints,
-    recordCount: "14k-18k tokens used with Claude. 5k-7k tokens used with Cadence.",
+    recordCount: (
+      <>
+        14k-18k tokens used with Claude.
+        <br />
+        5k-7k tokens used with Cadence.
+      </>
+    ),
     category: "Operations Analytics"
   }
 ]
@@ -92,7 +116,7 @@ export default function DemoSection({ onSelectDataset }: DemoSectionProps) {
                   </p>
                   
                   <div className="flex flex-col mt-auto">
-                    <div className="text-xs text-gray-500 dark:text-gray-400 mb-3">
+                    <div className="text-xs text-gray-500 dark:text-gray-400 mb-3 text-center">
                       {dataset.recordCount}
                     </div>
                     <Button 
