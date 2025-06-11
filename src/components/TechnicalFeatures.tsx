@@ -41,9 +41,9 @@ const features = [
   {
     icon: Shield,
     title: "Enterprise Security",
-    description: "End-to-end encryption with SOC 2 compliance and data governance",
+    description: "Secure authentication, HTTPS encryption, and JWT-based API security",
     badge: "Security",
-    technical: "AES-256 encryption with zero-trust architecture"
+    technical: "Supabase Auth with JWT tokens"
   },
   {
     icon: Cpu,

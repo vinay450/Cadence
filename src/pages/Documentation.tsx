@@ -194,12 +194,12 @@ export default function Documentation() {
                 </CardHeader>
                 <CardContent>
                   <CardDescription>
-                    Your data is protected with enterprise-grade security:
+                    Your data is protected with industry-standard security measures:
                     <ul className="list-disc pl-5 mt-2 space-y-1">
-                      <li>End-to-end encryption</li>
-                      <li>SOC 2 compliance</li>
-                      <li>Data governance</li>
-                      <li>Zero-trust architecture</li>
+                      <li>Secure authentication via Supabase Auth</li>
+                      <li>HTTPS encryption for data in transit</li>
+                      <li>Data encryption at rest in Supabase</li>
+                      <li>JWT-based API security</li>
                     </ul>
                   </CardDescription>
                 </CardContent>
