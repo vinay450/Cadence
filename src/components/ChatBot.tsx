@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -78,16 +77,12 @@ export default function ChatBot({ data, sessionId: initialSessionId, onSessionId
     setShowSuggestions(false)
 
     try {
-      const isFirstMessageWithData = !currentSessionId && data && messages.length === 0
-      
-      console.log('Sending message to chat function:', {
-        messages: [...messages, newMessage].map(msg => ({
-          role: msg.isUser ? 'user' : 'assistant',
-          content: msg.content
-        })),
-        hasData: isFirstMessageWithData,
-        sessionId: currentSessionId,
-        isNewAnalysis: isFirstMessageWithData
+      console.log('=== CHAT REQUEST DEBUG ===')
+      console.log('Request type determination:', {
+        hasSessionId: !!currentSessionId,
+        hasDataset: hasDataset,
+        messagesLength: messages.length,
+        dataLength: data?.length || 0
       })
 
       const requestBody: any = {
@@ -95,13 +90,28 @@ export default function ChatBot({ data, sessionId: initialSessionId, onSessionId
           role: msg.isUser ? 'user' : 'assistant',
           content: msg.content
         })),
-        sessionId: currentSessionId,
-        isNewAnalysis: isFirstMessageWithData
+        sessionId: currentSessionId
       }
 
-      if (isFirstMessageWithData) {
+      // Only include dataset if we don't have a session ID yet
+      if (!currentSessionId && data) {
         requestBody.data = data
+        requestBody.isNewAnalysis = true
+        console.log('🔥 INITIAL ANALYSIS - Including dataset:', {
+          dataLength: data.length,
+          estimatedTokens: Math.ceil(data.length / 4)
+        })
+      } else {
+        console.log('📝 CHAT MESSAGE - Using stored dataset')
       }
+
+      console.log('Final request body:', {
+        hasData: !!requestBody.data,
+        dataLength: requestBody.data?.length || 0,
+        messagesCount: requestBody.messages.length,
+        sessionId: requestBody.sessionId,
+        isNewAnalysis: requestBody.isNewAnalysis
+      })
 
       const { data: result, error } = await supabase.functions.invoke('chat', {
         body: requestBody
@@ -117,10 +127,16 @@ export default function ChatBot({ data, sessionId: initialSessionId, onSessionId
         throw new Error('Invalid response format')
       }
 
+      // Update session ID if we got a new one (initial analysis)
       if (result.sessionId && result.sessionId !== currentSessionId) {
         setCurrentSessionId(result.sessionId)
         onSessionIdUpdate?.(result.sessionId)
-        console.log('Session ID updated:', result.sessionId)
+        console.log('✅ Session created:', result.sessionId)
+        
+        toast({
+          title: 'Analysis Complete',
+          description: 'Your dataset has been analyzed and stored. You can now ask follow-up questions.',
+        })
       }
       
       const assistantMessage: Message = {
@@ -131,13 +147,6 @@ export default function ChatBot({ data, sessionId: initialSessionId, onSessionId
       }
 
       setMessages(prev => [...prev, assistantMessage])
-
-      if (isFirstMessageWithData) {
-        toast({
-          title: 'Analysis Complete',
-          description: 'Your dataset has been analyzed and stored. You can now ask follow-up questions.',
-        })
-      }
 
     } catch (error: any) {
       console.error('Error sending message:', error)
@@ -196,6 +205,17 @@ export default function ChatBot({ data, sessionId: initialSessionId, onSessionId
 
       <Card className="bg-white dark:bg-gray-800 shadow-xl border-0 rounded-t-none">
         <div className="p-6 space-y-4">
+          {/* Debug Info - Shows the token flow */}
+          {process.env.NODE_ENV === 'development' && (
+            <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded text-xs">
+              <div className="font-semibold mb-2">🔧 Debug Info:</div>
+              <div>Dataset: {data?.length || 0} chars (~{Math.ceil((data?.length || 0) / 4)} tokens)</div>
+              <div>Session ID: {currentSessionId || 'None'}</div>
+              <div>Messages: {messages.length}</div>
+              <div>Flow: {!currentSessionId && hasDataset ? '🔥 Ready for first chat (will use dataset)' : currentSessionId ? '📝 Chat active (no dataset)' : '❌ No data'}</div>
+            </div>
+          )}
+
           {/* Suggestion Prompts */}
           {showSuggestions && hasDataset && messages.length === 0 && (
             <div className="mb-6">
@@ -328,7 +348,7 @@ export default function ChatBot({ data, sessionId: initialSessionId, onSessionId
             <div className="flex items-center gap-2 text-sm p-3 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900 dark:to-purple-900 rounded-lg border border-blue-200 dark:border-blue-700">
               <Sparkles className="h-4 w-4 text-blue-500" />
               <span className="text-blue-700 dark:text-blue-300">
-                Dataset loaded! Send your first message to begin analysis and create a session.
+                Dataset loaded! Send your first message to begin chat session (will process dataset for context).
               </span>
             </div>
           )}
