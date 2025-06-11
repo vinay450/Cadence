@@ -33,7 +33,7 @@ export default function Documentation() {
       <Header session={session} />
       <main className="pt-28">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          <div className="flex justify-center mb-8">
+          <div className="flex justify-center gap-4 mb-8">
             <Button 
               variant="outline" 
               onClick={() => navigate('/')}
@@ -42,6 +42,16 @@ export default function Documentation() {
               <ArrowLeft className="h-4 w-4" />
               Back to Home
             </Button>
+            {session && (
+              <Button 
+                variant="outline" 
+                onClick={() => navigate('/dashboard')}
+                className="flex items-center gap-2"
+              >
+                <BarChart3 className="h-4 w-4" />
+                Go to Dashboard
+              </Button>
+            )}
           </div>
           <div className="text-center mb-16">
             <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
