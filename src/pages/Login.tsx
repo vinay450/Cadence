@@ -67,12 +67,19 @@ export default function Login() {
     e.preventDefault()
     try {
       setLoading(true)
-      const { error } = await supabase.auth.signInWithPassword({
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password
       })
       if (error) throw error
-      navigate('/analysis')
+      
+      // Check if we have a session
+      if (data.session) {
+        // Navigate to analysis page
+        navigate('/analysis')
+      } else {
+        throw new Error('No session created after login')
+      }
     } catch (error: any) {
       toast({
         title: 'Error',
@@ -85,7 +92,7 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 pt-28">
       <Card className="w-full max-w-md p-8 space-y-6">
         <div className="text-center">
           <Logo className="h-20 mx-auto mb-4" />
