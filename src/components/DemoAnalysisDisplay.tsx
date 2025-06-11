@@ -663,8 +663,14 @@ export default function DemoAnalysisDisplay({ dataset, onBack }: DemoAnalysisDis
             <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
               {dataset.title} Analysis
             </h2>
-            <p className="text-lg text-gray-600 dark:text-gray-300">
+            <p className="text-lg text-gray-600 dark:text-gray-300 mb-2">
               {dataset.description} • {dataset.recordCount}
+            </p>
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              Supported formats: CSV, JSON, and XLSX
+            </p>
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              Cadence supports .csv files up to ~2 mb or 480,000 data points in a single request (ex. 30,000 Rows x 16 Columns, 15,000 rows x 32 columns)
             </p>
           </div>
         </div>
