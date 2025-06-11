@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
-import { ArrowLeft, Download, Share2, Loader2, Send } from 'lucide-react'
+import { ArrowLeft, Download, Share2, Loader2, Send, Brain } from 'lucide-react'
 import AnimatedTextAnalysis from './AnimatedTextAnalysis'
 import DataNavigationSection from './DataNavigationSection'
 import { DataTable } from './DataTable'
@@ -552,6 +552,9 @@ function arrayToCSV(data: any[]): string {
 export default function DemoAnalysisDisplay({ dataset, onBack }: DemoAnalysisDisplayProps) {
   const [isAnalyzing, setIsAnalyzing] = useState(true)
   const [showContent, setShowContent] = useState(false)
+  const [loadingDots, setLoadingDots] = useState('.')
+  const [loadingDots2, setLoadingDots2] = useState('.')
+  const [loadingDots3, setLoadingDots3] = useState('.')
   const demoData = getDemoData(dataset.id)
   const aggregatedCategoryData = dataset.id === 'sales-performance' ? aggregateDataByProductCategory(salesData) : []
 
@@ -560,14 +563,49 @@ export default function DemoAnalysisDisplay({ dataset, onBack }: DemoAnalysisDis
     setIsAnalyzing(true)
     setShowContent(false)
 
-    // Show loading state for 4.7 seconds
+    // Show loading state for 4.0 seconds
     const timer = setTimeout(() => {
       setIsAnalyzing(false)
       setShowContent(true)
-    }, 4700)
+    }, 4000)
 
     return () => clearTimeout(timer)
   }, [dataset.id])
+
+  useEffect(() => {
+    // Animate loading dots
+    if (isAnalyzing) {
+      const dotsInterval = setInterval(() => {
+        setLoadingDots(prev => {
+          if (prev === '...') return '.'
+          if (prev === '..') return '...'
+          return '..'
+        })
+      }, 500)
+
+      const dotsInterval2 = setInterval(() => {
+        setLoadingDots2(prev => {
+          if (prev === '...') return '.'
+          if (prev === '..') return '...'
+          return '..'
+        })
+      }, 500)
+
+      const dotsInterval3 = setInterval(() => {
+        setLoadingDots3(prev => {
+          if (prev === '...') return '.'
+          if (prev === '..') return '...'
+          return '..'
+        })
+      }, 500)
+
+      return () => {
+        clearInterval(dotsInterval)
+        clearInterval(dotsInterval2)
+        clearInterval(dotsInterval3)
+      }
+    }
+  }, [isAnalyzing])
 
   useEffect(() => {
     // Scroll to navigation section immediately when dataset changes
@@ -639,24 +677,48 @@ export default function DemoAnalysisDisplay({ dataset, onBack }: DemoAnalysisDis
 
       {/* Loading State */}
       {isAnalyzing && (
-        <div id="loading-state" className="flex flex-col items-center justify-center py-12 space-y-4">
-          <Loader2 className="h-12 w-12 animate-spin text-blue-500" />
-          <p className="text-lg text-gray-600 dark:text-gray-300">
-            Processing your data...
-          </p>
-        </div>
+        <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-900 border-blue-200 dark:border-blue-800 shadow-lg">
+          <div className="p-8">
+            <div className="flex items-center space-x-3 mb-6">
+              <div className="relative">
+                <Brain className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                <div className="absolute -top-1 -right-3">
+                  <Loader2 className="h-3 w-3 animate-spin text-blue-500" />
+                </div>
+              </div>
+              <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 bg-clip-text text-transparent">
+                AI Analysis in Progress{loadingDots}
+              </h2>
+            </div>
+            
+            <div className="space-y-4">
+              <div className="flex items-center space-x-3 text-sm text-gray-600 dark:text-gray-300">
+                <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                <span>Processing dataset structure{loadingDots}</span>
+              </div>
+              <div className="flex items-center space-x-3 text-sm text-gray-600 dark:text-gray-300">
+                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse delay-150"></div>
+                <span>Identifying patterns and correlations{loadingDots2}</span>
+              </div>
+              <div className="flex items-center space-x-3 text-sm text-gray-600 dark:text-gray-300">
+                <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse delay-300"></div>
+                <span>Generating insights and recommendations{loadingDots3}</span>
+              </div>
+            </div>
+          </div>
+        </Card>
       )}
 
       {/* Content Section */}
       {showContent && (
         <>
       {/* AI Analysis Section */}
-      <div id="ai-analysis">
+      <div id="ai-analysis" className={`transition-opacity duration-500 ${showContent ? 'opacity-100' : 'opacity-0'}`}>
         <AnimatedTextAnalysis text={demoData.analysisText} isAnalyzing={isAnalyzing} />
       </div>
 
           {/* Disabled Chat Interface */}
-          <div id="chat-section" className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
+          <div id="chat-section" className={`transition-opacity duration-500 ${showContent ? 'opacity-100' : 'opacity-0'}`}>
             <h2 className="text-2xl font-semibold mb-4 dark:text-white">Chat about your data</h2>
             <div className="border rounded-lg p-4 bg-gray-50 dark:bg-gray-900">
               <div className="h-[200px] flex flex-col">
