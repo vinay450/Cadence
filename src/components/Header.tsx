@@ -15,6 +15,7 @@ export default function Header({ session }: HeaderProps) {
   const navigate = useNavigate()
   const location = useLocation()
   const isLandingPage = location.pathname === '/'
+  const isDocsPage = location.pathname === '/docs'
 
   useEffect(() => {
     // Check if dark mode is stored in localStorage
@@ -97,7 +98,7 @@ export default function Header({ session }: HeaderProps) {
               </div>
             )}
             
-            {session && (
+            {session && !isDocsPage && (
               <div className="flex items-center gap-4 flex-shrink-0">
                 <Button 
                   variant="outline" 
@@ -110,16 +111,18 @@ export default function Header({ session }: HeaderProps) {
               </div>
             )}
             
-            <div className="flex items-center gap-4 flex-shrink-0">
-              <Button 
-                variant="outline" 
-                size="sm" 
-                className="dark:border-gray-600 dark:text-gray-300 whitespace-nowrap px-3"
-                onClick={() => navigate('/docs')}
-              >
-                Documentation
-              </Button>
-            </div>
+            {!isDocsPage && (
+              <div className="flex items-center gap-4 flex-shrink-0">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="dark:border-gray-600 dark:text-gray-300 whitespace-nowrap px-3"
+                  onClick={() => navigate('/docs')}
+                >
+                  Documentation
+                </Button>
+              </div>
+            )}
           </div>
 
           <div className="hidden md:flex items-center gap-4 ml-auto">
@@ -199,7 +202,7 @@ export default function Header({ session }: HeaderProps) {
                   </button>
                 </>
               )}
-              {session && (
+              {session && !isDocsPage && (
                 <>
                   <Button 
                     variant="outline" 
@@ -210,13 +213,15 @@ export default function Header({ session }: HeaderProps) {
                   </Button>
                 </>
               )}
-              <Button 
-                variant="outline" 
-                className="w-full dark:border-gray-600 dark:text-gray-300"
-                onClick={() => navigate('/docs')}
-              >
-                Documentation
-              </Button>
+              {!isDocsPage && (
+                <Button 
+                  variant="outline" 
+                  className="w-full dark:border-gray-600 dark:text-gray-300"
+                  onClick={() => navigate('/docs')}
+                >
+                  Documentation
+                </Button>
+              )}
               <Button
                 variant="ghost"
                 size="sm"
