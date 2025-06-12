@@ -1,5 +1,6 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
+import commonjs from '@rollup/plugin-commonjs';
 import path from "path";
 
 // https://vitejs.dev/config/
@@ -7,7 +8,11 @@ export default defineConfig({
   plugins: [
     react({
       jsxRuntime: 'automatic',
-    })
+    }),
+    commonjs({
+      include: /node_modules/,
+      requireReturnsDefault: 'auto',
+    }),
   ],
   resolve: {
     alias: {
@@ -18,8 +23,5 @@ export default defineConfig({
     outDir: 'dist',
     sourcemap: false,
     minify: 'esbuild',
-  },
-  optimizeDeps: {
-    include: ['react', 'react-dom', 'scheduler'],
   },
 });
