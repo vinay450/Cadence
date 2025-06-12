@@ -70,14 +70,6 @@ export default function ChatBot({ sessionId, onSessionIdUpdate, model, data }: C
     setShowSuggestions(false)
 
     try {
-      console.log('=== CHAT REQUEST DEBUG ===')
-      console.log('Request type determination:', {
-        hasSessionId: !!currentSessionId,
-        hasDataset: !!data,
-        messagesLength: messages.length,
-        dataLength: data?.length
-      })
-
       const requestBody: any = {
         message: inputMessage,
         sessionId: currentSessionId,
@@ -88,32 +80,17 @@ export default function ChatBot({ sessionId, onSessionIdUpdate, model, data }: C
       if (!currentSessionId && data) {
         requestBody.data = data
         requestBody.isNewAnalysis = true
-        console.log('🔥 INITIAL ANALYSIS - Including dataset:', {
-          dataLength: data.length,
-          estimatedTokens: Math.ceil(data.length / 4)
-        })
-      } else {
-        console.log('📝 CHAT MESSAGE - Using stored dataset')
       }
-
-      console.log('Final request body:', {
-        hasData: !!requestBody.data,
-        dataLength: requestBody.data?.length || 0,
-        sessionId: requestBody.sessionId,
-        isNewAnalysis: requestBody.isNewAnalysis
-      })
 
       const { data: result, error } = await supabase.functions.invoke('chat', {
         body: requestBody
       })
 
       if (error) {
-        console.error('Supabase function error:', error)
         throw error
       }
 
       if (!result || !result.analysis) {
-        console.error('Invalid response format:', result)
         throw new Error('Invalid response format')
       }
 
@@ -121,7 +98,6 @@ export default function ChatBot({ sessionId, onSessionIdUpdate, model, data }: C
       if (result.sessionId && result.sessionId !== currentSessionId) {
         setCurrentSessionId(result.sessionId)
         onSessionIdUpdate(result.sessionId)
-        console.log('✅ Session created:', result.sessionId)
         
         toast({
           title: 'Analysis Complete',
@@ -139,7 +115,6 @@ export default function ChatBot({ sessionId, onSessionIdUpdate, model, data }: C
       setMessages(prev => [...prev, assistantMessage])
 
     } catch (error: any) {
-      console.error('Error sending message:', error)
       toast({
         title: 'Error',
         description: error.message || 'Failed to send message. Please try again.',
@@ -195,17 +170,6 @@ export default function ChatBot({ sessionId, onSessionIdUpdate, model, data }: C
 
       <Card className="bg-white dark:bg-gray-800 shadow-xl border-0 rounded-t-none">
         <div className="p-6 space-y-4">
-          {/* Debug Info - Shows the token flow */}
-          {process.env.NODE_ENV === 'development' && (
-            <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded text-xs">
-              <div className="font-semibold mb-2">🔧 Debug Info:</div>
-              <div>Dataset: {data?.length || 0} chars (~{Math.ceil((data?.length || 0) / 4)} tokens)</div>
-              <div>Session ID: {currentSessionId || 'None'}</div>
-              <div>Messages: {messages.length}</div>
-              <div>Flow: {!currentSessionId && hasDataset ? '🔥 Ready for first chat (will use dataset)' : currentSessionId ? '📝 Chat active (no dataset)' : '❌ No data'}</div>
-            </div>
-          )}
-
           {/* Suggestion Prompts */}
           {showSuggestions && hasDataset && (
             <div className="mb-6">

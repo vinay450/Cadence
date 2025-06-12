@@ -1,11 +1,23 @@
+import { useNavigate } from 'react-router-dom'
 import { Button } from "@/components/ui/button"
 import { ArrowRight, BarChart3, Zap, TrendingUp } from "lucide-react"
 import CyclingTypingAnimation from "./CyclingTypingAnimation"
 
 export default function Hero() {
+  const navigate = useNavigate()
+
   const scrollToApp = () => {
-    const appSection = document.getElementById('try-app')
-    appSection?.scrollIntoView({ behavior: 'smooth' })
+    const technicalFeaturesSection = document.querySelector('section:nth-of-type(3)')
+    if (technicalFeaturesSection) {
+      const headerOffset = 115 // Buffer to account for header height
+      const elementPosition = technicalFeaturesSection.getBoundingClientRect().top
+      const offsetPosition = elementPosition + window.pageYOffset - headerOffset
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      })
+    }
   }
 
   const scrollToDemo = () => {
@@ -40,7 +52,11 @@ export default function Hero() {
           </p>
           
           <div className="mt-10 flex items-center justify-center gap-x-6">
-            <Button onClick={scrollToApp} size="lg" className="bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600">
+            <Button 
+              size="lg"
+              onClick={() => navigate('/dashboard')}
+              className="bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600"
+            >
               Try Analytics Platform
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>

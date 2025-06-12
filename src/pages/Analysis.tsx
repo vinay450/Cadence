@@ -7,7 +7,7 @@ import ChatBot from '@/components/ChatBot'
 import DataNavigationSection from '@/components/DataNavigationSection'
 import { useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, FileText } from 'lucide-react'
 import {
   Table,
   TableBody,
@@ -200,14 +200,24 @@ export default function AnalysisApp({ session }: AnalysisAppProps) {
       <main className="pt-40 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto space-y-8">
           <div className="flex justify-center mb-8">
-            <Button 
-              variant="outline" 
-              onClick={() => navigate('/dashboard')}
-              className="flex items-center gap-2"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Back to Dashboard
-            </Button>
+            <div className="flex gap-4">
+              <Button 
+                variant="outline" 
+                onClick={() => navigate('/dashboard')}
+                className="flex items-center gap-2"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Back to Dashboard
+              </Button>
+              <Button 
+                variant="outline" 
+                onClick={() => navigate('/docs')}
+                className="flex items-center gap-2"
+              >
+                <FileText className="h-4 w-4" />
+                Documentation
+              </Button>
+            </div>
           </div>
           <DataAnalysisDashboard onAnalysis={handleAnalysis} isAnalyzing={isAnalyzing} />
 
