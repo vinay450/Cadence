@@ -237,7 +237,7 @@ The data collectively suggests a technology company that has achieved market mat
         recommendations: [
           {
             title: "Customer Distribution by Age",
-            chartType: "BarChart",
+            chartType: "BarChart", 
             dataPoints: {
               xAxis: "ageGroup",
               yAxis: "customerCount",
@@ -527,7 +527,7 @@ The data strongly supports a multi-pronged optimization strategy focusing on sup
           }
         ]
       }
-    }
+      }
 
     default:
       return {
@@ -741,11 +741,11 @@ export default function DemoAnalysisDisplay({ dataset, onBack }: DemoAnalysisDis
                 </div>
               </div>
             </div>
-          </div>
+      </div>
 
-          {/* Data Preview Section */}
+      {/* Data Preview Section */}
           {dataset.id === 'sales-performance' ? (
-            <div id="data-preview" className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
+        <div id="data-preview" className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
               <div className="flex items-center justify-between mb-2">
                 <h3 className="text-lg font-semibold">Data Preview</h3>
                 <button
