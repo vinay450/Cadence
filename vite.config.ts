@@ -18,5 +18,8 @@ export default defineConfig({
     outDir: 'dist',
     sourcemap: false,
     minify: 'esbuild',
+  },
+  optimizeDeps: {
+    include: ['scheduler'],
   }
 });
