@@ -49,9 +49,7 @@
     "tailwind-merge": "^2.2.1"
   },
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^25.0.7",
     "@types/node": "^20.11.28",
-    "@types/rollup-plugin-commonjs": "^9.3.1",
     "@types/react": "18.2.66",
     "@types/react-dom": "18.2.22",
     "@typescript-eslint/eslint-plugin": "^7.2.0",
