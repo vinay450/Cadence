@@ -6,7 +6,13 @@ import path from "path";
 export default defineConfig({
   plugins: [
     react({
-      jsxRuntime: 'automatic'
+      jsxRuntime: 'automatic',
+      jsxImportSource: 'react',
+      babel: {
+        presets: [
+          ['@babel/preset-react', { runtime: 'automatic' }]
+        ]
+      }
     })
   ],
   resolve: {
