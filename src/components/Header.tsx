@@ -103,13 +103,13 @@ export default function Header({ session }: HeaderProps) {
                   onClick={() => scrollToSection('features')}
                   className="text-sm font-medium text-gray-700 hover:text-indigo-600 transition-colors dark:text-gray-300 dark:hover:text-indigo-400 whitespace-nowrap"
                 >
-                  Features
+              Features
                 </button>
                 <button 
                   onClick={() => scrollToSection('comparison')}
                   className="text-sm font-medium text-gray-700 hover:text-indigo-600 transition-colors dark:text-gray-300 dark:hover:text-indigo-400 whitespace-nowrap"
                 >
-                  Comparison
+              Comparison
                 </button>
               </div>
             )}
@@ -165,12 +165,12 @@ export default function Header({ session }: HeaderProps) {
                 </div>
                 <Button onClick={handleLogout} size="sm" className="bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 whitespace-nowrap px-3 flex-shrink-0">
                   Log Out
-                </Button>
+            </Button>
               </div>
             ) : (
               <Button onClick={() => navigate('/login')} size="sm" className="bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 whitespace-nowrap px-3 flex-shrink-0">
                 Log In
-              </Button>
+            </Button>
             )}
           </div>
           
@@ -205,7 +205,7 @@ export default function Header({ session }: HeaderProps) {
                     }}
                     className="block w-full text-left px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300"
                   >
-                    Features
+                Features
                   </button>
                   <button 
                     onClick={() => {
@@ -214,7 +214,7 @@ export default function Header({ session }: HeaderProps) {
                     }}
                     className="block w-full text-left px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300"
                   >
-                    Comparison
+                Comparison
                   </button>
                 </>
               )}

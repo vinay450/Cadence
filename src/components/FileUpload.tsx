@@ -63,7 +63,7 @@ export default function FileUpload({ onUpload, loading }: FileUploadProps) {
           <div className="text-center">
             <p className="text-gray-600 dark:text-gray-400 mb-2">
               Drag files here or click to select files.
-            </p>
+          </p>
             <p className="text-sm text-gray-500 dark:text-gray-400">
               Cadence supports .csv files up to ~2 mb or 480,000 data points in a single request
             </p>
