@@ -193,11 +193,11 @@ export default function ChatBot({ sessionId, onSessionIdUpdate, model, data }: C
             </div>
           )}
 
-          {/* Messages Container */}
+        {/* Messages Container */}
           <div className="h-96 overflow-y-auto border-2 border-gray-100 dark:border-gray-700 rounded-xl p-4 bg-gradient-to-b from-gray-50 to-white dark:from-gray-800 dark:to-gray-700">
-            {messages.length === 0 ? (
-              <div className="flex items-center justify-center h-full text-gray-500 dark:text-gray-400">
-                <div className="text-center">
+          {messages.length === 0 ? (
+            <div className="flex items-center justify-center h-full text-gray-500 dark:text-gray-400">
+              <div className="text-center">
                   <div className="relative mb-4">
                     <MessageCircle className="h-16 w-16 mx-auto opacity-30" />
                     <Sparkles className="h-6 w-6 absolute top-0 right-1/2 transform translate-x-1/2 text-purple-400 animate-pulse" />
@@ -213,15 +213,15 @@ export default function ChatBot({ sessionId, onSessionIdUpdate, model, data }: C
                       <p className="text-sm">Ask any question about your dataset or use the suggestions above</p>
                     </div>
                   )}
-                </div>
               </div>
-            ) : (
+            </div>
+          ) : (
               <div className="space-y-4">
-                {messages.map((message) => (
-                  <div
-                    key={message.id}
-                    className={`flex ${message.isUser ? 'justify-end' : 'justify-start'}`}
-                  >
+              {messages.map((message) => (
+                <div
+                  key={message.id}
+                  className={`flex ${message.isUser ? 'justify-end' : 'justify-start'}`}
+                >
                     <div className={`flex items-start gap-3 max-w-xs lg:max-w-md ${message.isUser ? 'flex-row-reverse' : 'flex-row'}`}>
                       {/* Avatar */}
                       <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
@@ -238,20 +238,20 @@ export default function ChatBot({ sessionId, onSessionIdUpdate, model, data }: C
                       
                       {/* Message bubble */}
                       <div className={`px-4 py-3 rounded-2xl relative ${
-                        message.isUser
+                      message.isUser
                           ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-br-md'
                           : 'bg-white dark:bg-gray-600 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-500 rounded-bl-md shadow-sm'
                       }`}>
                         <p className="text-sm whitespace-pre-wrap leading-relaxed">{message.content}</p>
                         <p className={`text-xs mt-2 ${
-                          message.isUser ? 'text-blue-100' : 'text-gray-500 dark:text-gray-400'
-                        }`}>
-                          {message.timestamp.toLocaleTimeString()}
-                        </p>
+                      message.isUser ? 'text-blue-100' : 'text-gray-500 dark:text-gray-400'
+                    }`}>
+                      {message.timestamp.toLocaleTimeString()}
+                    </p>
                       </div>
-                    </div>
                   </div>
-                ))}
+                </div>
+              ))}
                 {isLoading && (
                   <div className="flex justify-start">
                     <div className="flex items-start gap-3">
@@ -267,34 +267,34 @@ export default function ChatBot({ sessionId, onSessionIdUpdate, model, data }: C
                     </div>
                   </div>
                 )}
-              </div>
-            )}
-          </div>
+            </div>
+          )}
+        </div>
 
-          {/* Input Container */}
+        {/* Input Container */}
           <div className="relative">
             <div className="flex gap-3 p-3 bg-gradient-to-r from-gray-50 to-blue-50 dark:from-gray-800 dark:to-blue-900 rounded-xl border border-gray-200 dark:border-gray-600">
-              <textarea
-                value={inputMessage}
-                onChange={(e) => setInputMessage(e.target.value)}
-                onKeyPress={handleKeyPress}
+          <textarea
+            value={inputMessage}
+            onChange={(e) => setInputMessage(e.target.value)}
+            onKeyPress={handleKeyPress}
                 placeholder={getPlaceholderText()}
                 className="flex-1 px-4 py-3 border-0 rounded-lg resize-none h-12 bg-white dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
-                rows={1}
+            rows={1}
                 disabled={isInputDisabled}
-              />
-              <Button
-                onClick={handleSendMessage}
+          />
+          <Button
+            onClick={handleSendMessage}
                 disabled={inputMessage.trim() === '' || isInputDisabled}
                 className="px-6 py-3 bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 disabled:opacity-50 rounded-lg shadow-lg transition-all duration-200 transform hover:scale-105"
-              >
+          >
                 {isLoading ? (
                   <Loader2 className="h-5 w-5 animate-spin" />
                 ) : (
                   <Send className="h-5 w-5" />
                 )}
-              </Button>
-            </div>
+          </Button>
+        </div>
           </div>
 
           {/* Status Information */}
@@ -314,8 +314,8 @@ export default function ChatBot({ sessionId, onSessionIdUpdate, model, data }: C
               </span>
             </div>
           )}
-        </div>
-      </Card>
+      </div>
+    </Card>
     </div>
   )
 }
