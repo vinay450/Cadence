@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
-import { Button } from "@/components/ui/button";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import TechnicalFeatures from "@/components/TechnicalFeatures";

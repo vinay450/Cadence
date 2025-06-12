@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import { BarChart3, TrendingUp, PieChart, Users, ActivitySquare, Stethoscope, Waypoints } from "lucide-react"
+import { TrendingUp, ActivitySquare, Stethoscope, Waypoints } from "lucide-react"
 
 interface DemoDataset {
   id: string

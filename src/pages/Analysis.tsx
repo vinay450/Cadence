@@ -51,7 +51,7 @@ export default function AnalysisApp({ session }: AnalysisAppProps) {
   const [selectedModel, setSelectedModel] = useState('claude-3-5-sonnet-20241022')
   const [tableData, setTableData] = useState<TableRow[]>([])
   const [claudeLog, setClaudeLog] = useState<any>(null)
-  const [parsedData, setParsedData] = useState<any[]>([])
+  const [parsedData] = useState<any[]>([])
   const [isLogMinimized, setIsLogMinimized] = useState(false)
   const [tableSearch, setTableSearch] = useState('')
   const [sortColumn, setSortColumn] = useState<number | null>(null)

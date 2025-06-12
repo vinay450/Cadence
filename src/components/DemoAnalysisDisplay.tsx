@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
-import { ArrowLeft, Download, Share2, Loader2, Send, Brain } from 'lucide-react'
+import { ArrowLeft, Download, Share2, Loader2, Brain } from 'lucide-react'
 import AnimatedTextAnalysis from './AnimatedTextAnalysis'
 import DataNavigationSection from './DataNavigationSection'
 import { DataTable } from './DataTable'
@@ -24,12 +24,6 @@ interface DemoDataset {
 interface DemoAnalysisDisplayProps {
   dataset: DemoDataset
   onBack: () => void
-}
-
-interface ChartData {
-  quarter: string
-  revenue: number
-  growth: number
 }
 
 interface CustomerData {
@@ -165,7 +159,6 @@ const getDemoData = (datasetId: string): DemoData<DemoDataType> => {
   switch (datasetId) {
     case 'sales-performance': {
       const aggregatedRegionData = aggregateDataByRegion(salesData)
-      const aggregatedCategoryData = aggregateDataByProductCategory(salesData)
       const regions = Array.from(new Set(salesData.map(item => item.region)))
       const categories = Array.from(new Set(salesData.map(item => item.productCategory)))
       
@@ -309,7 +302,6 @@ This analysis reveals a well-instrumented system with clear failure signatures t
       const generateMedicalData = () => {
         const data: MedicalData[] = [];
         const treatments = ['Treatment A', 'Treatment B', 'Treatment C', 'Treatment D', 'Treatment E'];
-        const phases = ['Phase 2', 'Phase 3'];
         const genders = ['Male', 'Female'];
         
         // Base metrics for each treatment
@@ -557,7 +549,6 @@ export default function DemoAnalysisDisplay({ dataset, onBack }: DemoAnalysisDis
   const [loadingDots2, setLoadingDots2] = useState('.')
   const [loadingDots3, setLoadingDots3] = useState('.')
   const demoData = getDemoData(dataset.id)
-  const aggregatedCategoryData = dataset.id === 'sales-performance' ? aggregateDataByProductCategory(salesData) : []
 
   useEffect(() => {
     // Reset states when dataset changes
@@ -804,7 +795,7 @@ export default function DemoAnalysisDisplay({ dataset, onBack }: DemoAnalysisDis
                 <div className="h-80 min-w-[600px]">
                   {rec.chartType === 'LineChart' && (
                     <LineChart
-                      data={rec.title === "Product Category Revenue Comparison" ? aggregatedCategoryData : demoData.chartData}
+                      data={rec.title === "Product Category Revenue Comparison" ? aggregateDataByProductCategory(salesData) : demoData.chartData}
                       dataPoints={rec.dataPoints as LineChartDataPoints}
                       xAxisLabel={rec.dataPoints.xAxisLabel}
                       yAxisLabel={rec.dataPoints.yAxisLabel}

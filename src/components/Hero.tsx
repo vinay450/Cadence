@@ -6,20 +6,6 @@ import CyclingTypingAnimation from "./CyclingTypingAnimation"
 export default function Hero() {
   const navigate = useNavigate()
 
-  const scrollToApp = () => {
-    const technicalFeaturesSection = document.querySelector('section:nth-of-type(3)')
-    if (technicalFeaturesSection) {
-      const headerOffset = 115 // Buffer to account for header height
-      const elementPosition = technicalFeaturesSection.getBoundingClientRect().top
-      const offsetPosition = elementPosition + window.pageYOffset - headerOffset
-
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: 'smooth'
-      })
-    }
-  }
-
   const scrollToDemo = () => {
     const demoSection = document.querySelector('section:nth-of-type(2)')
     if (demoSection) {
