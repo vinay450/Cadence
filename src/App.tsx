@@ -75,21 +75,21 @@ export default function App() {
               <>
                 <main className="pt-28">
                   <section id="hero">
-                    <Hero />
+                  <Hero />
                   </section>
                   <DemoSection onSelectDataset={handleSelectDataset} />
                   {selectedDemoDataset && (
                     <section id="demo-section" className="py-20">
-                      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                        <DemoAnalysisDisplay
-                          dataset={selectedDemoDataset}
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <DemoAnalysisDisplay 
+                          dataset={selectedDemoDataset} 
                           onBack={handleBackToDatasets}
                         />
-                      </div>
-                    </section>
+                    </div>
+                  </section>
                   )}
-                  <TechnicalFeatures />
-                  <ComparisonSection />
+                    <TechnicalFeatures />
+                    <ComparisonSection />
                 </main>
                 <Footer />
               </>
