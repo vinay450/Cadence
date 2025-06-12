@@ -17,6 +17,7 @@ export default function Header({ session }: HeaderProps) {
   const isLandingPage = location.pathname === '/'
   const isDocsPage = location.pathname === '/docs'
   const isDashboardPage = location.pathname === '/dashboard'
+  const isAnalysisPage = location.pathname === '/analysis'
 
   useEffect(() => {
     // Check if dark mode is stored in localStorage
@@ -113,7 +114,7 @@ export default function Header({ session }: HeaderProps) {
               </div>
             )}
             
-            {session && !isDocsPage && !isDashboardPage && (
+            {session && !isDocsPage && !isDashboardPage && !isAnalysisPage && (
               <div className="flex items-center gap-4 flex-shrink-0">
                 <Button 
                   variant="outline" 
@@ -126,7 +127,7 @@ export default function Header({ session }: HeaderProps) {
               </div>
             )}
             
-            {!isDocsPage && !isDashboardPage && (
+            {!isDocsPage && !isDashboardPage && !isAnalysisPage && (
               <div className="flex items-center gap-4 flex-shrink-0">
                 <Button 
                   variant="outline" 
@@ -217,7 +218,7 @@ export default function Header({ session }: HeaderProps) {
                   </button>
                 </>
               )}
-              {session && !isDocsPage && !isDashboardPage && (
+              {session && !isDocsPage && !isDashboardPage && !isAnalysisPage && (
                 <>
                   <Button 
                     variant="outline" 
@@ -228,7 +229,7 @@ export default function Header({ session }: HeaderProps) {
                   </Button>
                 </>
               )}
-              {!isDocsPage && !isDashboardPage && (
+              {!isDocsPage && !isDashboardPage && !isAnalysisPage && (
                 <Button 
                   variant="outline" 
                   className="w-full dark:border-gray-600 dark:text-gray-300"
