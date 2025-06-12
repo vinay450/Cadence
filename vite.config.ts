@@ -12,6 +12,7 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
+      'scheduler': 'scheduler/esm/scheduler.js',
     },
   },
   build: {
