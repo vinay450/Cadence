@@ -17,7 +17,7 @@ interface DemoDataset {
   title: string
   description: string
   icon: React.ComponentType<any>
-  recordCount: string
+  recordCount: React.ReactNode
   category: string
 }
 
