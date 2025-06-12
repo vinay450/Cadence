@@ -16,6 +16,7 @@ export default function Header({ session }: HeaderProps) {
   const location = useLocation()
   const isLandingPage = location.pathname === '/'
   const isDocsPage = location.pathname === '/docs'
+  const isDashboardPage = location.pathname === '/dashboard'
 
   useEffect(() => {
     // Check if dark mode is stored in localStorage
@@ -50,16 +51,30 @@ export default function Header({ session }: HeaderProps) {
   }
 
   const scrollToSection = (sectionId: string) => {
-    const element = document.getElementById(sectionId)
-    if (element) {
-      const headerOffset = sectionId === 'features' ? 45 : 115 // 45px for Features, 115px for Comparison
-      const elementPosition = element.getBoundingClientRect().top
-      const offsetPosition = elementPosition + window.pageYOffset - headerOffset
+    if (sectionId === 'features') {
+      const element = document.querySelector('section:nth-of-type(3)') // Technical Features is the third section
+      if (element) {
+        const headerOffset = 40 // Buffer for features section
+        const elementPosition = element.getBoundingClientRect().top
+        const offsetPosition = elementPosition + window.pageYOffset - headerOffset
 
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: 'smooth'
-      })
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth'
+        })
+      }
+    } else if (sectionId === 'comparison') {
+      const element = document.getElementById(sectionId)
+      if (element) {
+        const headerOffset = 115 // Original buffer for comparison section
+        const elementPosition = element.getBoundingClientRect().top
+        const offsetPosition = elementPosition + window.pageYOffset - headerOffset
+
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth'
+        })
+      }
     }
   }
 
@@ -98,7 +113,7 @@ export default function Header({ session }: HeaderProps) {
               </div>
             )}
             
-            {session && !isDocsPage && (
+            {session && !isDocsPage && !isDashboardPage && (
               <div className="flex items-center gap-4 flex-shrink-0">
                 <Button 
                   variant="outline" 
@@ -111,7 +126,7 @@ export default function Header({ session }: HeaderProps) {
               </div>
             )}
             
-            {!isDocsPage && (
+            {!isDocsPage && !isDashboardPage && (
               <div className="flex items-center gap-4 flex-shrink-0">
                 <Button 
                   variant="outline" 
@@ -202,7 +217,7 @@ export default function Header({ session }: HeaderProps) {
                   </button>
                 </>
               )}
-              {session && !isDocsPage && (
+              {session && !isDocsPage && !isDashboardPage && (
                 <>
                   <Button 
                     variant="outline" 
@@ -213,7 +228,7 @@ export default function Header({ session }: HeaderProps) {
                   </Button>
                 </>
               )}
-              {!isDocsPage && (
+              {!isDocsPage && !isDashboardPage && (
                 <Button 
                   variant="outline" 
                   className="w-full dark:border-gray-600 dark:text-gray-300"

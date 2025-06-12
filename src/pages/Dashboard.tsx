@@ -222,14 +222,24 @@ export default function Dashboard() {
       <main className="pt-28">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex justify-center mb-8">
-            <Button 
-              variant="outline" 
-              onClick={() => navigate('/')}
-              className="flex items-center gap-2"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Back to Home
-            </Button>
+            <div className="flex gap-4">
+              <Button 
+                variant="outline" 
+                onClick={() => navigate('/')}
+                className="flex items-center gap-2"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Back to Home
+              </Button>
+              <Button 
+                variant="outline" 
+                onClick={() => navigate('/docs')}
+                className="flex items-center gap-2"
+              >
+                <FileText className="h-4 w-4" />
+                Documentation
+              </Button>
+            </div>
           </div>
           <div className="flex justify-between items-center mb-8 mt-8">
             <h1 className="text-3xl font-bold text-foreground">Dashboard</h1>
