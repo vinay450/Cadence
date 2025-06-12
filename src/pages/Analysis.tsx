@@ -175,8 +175,74 @@ export default function AnalysisApp({ session }: AnalysisAppProps) {
         throw new Error('Invalid response format')
       }
 
+      // Create a new project in the database
+      const { data: project, error: projectError } = await supabase
+        .from('projects')
+        .insert({
+          user_id: session?.user?.id,
+          title: 'Dataset Analysis',
+          description: 'Analysis of uploaded dataset',
+          file_name: 'dataset.csv', // You might want to get this from the actual file
+          file_type: 'csv', // You might want to get this from the actual file
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        })
+        .select()
+        .single()
+
+      if (projectError) {
+        console.error('5. Project creation error:', projectError)
+        throw projectError
+      }
+
+      // Save the analysis results
+      const { error: analysisError } = await supabase
+        .from('analysis_results')
+        .insert({
+          project_id: project.id,
+          dataset_overview: {
+            total_rows: rows.length,
+            total_columns: Object.keys(rows[0] || {}).length,
+            column_names: Object.keys(rows[0] || {}),
+            data_types: {} // You might want to infer data types from the data
+          },
+          statistical_summary: result.visualizations?.statisticalSummary || {},
+          pattern_recognition: {
+            trends: result.visualizations?.statisticalSummary?.trends || [],
+            anomalies: result.visualizations?.dataQualityMetrics?.anomalies || [],
+            seasonality: result.visualizations?.statisticalSummary?.seasonality || []
+          },
+          data_quality: {
+            missing_values: result.visualizations?.dataQualityMetrics?.completeness || {},
+            outliers: result.visualizations?.dataQualityMetrics?.outlierCount || {},
+            data_quality_score: result.visualizations?.dataQualityMetrics?.qualityScore || 0
+          },
+          key_insights: result.visualizations?.businessInsights?.keyFindings || [],
+          recommendations: result.visualizations?.businessInsights?.recommendations || []
+        })
+
+      if (analysisError) {
+        console.error('6. Analysis results save error:', analysisError)
+        throw analysisError
+      }
+
+      // Save the initial chat message
+      const { error: chatError } = await supabase
+        .from('chat_messages')
+        .insert({
+          project_id: project.id,
+          role: 'assistant',
+          content: result.analysis
+        })
+
+      if (chatError) {
+        console.error('7. Chat message save error:', chatError)
+        throw chatError
+      }
+
       setAnalysisData(result.analysis)
       setSessionId(result.sessionId)
+      setClaudeLog(result)
 
       // Scroll to analysis section
       const analysisSection = document.getElementById('ai-analysis')
@@ -184,7 +250,7 @@ export default function AnalysisApp({ session }: AnalysisAppProps) {
         analysisSection.scrollIntoView({ behavior: 'smooth' })
       }
     } catch (error) {
-      console.error('5. Analysis error:', error)
+      console.error('8. Analysis error:', error)
       toast({
         title: 'Error',
         description: error instanceof Error ? error.message : 'Failed to analyze dataset',
