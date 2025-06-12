@@ -16,11 +16,16 @@ export default defineConfig({
     sourcemap: true,
     minify: 'terser',
     rollupOptions: {
+      external: ['react', 'react-dom'],
       output: {
-        manualChunks: {
-          'react-vendor': ['react', 'react-dom'],
+        globals: {
+          react: 'React',
+          'react-dom': 'ReactDOM'
         }
       }
     }
+  },
+  optimizeDeps: {
+    include: ['react', 'react-dom']
   }
 });
