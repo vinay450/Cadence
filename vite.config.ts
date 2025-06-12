@@ -15,9 +15,22 @@ export default defineConfig({
     sourcemap: false, // Disable sourcemaps for production
     minify: 'esbuild', // Use esbuild instead of terser for faster builds
     rollupOptions: {
+      external: ['react', 'react-dom'],
       output: {
-        manualChunks: undefined // Let Vite handle chunking automatically
+        globals: {
+          react: 'React',
+          'react-dom': 'ReactDOM'
+        }
       }
     }
+  },
+  optimizeDeps: {
+    include: ['react', 'react-dom'],
+    esbuildOptions: {
+      target: 'es2020'
+    }
+  },
+  esbuild: {
+    target: 'es2020'
   }
 });
