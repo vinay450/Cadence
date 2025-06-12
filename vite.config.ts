@@ -4,50 +4,22 @@ import path from "path";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [
-    react({
-      jsxRuntime: 'automatic',
-      jsxImportSource: 'react',
-      babel: {
-        plugins: [
-          ['@babel/plugin-transform-react-jsx', { runtime: 'automatic' }]
-        ]
-      }
-    })
-  ],
+  plugins: [react()],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
   },
   build: {
-    commonjsOptions: {
-      include: [/node_modules/],
-      transformMixedEsModules: true
-    },
+    outDir: 'dist',
+    assetsDir: 'assets',
+    sourcemap: true,
+    minify: 'terser',
     rollupOptions: {
-      external: ['react', 'react-dom'],
       output: {
-        globals: {
-          react: 'React',
-          'react-dom': 'ReactDOM'
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom'],
         }
-      }
-    }
-  },
-  optimizeDeps: {
-    include: ['react', 'react-dom'],
-    esbuildOptions: {
-      jsx: 'automatic'
-    }
-  },
-  server: {
-    host: "::",
-    port: 8080,
-    proxy: {
-      '/api': {
-        target: 'http://localhost:3000',
-        changeOrigin: true,
       }
     }
   }
