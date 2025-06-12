@@ -7,12 +7,7 @@ export default defineConfig({
   plugins: [
     react({
       jsxRuntime: 'automatic',
-      jsxImportSource: 'react',
-      babel: {
-        presets: [
-          ['@babel/preset-react', { runtime: 'automatic' }]
-        ]
-      }
+      jsxImportSource: 'react'
     })
   ],
   resolve: {
@@ -22,12 +17,12 @@ export default defineConfig({
   },
   build: {
     outDir: 'dist',
-    sourcemap: false, // Disable sourcemaps for production
-    minify: 'esbuild', // Use esbuild instead of terser for faster builds
+    sourcemap: false,
+    minify: 'esbuild',
     rollupOptions: {
+      external: ['react', 'react-dom'],
       output: {
         manualChunks: {
-          'react-vendor': ['react', 'react-dom'],
           'ui-vendor': [
             '@headlessui/react',
             '@radix-ui/react-accordion',
@@ -58,6 +53,10 @@ export default defineConfig({
             '@radix-ui/react-toggle-group',
             '@radix-ui/react-tooltip'
           ]
+        },
+        globals: {
+          react: 'React',
+          'react-dom': 'ReactDOM'
         }
       }
     }
