@@ -75,6 +75,21 @@ const sampleDatasets: DemoDataset[] = [
 ]
 
 export default function DemoSection({ onSelectDataset }: DemoSectionProps) {
+  const handleTryDemo = (dataset: DemoDataset) => {
+    onSelectDataset(dataset)
+    const element = document.getElementById('demo-section')
+    if (element) {
+      const headerOffset = 150 // Increased buffer for better visibility
+      const elementPosition = element.getBoundingClientRect().top
+      const offsetPosition = elementPosition + window.pageYOffset - headerOffset
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      })
+    }
+  }
+
   return (
     <section className="bg-gradient-to-br from-indigo-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-indigo-900 py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -97,7 +112,7 @@ export default function DemoSection({ onSelectDataset }: DemoSectionProps) {
               <Card 
                 key={dataset.id}
                 className="relative group hover:shadow-lg transition-all duration-300 cursor-pointer bg-white/70 dark:bg-gray-800/70 border border-indigo-200 dark:border-indigo-800 hover:border-indigo-300 dark:hover:border-indigo-600"
-                onClick={() => onSelectDataset(dataset)}
+                onClick={() => handleTryDemo(dataset)}
               >
                 <div className="p-6 flex flex-col h-full">
                   <div className="flex items-center justify-between mb-4">
@@ -125,7 +140,7 @@ export default function DemoSection({ onSelectDataset }: DemoSectionProps) {
                       className="w-full border-indigo-300 text-indigo-600 hover:bg-indigo-50 dark:border-indigo-600 dark:text-indigo-400 dark:hover:bg-indigo-900/20"
                       onClick={(e) => {
                         e.stopPropagation()
-                        onSelectDataset(dataset)
+                        handleTryDemo(dataset)
                       }}
                     >
                       Try Demo
