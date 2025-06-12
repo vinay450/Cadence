@@ -23,7 +23,7 @@ interface DemoDataset {
   title: string
   description: string
   icon: React.ComponentType<any>
-  recordCount: string
+  recordCount: React.ReactNode
   category: string
 }
 
@@ -78,66 +78,27 @@ export default function App() {
                     <Hero />
                   </section>
                   <DemoSection onSelectDataset={handleSelectDataset} />
-                  <section id="try-app" className="py-20">
-                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                      {selectedDemoDataset ? (
+                  {selectedDemoDataset && (
+                    <section id="demo-section" className="py-20">
+                      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                         <DemoAnalysisDisplay
                           dataset={selectedDemoDataset}
                           onBack={handleBackToDatasets}
                         />
-                      ) : (
-                        <>
-                          <div className="text-center mb-12">
-                            <div className="inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-sm font-semibold mb-6">
-                              🚀 Try Our Analytics Platform Live
-                            </div>
-                            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
-                              Upload Your Own Data
-                            </h2>
-                            <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-                              Upload your CSV data below and see how our revolutionary AI delivers comprehensive insights and visualizations.
-                            </p>
-                          </div>
-                          {session ? (
-                            <AnalysisApp session={session} />
-                          ) : (
-                            <div className="text-center">
-                              <p className="text-lg text-gray-600 dark:text-gray-300 mb-4">
-                                Please log in to access the full analytics platform.
-                              </p>
-                              <Button onClick={() => window.location.href = '/login'}>
-                                Log In
-                              </Button>
-                            </div>
-                          )}
-                        </>
-                      )}
-                    </div>
-                  </section>
-                  <section id="features">
-                    <TechnicalFeatures />
-                  </section>
-                  <section id="comparison">
-                    <ComparisonSection />
-                  </section>
+                      </div>
+                    </section>
+                  )}
+                  <TechnicalFeatures />
+                  <ComparisonSection />
                 </main>
                 <Footer />
               </>
             } />
             <Route path="/login" element={<Login />} />
-            <Route 
-              path="/analysis" 
-              element={
-                session ? (
-                  <AnalysisApp session={session} />
-                ) : (
-                  <Navigate to="/login" replace />
-                )
-              } 
-            />
-            <Route path="/docs" element={<Documentation />} />
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/docs" element={<Documentation />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/analysis" element={<AnalysisApp session={session} />} />
           </Routes>
         </div>
       </Router>
