@@ -1,4 +1,12 @@
-<!DOCTYPE html>
+import fs from 'fs';
+import path from 'path';
+
+// Read the built index.html
+const indexPath = path.resolve('dist', 'index.html');
+const indexContent = fs.readFileSync(indexPath, 'utf-8');
+
+// Create the production index.html with hardcoded paths
+const productionIndex = `<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -16,10 +24,14 @@
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@lovable_dev" />
     <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+    <script type="module" crossorigin src="./assets/index.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index.css">
   </head>
 
   <body>
     <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
   </body>
-</html>
+</html>`;
+
+// Write the production index.html
+fs.writeFileSync(indexPath, productionIndex); 

@@ -23,8 +23,14 @@ export default defineConfig({
     },
     assetsDir: 'assets',
     rollupOptions: {
+      input: {
+        main: path.resolve(__dirname, 'index.html'),
+      },
       output: {
-        assetFileNames: 'assets/[name][extname]',
+        assetFileNames: (assetInfo) => {
+          if (assetInfo.name === 'style.css') return 'assets/index.css';
+          return 'assets/[name][extname]';
+        },
         chunkFileNames: 'assets/[name].js',
         entryFileNames: 'assets/index.js',
       },
