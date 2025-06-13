@@ -13,6 +13,10 @@ export default function Documentation() {
   const navigate = useNavigate()
 
   useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [])
+
+  useEffect(() => {
     // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session)
@@ -58,7 +62,7 @@ export default function Documentation() {
               Documentation
             </h1>
             <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-              Learn how to use Cadence AI to analyze your data and generate insights
+              Learn how to use Cadence to analyze your data and generate insights
             </p>
           </div>
 
