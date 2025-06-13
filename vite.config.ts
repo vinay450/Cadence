@@ -9,7 +9,7 @@ export default defineConfig({
       jsxRuntime: 'automatic',
     })
   ],
-  base: '/Cadence/',
+  base: './',
   server: {
     port: 8080
   },
@@ -24,6 +24,14 @@ export default defineConfig({
     minify: 'esbuild',
     commonjsOptions: {
       transformMixedEsModules: true,
-    }
+    },
+    assetsDir: 'assets',
+    rollupOptions: {
+      output: {
+        assetFileNames: 'assets/[name].[hash][extname]',
+        chunkFileNames: 'assets/[name].[hash].js',
+        entryFileNames: 'assets/[name].[hash].js',
+      },
+    },
   },
 });
