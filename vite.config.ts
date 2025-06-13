@@ -9,6 +9,10 @@ export default defineConfig({
       jsxRuntime: 'automatic',
     })
   ],
+  base: '/Cadence/',
+  server: {
+    port: 8080
+  },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
