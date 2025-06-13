@@ -9,7 +9,7 @@ export default defineConfig({
       jsxRuntime: 'automatic',
     })
   ],
-  base: './',
+  base: '/Cadence/',
   server: {
     port: 8080
   },

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -14,6 +14,64 @@ export default function Login() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
+
+  // Handle OAuth callback when component mounts
+  useEffect(() => {
+    const handleAuthCallback = async () => {
+      // Check if we're returning from OAuth with tokens in the URL
+      if (window.location.hash.includes('access_token')) {
+        try {
+          const { data, error } = await supabase.auth.getSession()
+          if (error) throw error
+          
+          if (data.session) {
+            // Clean up the URL by removing the hash
+            window.history.replaceState({}, '', window.location.pathname)
+            // Navigate to analysis page
+            navigate('/analysis')
+          }
+        } catch (error) {
+          console.error('Error handling auth callback:', error)
+          toast({
+            title: 'Authentication Error',
+            description: 'There was an issue completing your login. Please try again.',
+            variant: 'destructive'
+          })
+        }
+      }
+    }
+
+    handleAuthCallback()
+  }, [navigate])
+
+  // Handle OAuth callback when component mounts
+  useEffect(() => {
+    const handleAuthCallback = async () => {
+      // Check if we're returning from OAuth with tokens in the URL
+      if (window.location.hash.includes('access_token')) {
+        try {
+          const { data, error } = await supabase.auth.getSession()
+          if (error) throw error
+          
+          if (data.session) {
+            // Clean up the URL by removing the hash
+            window.history.replaceState({}, '', window.location.pathname)
+            // Navigate to analysis page
+            navigate('/analysis')
+          }
+        } catch (error) {
+          console.error('Error handling auth callback:', error)
+          toast({
+            title: 'Authentication Error',
+            description: 'There was an issue completing your login. Please try again.',
+            variant: 'destructive'
+          })
+        }
+      }
+    }
+
+    handleAuthCallback()
+  }, [navigate])
 
   const handleGoogleLogin = async () => {
     try {
@@ -44,7 +102,7 @@ export default function Login() {
         email,
         password,
         options: {
-          emailRedirectTo: `${window.location.origin}/analysis`
+          emailRedirectTo: `${window.location.origin}/Cadence/analysis`
         }
       })
       if (error) throw error
@@ -190,4 +248,4 @@ export default function Login() {
       </Card>
     </div>
   )
-} 
+}
