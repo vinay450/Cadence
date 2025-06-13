@@ -25,9 +25,19 @@ export default defineConfig({
     },
     assetsDir: 'assets',
     rollupOptions: {
-      input: {
-        main: path.resolve(__dirname, 'index.html'),
-      },
-    },
+      output: {
+        entryFileNames: 'assets/index.[hash].js',
+        chunkFileNames: 'assets/[name].[hash].js',
+        assetFileNames: (assetInfo) => {
+          if (assetInfo.name === 'style.css') {
+            return 'assets/index.[hash].css';
+          }
+          return 'assets/[name].[hash][extname]';
+        }
+      }
+    }
   },
+  optimizeDeps: {
+    exclude: ['index.dev.html']
+  }
 });
