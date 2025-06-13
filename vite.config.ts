@@ -4,11 +4,7 @@ import path from "path";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [
-    react({
-      jsxRuntime: 'automatic',
-    })
-  ],
+  plugins: [react()],
   base: '/Cadence/',
   server: {
     port: 8080
@@ -24,7 +20,6 @@ export default defineConfig({
     minify: 'esbuild',
     commonjsOptions: {
       transformMixedEsModules: true,
-      include: [/node_modules/],
     },
     assetsDir: 'assets',
     rollupOptions: {
@@ -33,7 +28,6 @@ export default defineConfig({
         chunkFileNames: 'assets/[name].[hash].js',
         entryFileNames: 'assets/[name].[hash].js',
       },
-      external: ['react', 'react-dom'],
     },
   },
 });
