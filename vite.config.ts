@@ -9,7 +9,7 @@ export default defineConfig({
       jsxRuntime: 'automatic',
     })
   ],
-  base: process.env.NODE_ENV === 'production' ? '/Cadence/' : '/',
+  base: '/',
   server: {
     port: 8080
   },
