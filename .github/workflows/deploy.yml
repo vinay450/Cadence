@@ -26,8 +26,8 @@ jobs:
       - name: Clear Vite cache
         run: rm -rf node_modules/.vite
 
-      - name: Build project with force optimization
-        run: npm run build -- --force
+      - name: Build project
+        run: npm run build
         env:
           NODE_ENV: production
 
