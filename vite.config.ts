@@ -21,7 +21,8 @@ export default defineConfig({
     sourcemap: false,
     minify: 'esbuild',
     commonjsOptions: {
-      transformMixedEsModules: true,
+      include: [/node_modules/],
+      transformMixedEsModules: false,
     },
     assetsDir: 'assets',
     rollupOptions: {
@@ -38,7 +39,7 @@ export default defineConfig({
     }
   },
   optimizeDeps: {
-    include: ['react/jsx-runtime'],
+    include: ['react', 'react-dom', 'react/jsx-runtime'],
     exclude: ['index.dev.html']
   }
 });
