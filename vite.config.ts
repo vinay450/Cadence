@@ -24,6 +24,7 @@ export default defineConfig({
     minify: 'esbuild',
     commonjsOptions: {
       transformMixedEsModules: true,
+      include: [/node_modules/],
     },
     assetsDir: 'assets',
     rollupOptions: {
@@ -32,6 +33,7 @@ export default defineConfig({
         chunkFileNames: 'assets/[name].[hash].js',
         entryFileNames: 'assets/[name].[hash].js',
       },
+      external: ['react', 'react-dom'],
     },
   },
 });
