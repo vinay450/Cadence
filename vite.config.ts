@@ -7,7 +7,9 @@ export default defineConfig({
   plugins: [react()],
   base: '/Cadence/',
   server: {
-    port: 8080
+    port: 8080,
+    strictPort: true,
+    host: true
   },
   resolve: {
     alias: {
@@ -25,14 +27,6 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: path.resolve(__dirname, 'index.html'),
-      },
-      output: {
-        assetFileNames: (assetInfo) => {
-          if (assetInfo.name === 'style.css') return 'assets/index.css';
-          return 'assets/[name][extname]';
-        },
-        chunkFileNames: 'assets/[name].js',
-        entryFileNames: 'assets/index.js',
       },
     },
   },
