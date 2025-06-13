@@ -20,12 +20,9 @@ export default defineConfig({
     outDir: 'dist',
     sourcemap: false,
     minify: 'esbuild',
-    commonjsOptions: {
-      include: [/node_modules/],
-      transformMixedEsModules: false,
-    },
     assetsDir: 'assets',
     rollupOptions: {
+      external: [],
       output: {
         entryFileNames: 'assets/index.[hash].js',
         chunkFileNames: 'assets/[name].[hash].js',
@@ -39,7 +36,6 @@ export default defineConfig({
     }
   },
   optimizeDeps: {
-    include: ['react', 'react-dom', 'react/jsx-runtime'],
-    exclude: ['index.dev.html']
+    force: true
   }
 });

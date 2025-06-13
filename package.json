@@ -5,9 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
-    "build-webpack": "webpack --mode production",
-    "build-rollup": "rollup -c",
+    "build": "vite build",
     "preview": "vite preview"
   },
   "dependencies": {
