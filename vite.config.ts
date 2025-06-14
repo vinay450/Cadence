@@ -7,6 +7,14 @@ export default defineConfig(({ mode }) => {
   // Load env file based on `mode` in the current directory.
   const env = loadEnv(mode, process.cwd(), '');
   
+  // Log environment variables in development
+  if (mode === 'development') {
+    console.log('Environment variables:', {
+      VITE_SUPABASE_URL: env.VITE_SUPABASE_URL ? 'Set' : 'Not set',
+      VITE_SUPABASE_ANON_KEY: env.VITE_SUPABASE_ANON_KEY ? 'Set' : 'Not set'
+    });
+  }
+  
   return {
     plugins: [react({
       jsxRuntime: 'automatic'
@@ -46,8 +54,8 @@ export default defineConfig(({ mode }) => {
       exclude: ['index.dev.html']
     },
     define: {
-      'import.meta.env.VITE_SUPABASE_URL': JSON.stringify(env.VITE_SUPABASE_URL),
-      'import.meta.env.VITE_SUPABASE_ANON_KEY': JSON.stringify(env.VITE_SUPABASE_ANON_KEY)
+      'import.meta.env.VITE_SUPABASE_URL': JSON.stringify(env.VITE_SUPABASE_URL || ''),
+      'import.meta.env.VITE_SUPABASE_ANON_KEY': JSON.stringify(env.VITE_SUPABASE_ANON_KEY || '')
     }
   };
 });
