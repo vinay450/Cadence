@@ -5,7 +5,7 @@ import path from "path";
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react({
-    jsxRuntime: 'classic' // Use classic JSX runtime to avoid jsx-runtime issues
+    jsxRuntime: 'automatic' // Switch back to automatic runtime
   })],
   base: '/Cadence/',
   server: {
@@ -22,10 +22,7 @@ export default defineConfig({
     outDir: 'dist',
     sourcemap: false,
     minify: 'esbuild',
-    commonjsOptions: {
-      include: [/node_modules/],
-      transformMixedEsModules: false,
-    },
+    target: 'esnext',
     assetsDir: 'assets',
     rollupOptions: {
       output: {
@@ -41,7 +38,7 @@ export default defineConfig({
     }
   },
   optimizeDeps: {
-    include: ['react', 'react-dom'],
+    include: ['react', 'react-dom', 'react/jsx-runtime'],
     exclude: ['index.dev.html']
   }
 });
