@@ -9,7 +9,7 @@ export default defineConfig(({ mode }) => {
   
   return {
     plugins: [react({
-      jsxRuntime: 'automatic' // Switch back to automatic runtime
+      jsxRuntime: 'automatic'
     })],
     base: '/Cadence/',
     server: {
@@ -46,8 +46,10 @@ export default defineConfig(({ mode }) => {
       exclude: ['index.dev.html']
     },
     define: {
-      'import.meta.env.VITE_SUPABASE_URL': JSON.stringify(env.VITE_SUPABASE_URL),
-      'import.meta.env.VITE_SUPABASE_ANON_KEY': JSON.stringify(env.VITE_SUPABASE_ANON_KEY)
+      'process.env': {
+        VITE_SUPABASE_URL: JSON.stringify(env.VITE_SUPABASE_URL),
+        VITE_SUPABASE_ANON_KEY: JSON.stringify(env.VITE_SUPABASE_ANON_KEY)
+      }
     }
   };
 });
