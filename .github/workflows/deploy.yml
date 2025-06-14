@@ -5,6 +5,11 @@ on:
     branches:
       - production_final
 
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
 jobs:
   build:
     name: Build
@@ -60,7 +65,8 @@ jobs:
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.GH_PAT }}
           publish_dir: ./dist
           publish_branch: pages-build-deployment
           force_orphan: true
+          commit_message: "Deploy to GitHub Pages"
